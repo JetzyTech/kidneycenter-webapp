@@ -48,7 +48,7 @@ export default function Footer() {
   return (
     <div className="bg-[#FDFDFD]">
       <div className="px-10">
-      <div className="flex items-center justify-between py-10">
+      <div className="flex items-center justify-between py-20">
         <Image src={JetzyLogo} alt="Logo" className="w-12 h-12" />
         <div className="flex items-center gap-x-5">
           {footerSocial.map((socail) => (
