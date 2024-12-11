@@ -4,6 +4,7 @@ import "./globals.css";
 import { Navbar, Footer } from "./components";
 import { ThemeProvider } from "./providers/theme-provider";
 import theme from "@/theme";
+import { NuqsAdapter } from "nuqs/adapters/next";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,11 +33,13 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <ThemeProvider theme={theme}>
-          <div className="flex flex-col min-h-screen">
-          <Navbar />
-          <main className="flex-1">{children}</main>
-          <Footer />
-          </div>
+          <NuqsAdapter>
+            <div className="flex flex-col min-h-screen">
+              <Navbar />
+              <main className="flex-1">{children}</main>
+              <Footer />
+            </div>
+          </NuqsAdapter>
         </ThemeProvider>
       </body>
     </html>
