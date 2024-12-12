@@ -65,12 +65,17 @@ export default function Authentication() {
           {authItems.find((item) => item.key === selectedTab)?.children}
         </div>
       </div>
-      <div>
+      <div className="relative">
         <Image
           src={AuthBgImg}
           alt="Jetzy signup"
           className="w-[896px] h-[900px]"
         />
+
+        <div className="absolute top-1/2 left-0 right-0 flex flex-col items-center text-center w-[564px] mx-auto justify-center">
+          <Typography.Text className="font-black text-5xl text-white leading-[60.24px]">Live The Jetzy Life!</Typography.Text>
+          <Typography.Text className="text-[28px] text-white font-normal leading-[35.14px]">Connect with like-minded people and have the most unique experiences.</Typography.Text>
+        </div>
       </div>
     </div>
   );
