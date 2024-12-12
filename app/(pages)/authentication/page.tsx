@@ -1,91 +1,77 @@
-'use client';
+"use client";
 
-import { AppleIcon, GoogleIcon } from "@/app/assets/icons";
-import { Button, Divider, Form, Input, Typography } from "antd"
+import { Typography } from "antd";
 import { parseAsString, useQueryState } from "nuqs";
+import AuthBgImg from "@/app/assets/images/auth/bg-img.png";
+import JetzyLogo from "@/app/assets/logos/jetzy-logo.png";
+import Image from "next/image";
+import Signup from "./components/SignUp";
+import Login from "./components/Login";
+import Link from "next/link";
 
 enum AUTH_TABS {
-  SIGNUP = 'signup',
-  LOGIN = 'login'
-}
-
-const Login = () => {
-  return (<></>)  
-}
-
-const Signup = () => {
-  const [form] = Form.useForm();
-
-  return (
-    <>
-    <div>
-      <Typography.Text className="text-[32px] font-extrabold">Sign up</Typography.Text>
-
-      <div>
-        <Form form={form} layout="vertical">
-          <Form.Item name='inviteCode' label={<Typography.Text className="font-medium text-lg leading-6">Invite Code</Typography.Text>}>
-            <Input value='HBL50' variant="filled" size="large" />
-          </Form.Item>
-          <Form.Item name='emailAddress' label={<Typography.Text className="font-medium text-lg leading-6">Enter your email address</Typography.Text>}>
-            <Input placeholder="Enter your email address" variant="filled" size="large" />
-          </Form.Item>
-          <Form.Item name='phoneNumber' label={<Typography.Text className="font-medium text-lg leading-6">Phone Number</Typography.Text>}>
-            <Input placeholder="Phone Number" variant="filled" size="large" />
-          </Form.Item>
-          <Form.Item name='password' label={<Typography.Text className="font-medium text-lg leading-6">Password</Typography.Text>}>
-            <Input.Password placeholder="Password" variant="filled" size="large" />
-          </Form.Item>
-          <Button size='large' type='primary' variant="filled" className="w-full">Signup</Button>
-        </Form>
-
-        <Divider />
-
-        <div className="flex items-center gap-x-1">
-          <Button size='large' className="rounded-full" icon={<GoogleIcon/>}>Sign in with Google</Button>
-          <Button size='large' className="rounded-full" icon={<AppleIcon/>}>Sign in with Apple</Button>
-        </div>
-      </div>
-    </div>
-    </>
-  )
+  SIGNUP = "signup",
+  LOGIN = "login",
 }
 
 const authItems = [
   {
     key: AUTH_TABS.SIGNUP,
-    label: 'New Jetzy Member',
+    label: "New Jetzy Member",
     children: <Signup />,
   },
   {
     key: AUTH_TABS.LOGIN,
-    label: 'Existing Jetzy Member',
+    label: "Existing Jetzy Member",
     children: <Login />,
   },
-]
-
+];
 
 export default function Authentication() {
-  const [selectedTab, setSelectedTab] = useQueryState('tab', parseAsString.withDefault(AUTH_TABS.LOGIN));
+  const [selectedTab, setSelectedTab] = useQueryState(
+    "tab",
+    parseAsString.withDefault(AUTH_TABS.LOGIN)
+  );
 
-  console.log({selectedTab})
-
-   return (
-    <>
-    <div className="flex items-center gap-x-5 border border-muted w-max rounded-full p-2">
-      {authItems.map((item) => (
-        <div
-          key={item.key} 
-          onClick={() => setSelectedTab(item.key)}
-          className={`p-2 !cursor-pointer ${selectedTab === item.key ? 'bg-secondary border border-primary rounded-full' : ''}`}
-        >
-          <Typography.Text className={`font-medium ${selectedTab === item.key ? 'text-primary' : 'text-muted'}`}>{item.label}</Typography.Text>
+  return (
+    <div className="flex justify-between">
+      <div className="w-[448px] mx-auto py-10">
+        <Link href='/' className="w-max inline-block">
+          <Image src={JetzyLogo} alt='Jetzy Logo' className="w-12 h-12 mb-5 cursor-pointer" />
+        </Link>
+        <div className="flex items-center justify-between gap-x-5 border border-muted w-full rounded-full p-2 mb-10">
+          {authItems.map((item) => (
+            <div
+              key={item.key}
+              onClick={() => setSelectedTab(item.key)}
+              className={`w-[210px] h-[48px] px-4 py-3 text-center !cursor-pointer ${
+                selectedTab === item.key
+                  ? "bg-secondary border border-primary rounded-full"
+                  : ""
+              }`}
+            >
+              <Typography.Text
+                className={`font-medium ${
+                  selectedTab === item.key ? "text-primary" : "text-muted"
+                }`}
+              >
+                {item.label}
+              </Typography.Text>
+            </div>
+          ))}
         </div>
-      ))}
-    </div>
 
-    <div className="max-w-sm">
-      {authItems.find(item => item.key === selectedTab)?.children}
+        <div className="w-[448px]">
+          {authItems.find((item) => item.key === selectedTab)?.children}
+        </div>
+      </div>
+      <div>
+        <Image
+          src={AuthBgImg}
+          alt="Jetzy signup"
+          className="w-[896px] h-[900px]"
+        />
+      </div>
     </div>
-    </>
-  )
+  );
 }

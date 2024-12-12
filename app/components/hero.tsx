@@ -20,7 +20,7 @@ export default function Hero() {
   return (
     <>
     <div className="relative">
-      <div className="absolute -top-[3.5rem] left-0 right-0">
+      <div className="absolute -top-[3.5rem] left-0 right-0 pointer-events-none">
         <Image src={BgBlob} alt="bg-blob" className="w-[1110px] h-[560px] mx-auto" />
       </div>
       <div className="max-w-4xl mx-auto flex flex-col items-center justify-center mt-14">
@@ -46,8 +46,7 @@ export default function Hero() {
           discounts, and unique benefits.
         </Typography.Text>
 
-        <button 
-        className="rounded-full bg-[#00B1B2] text-white w-[200px] h-[60px] text-base font-medium flex items-center justify-center gap-x-2 active:scale-95 transition duration-200 hover:bg-[#00b2b2e3]">
+        <button className="rounded-full bg-[#00B1B2] text-white w-[200px] h-[60px] text-base font-medium flex items-center justify-center gap-x-2 active:scale-95 transition duration-200 hover:bg-[#00b2b2e3]">
           Get Started Now! <ArrowRight />
         </button>
       </div>
@@ -61,7 +60,7 @@ export default function Hero() {
 
 const ImageCarousal = ({images}: {images: StaticImageData[]}) => {
   return (
-    <div className="relative w-full mt-20">
+    <div className=" w-full mt-20">
       <div className="flex items-center justify-center gap-x-5">
         {images.map((entry, index) => (
           <div
