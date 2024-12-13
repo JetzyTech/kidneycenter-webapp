@@ -8,6 +8,8 @@ import {
   SearchSVG,
   Stars,
 } from "@/app/assets/icons";
+import request from "@/app/lib/request";
+import { useQuery } from "@tanstack/react-query";
 import {
   Button,
   DatePicker,
@@ -19,8 +21,10 @@ import {
   Typography,
   Card,
   Checkbox,
+  message,
 } from "antd";
 import Image from "next/image";
+import { parseAsString, useQueryState } from "nuqs";
 import React from "react";
 
 const data = [
@@ -130,12 +134,37 @@ export default function Dashboard() {
 }
 
 const Filters = () => {
-  const [guests, setGuests] = React.useState(1);
-  const [rooms, setRooms] = React.useState(1);
+  const [guests, setGuests] = useQueryState('adults', parseAsString.withDefault('1'));
+  const [rooms, setRooms] = useQueryState('rooms', parseAsString.withDefault('1'));
   const [selectedPrice, setSelectedPrice] = React.useState("Any");
   const [priceRange, setPriceRange] = React.useState([0, 1000]);
   const [tempPriceRange, setTempPriceRange] = React.useState([0, 1000]);
   const [selectedStars, setSelectedStars] = React.useState<number[]>([]);
+
+
+  // MOVE API CALL TO DASHBOARD
+  const getHotelListings = async () => {
+    const url = `/v1/meetselect/hotels?rooms=${rooms}&perPage=10&page=1&adults=${guests}&check_in=2024-12-25&check_out=2024-12-28&latitude=37.785834&longitude=-122.406417`
+    try {
+
+      const result = await request.get(url);
+
+      if (!result) message.error('No Hotels Found!')
+
+      return result.data
+
+    } catch (error: any) {
+      console.error(error.message)
+      message.error(error.message)
+    }
+  }
+
+  const {data} = useQuery({
+    queryKey: ['hotel-listings'],
+    queryFn: getHotelListings
+  })
+
+  console.log({data})
 
   const where = [
     {
@@ -251,138 +280,136 @@ const Filters = () => {
     <>
       <div>
         <Form colon={false} className="flex flex-col">
-        <div className="flex items-center gap-x-10">
-          <Form.Item
-            className="w-[283px]"
-            label={
-              <Typography.Text className="text-base font-medium">
-                Where
-              </Typography.Text>
-            }
-          >
-            <Select
-              size="large"
-              defaultValue="Select Current Location"
-              options={where}
-              suffixIcon={<Pins />}
-            />
-          </Form.Item>
-          <Form.Item
-            className="w-[283px]"
-            label={
-              <Typography.Text className="text-base font-medium">
-                When
-              </Typography.Text>
-            }
-          >
-            <DatePicker.RangePicker size="large" format="YYYY-MM-DD" />
-          </Form.Item>
-
-          <Form.Item
-            label={
-              <Typography.Text className="text-base font-medium">
-                Guests
-              </Typography.Text>
-            }
-          >
-            <Counter count={guests} setCount={setGuests}  />
-          </Form.Item>
-
-          <Form.Item
-            label={
-              <Typography.Text className="text-base font-medium">
-                Rooms
-              </Typography.Text>
-            }
-          >
-            <Counter count={rooms} setCount={setRooms}  />
-          </Form.Item>
-
-          <Form.Item>
-            <Button
-              type="primary"
-              variant="filled"
-              size="large"
-              icon={<SearchSVG />}
-              iconPosition="end"
+          <div className="flex items-center gap-x-10">
+            <Form.Item
+              className="w-[283px]"
+              label={
+                <Typography.Text className="text-base font-medium">
+                  Where
+                </Typography.Text>
+              }
             >
-              Search
-            </Button>
-          </Form.Item>
-
-        </div>
-         
-<div className="flex items-center gap-x-10">
-          <Form.Item
-            label={
-              <Typography.Text className="text-muted font-medium">
-                Star ratings
-              </Typography.Text>
-            }
-          >
-            <Dropdown
-              dropdownRender={() => (
-                <StarRatingContent
-                  selectedStars={selectedStars}
-                  setSelectedStars={setSelectedStars}
-                />
-              )}
-              className="cursor-pointer"
-              trigger={["click"]}
+              <Select
+                size="large"
+                defaultValue="Select Current Location"
+                options={where}
+                suffixIcon={<Pins />}
+              />
+            </Form.Item>
+            <Form.Item
+              className="w-[283px]"
+              label={
+                <Typography.Text className="text-base font-medium">
+                  When
+                </Typography.Text>
+              }
             >
-              <Typography.Text className="inline-flex font-medium">
-                {selectedStars.length > 0
-                  ? `${selectedStars.length} Star${
-                      selectedStars.length > 1 ? "s" : ""
-                    }`
-                  : "All"}
-                &nbsp;
-                <ChevronDownSVG />
-              </Typography.Text>
-            </Dropdown>
-          </Form.Item>
+              <DatePicker.RangePicker size="large" format="YYYY-MM-DD" />
+            </Form.Item>
 
-          <Form.Item
-            label={
-              <Typography.Text className="text-muted font-medium">
-                Prices
-              </Typography.Text>
-            }
-          >
-            <Dropdown
-              menu={pricesProps}
-              className="cursor-pointer"
-              trigger={["click"]}
+            <Form.Item
+              label={
+                <Typography.Text className="text-base font-medium">
+                  Guests
+                </Typography.Text>
+              }
             >
-              <Typography.Text className="inline-flex font-medium">
-                {selectedPrice}&nbsp;
-                <ChevronDownSVG />
-              </Typography.Text>
-            </Dropdown>
-          </Form.Item>
+              <Counter count={Number(guests)} setCount={value => setGuests(String(value))} />
+            </Form.Item>
 
-          <Form.Item
-            label={
-              <Typography.Text className="text-muted font-medium">
-                Price Range
-              </Typography.Text>
-            }
-          >
-            <Dropdown
-              dropdownRender={() => <PriceRangeContent />}
-              className="cursor-pointer"
-              trigger={["click"]}
+            <Form.Item
+              label={
+                <Typography.Text className="text-base font-medium">
+                  Rooms
+                </Typography.Text>
+              }
             >
-              <Typography.Text className="inline-flex font-medium">
-                {priceRange[0] === 0 && priceRange[1] === 1000
-                  ? "All"
-                  : `$${priceRange[0]} - $${priceRange[1]}`}
-                &nbsp;
-                <ChevronDownSVG />
-              </Typography.Text>
-            </Dropdown>
-          </Form.Item>
+              <Counter count={Number(rooms)} setCount={value => setRooms(String(value))} />
+            </Form.Item>
 
+            <Form.Item>
+              <Button
+                type="primary"
+                variant="filled"
+                size="large"
+                icon={<SearchSVG />}
+                iconPosition="end"
+              >
+                Search
+              </Button>
+            </Form.Item>
+          </div>
+
+          <div className="flex items-center gap-x-10">
+            <Form.Item
+              label={
+                <Typography.Text className="text-muted font-medium">
+                  Star ratings
+                </Typography.Text>
+              }
+            >
+              <Dropdown
+                dropdownRender={() => (
+                  <StarRatingContent
+                    selectedStars={selectedStars}
+                    setSelectedStars={setSelectedStars}
+                  />
+                )}
+                className="cursor-pointer"
+                trigger={["click"]}
+              >
+                <Typography.Text className="inline-flex font-medium">
+                  {selectedStars.length > 0
+                    ? `${selectedStars.length} Star${
+                        selectedStars.length > 1 ? "s" : ""
+                      }`
+                    : "All"}
+                  &nbsp;
+                  <ChevronDownSVG />
+                </Typography.Text>
+              </Dropdown>
+            </Form.Item>
+
+            <Form.Item
+              label={
+                <Typography.Text className="text-muted font-medium">
+                  Prices
+                </Typography.Text>
+              }
+            >
+              <Dropdown
+                menu={pricesProps}
+                className="cursor-pointer"
+                trigger={["click"]}
+              >
+                <Typography.Text className="inline-flex font-medium">
+                  {selectedPrice}&nbsp;
+                  <ChevronDownSVG />
+                </Typography.Text>
+              </Dropdown>
+            </Form.Item>
+
+            <Form.Item
+              label={
+                <Typography.Text className="text-muted font-medium">
+                  Price Range
+                </Typography.Text>
+              }
+            >
+              <Dropdown
+                dropdownRender={() => <PriceRangeContent />}
+                className="cursor-pointer"
+                trigger={["click"]}
+              >
+                <Typography.Text className="inline-flex font-medium">
+                  {priceRange[0] === 0 && priceRange[1] === 1000
+                    ? "All"
+                    : `$${priceRange[0]} - $${priceRange[1]}`}
+                  &nbsp;
+                  <ChevronDownSVG />
+                </Typography.Text>
+              </Dropdown>
+            </Form.Item>
           </div>
         </Form>
       </div>
@@ -390,15 +417,16 @@ const Filters = () => {
   );
 };
 
-const Counter: React.FC<{ count: number; setCount: React.Dispatch<React.SetStateAction<number>> }> = ({ count, setCount }) => {
-
+const Counter: React.FC<{
+  count: number;
+  setCount: React.Dispatch<React.SetStateAction<number>>;
+}> = ({ count, setCount }) => {
   const handleDecrement = () => {
-    setCount((prev) => Math.max(1, prev - 1))
-  }
-
+    setCount((prev) => Math.max(1, prev - 1));
+  };
   const handleIncrement = () => {
-    setCount((prev) => prev + 1)
-  }
+    setCount((prev) => prev + 1);
+  };
 
   return (
     <>
@@ -420,6 +448,5 @@ const Counter: React.FC<{ count: number; setCount: React.Dispatch<React.SetState
         </div>
       </div>
     </>
-  )
-}
-
+  );
+};
