@@ -1,13 +1,16 @@
 "use client";
 
+import Image from "next/image";
+import Link from "next/link";
+
 import { Typography } from "antd";
 import { parseAsString, useQueryState } from "nuqs";
-import AuthBgImg from "@/app/assets/images/auth/bg-img.png";
-import JetzyLogo from "@/app/assets/logos/jetzy-logo.png";
-import Image from "next/image";
+
 import Signup from "./components/SignUp";
 import Login from "./components/Login";
-import Link from "next/link";
+
+import AuthBgImg from "@/app/assets/images/auth/bg-img.png";
+import JetzyLogo from "@/app/assets/logos/jetzy-logo.png";
 
 enum AUTH_TABS {
   SIGNUP = "signup",
