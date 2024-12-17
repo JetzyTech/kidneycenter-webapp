@@ -179,8 +179,8 @@ export const Stars = () => {
 export const Pins = () => {
   return (
     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M8 8.5C9.10457 8.5 10 7.60457 10 6.5C10 5.39543 9.10457 4.5 8 4.5C6.89543 4.5 6 5.39543 6 6.5C6 7.60457 6.89543 8.5 8 8.5Z" stroke="#8C9094" stroke-linecap="round" stroke-linejoin="round"/>
-      <path d="M13 6.5C13 11 8 14.5 8 14.5C8 14.5 3 11 3 6.5C3 5.17392 3.52678 3.90215 4.46447 2.96447C5.40215 2.02678 6.67392 1.5 8 1.5C9.32608 1.5 10.5979 2.02678 11.5355 2.96447C12.4732 3.90215 13 5.17392 13 6.5V6.5Z" stroke="#8C9094" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M8 8.5C9.10457 8.5 10 7.60457 10 6.5C10 5.39543 9.10457 4.5 8 4.5C6.89543 4.5 6 5.39543 6 6.5C6 7.60457 6.89543 8.5 8 8.5Z" stroke="#8C9094" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M13 6.5C13 11 8 14.5 8 14.5C8 14.5 3 11 3 6.5C3 5.17392 3.52678 3.90215 4.46447 2.96447C5.40215 2.02678 6.67392 1.5 8 1.5C9.32608 1.5 10.5979 2.02678 11.5355 2.96447C12.4732 3.90215 13 5.17392 13 6.5V6.5Z" stroke="#8C9094" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
   )
 }
@@ -212,8 +212,8 @@ export const PlusSVG = (props: {width?: number; height?: number;}) => {
 export const SearchSVG = () => {
   return (
     <svg width="23" height="22" viewBox="0 0 23 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M10.4688 17.1875C14.4556 17.1875 17.6875 13.9556 17.6875 9.96875C17.6875 5.98194 14.4556 2.75 10.4688 2.75C6.48194 2.75 3.25 5.98194 3.25 9.96875C3.25 13.9556 6.48194 17.1875 10.4688 17.1875Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      <path d="M15.5723 15.0735L19.7489 19.2501" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M10.4688 17.1875C14.4556 17.1875 17.6875 13.9556 17.6875 9.96875C17.6875 5.98194 14.4556 2.75 10.4688 2.75C6.48194 2.75 3.25 5.98194 3.25 9.96875C3.25 13.9556 6.48194 17.1875 10.4688 17.1875Z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M15.5723 15.0735L19.7489 19.2501" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
   )
 }
@@ -221,7 +221,7 @@ export const SearchSVG = () => {
 export const ChevronDownSVG = () => {
   return (
     <svg width="23" height="23" viewBox="0 0 23 23" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M5.75 8.625L11.5 14.375L17.25 8.625" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M5.75 8.625L11.5 14.375L17.25 8.625" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
   )
 }
