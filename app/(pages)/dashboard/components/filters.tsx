@@ -1,13 +1,24 @@
-import React from "react";
-import request from "@/app/lib/request";
-import { parseAsInteger, parseAsString, useQueryState } from "nuqs";
+import React, { FormEvent, useCallback, useEffect, useState } from "react";
 import { useDashboardContext } from "../hooks/use-dashboard-context";
-import { Button, Card, Checkbox, DatePicker, Dropdown, Form, MenuProps, message, Select, Slider, Typography } from "antd";
-import { useMutation } from "@tanstack/react-query";
 import { ChevronDownSVG, Pins, SearchSVG, Stars } from "@/app/assets/icons";
 import { usePlacesWidget } from "react-google-autocomplete";
 import { Counter } from "./counter";
 import { useFilter } from "../hooks/use-filter";
+import {
+  AutoComplete,
+  Button,
+  Card,
+  Checkbox,
+  DatePicker,
+  Dropdown,
+  Form,
+  Input,
+  MenuProps,
+  Select,
+  Slider,
+  Typography,
+} from "antd";
+import { useMap, useMapsLibrary } from "@vis.gl/react-google-maps";
 
 const pricesItems = [
   {
@@ -21,10 +32,9 @@ const pricesItems = [
 ];
 
 export const Filters = () => {
-  const { setHotelListings } = useDashboardContext();
+  const { hotelListingMutation } = useDashboardContext();
   const {
     checkIn,
-    checkOut,
     guests,
     rooms,
     priceRange,
@@ -36,7 +46,7 @@ export const Filters = () => {
     selectedStars,
     setSelectedStars,
     updateField,
-    setPlacesOptions
+    setPlacesOptions,
   } = useFilter();
 
   // const getGooglePlaces = async () => {
@@ -58,29 +68,6 @@ export const Filters = () => {
   // }
 
   // infinite scroll
-  const getHotelListings = async () => {
-    const url = `/v1/meetselect/hotels?rooms=${rooms}&perPage=10&page=1&adults=${guests}&check_in=${checkIn}&check_out=${checkOut}&latitude=37.785834&longitude=-122.406417`;
-    try {
-      const result = await request.get(url);
-
-      if (!result) message.error("No Hotels Found!");
-
-      return result.data;
-    } catch (error: any) {
-      console.error(error.message);
-      message.error(error.message);
-    }
-  };
-
-  const hotelListingMutation = useMutation({
-    mutationKey: ["hotel-listings"],
-    mutationFn: getHotelListings,
-    onSettled:(data) => setHotelListings(data),
-    onError: (error) => {
-      console.error(error.message);
-      message.error(error.message);
-    },
-  });
 
   const handleSearch = () => hotelListingMutation.mutate();
 
@@ -88,7 +75,7 @@ export const Filters = () => {
     items: pricesItems,
     onClick: (e) => {
       setSortPrice(
-        pricesItems.find((item) => item.key === e.key)?.label || 'Any'
+        pricesItems.find((item) => item.key === e.key)?.label || "Any"
       );
     },
   };
@@ -125,7 +112,7 @@ export const Filters = () => {
         </div>
       </div>
     </Card>
-  )
+  );
 
   const StarRatingContent = ({
     selectedStars,
@@ -158,17 +145,18 @@ export const Filters = () => {
         ))}
       </div>
     </Card>
-  )
+  );
 
   const { ref } = usePlacesWidget({
     apiKey: process.env.NEXT_PUBLIC_GOOGLE_MAP_API_KEY,
-    onPlaceSelected: (places) => {
-      console.log({ places });
-      const options =
-        places?.map((place: any) => ({
+    onPlaceSelected: (place: any) => {
+      console.log({ place });
+      const options = [
+        {
           label: place.description,
           value: place.place_id,
-        })) || [];
+        },
+      ];
       setPlacesOptions(options);
     },
   });
@@ -176,10 +164,7 @@ export const Filters = () => {
   return (
     <>
       <div>
-        <Form
-          colon={false}
-          className="flex flex-col"
-        >
+        <Form colon={false} className="flex flex-col">
           <div className="flex items-center gap-x-10">
             <Form.Item
               className="w-[283px]"
@@ -189,14 +174,16 @@ export const Filters = () => {
                 </Typography.Text>
               }
             >
-              <Select
+              {/* <AutocompleteWhat /> */}
+              {/* <AutoComplete ref={ref} /> */}
+              {/* <Select
                 showSearch
                 ref={ref}
                 size="large"
                 defaultValue="Select Current Location"
                 // options={where}
                 suffixIcon={<Pins />}
-              />
+              /> */}
             </Form.Item>
             <Form.Item
               className="w-[283px]"
@@ -210,8 +197,10 @@ export const Filters = () => {
                 size="large"
                 format="YYYY-MM-DD"
                 onChange={(dates, dateStrings) => {
-                  updateField('checkIn', dateStrings[0]);
-                  updateField('checkOut' , dateStrings[1]);
+                  console.log({ dateStrings });
+                  updateField("checkIn", dateStrings[0]);
+                  updateField("checkOut", dateStrings[1]);
+                  console.log({ checkIn });
                 }}
               />
             </Form.Item>
@@ -225,7 +214,7 @@ export const Filters = () => {
             >
               <Counter
                 count={Number(guests)}
-                setCount={(value) => updateField('guests' , value)}
+                setCount={(value) => updateField("guests", value)}
               />
             </Form.Item>
 
@@ -238,7 +227,7 @@ export const Filters = () => {
             >
               <Counter
                 count={Number(rooms)}
-                setCount={(value) => updateField('rooms', value)}
+                setCount={(value) => updateField("rooms", value)}
               />
             </Form.Item>
 
@@ -265,14 +254,14 @@ export const Filters = () => {
               }
             >
               <Dropdown
+                className="cursor-pointer"
+                trigger={["click"]}
                 dropdownRender={() => (
                   <StarRatingContent
                     selectedStars={selectedStars}
                     setSelectedStars={setSelectedStars}
                   />
                 )}
-                className="cursor-pointer"
-                trigger={["click"]}
               >
                 <Typography.Text className="inline-flex font-medium">
                   {selectedStars.length > 0
@@ -332,3 +321,56 @@ export const Filters = () => {
     </>
   );
 };
+
+// import usePlacesService from "react-google-autocomplete/lib/usePlacesAutocompleteService";
+
+// const AutocompleteWhat = () => {
+//   const [details, setDetails] = React.useState();
+//   const {
+//     placesService,
+//     placePredictions,
+//     getPlacePredictions,
+//     isPlacePredictionsLoading,
+//   } = usePlacesService({
+//     apiKey: process.env.REACT_APP_GOOGLE,
+//   });
+
+//   useEffect(() => {
+//     if (placePredictions.length)
+//       placesService?.getDetails(
+//         {
+//           placeId: placePredictions[0].place_id,
+//         },
+//         (placeDetails) => setDetails(placeDetails)
+//       );
+//   }, [placePredictions]);
+
+//   const options = placePredictions.map((place) => [
+//     {
+//       value: place.description,
+//     },
+//   ]);
+
+//   console.log({ placePredictions });
+
+//   return (
+//     <>
+//       <Input
+//         placeholder="Debounce 500 ms"
+//         disabled={isPlacePredictionsLoading}
+//         onChange={(evt) => {
+//           getPlacePredictions({ input: evt.target.value });
+//         }}
+//       />
+//       {placePredictions.map((item) => (
+//         <AutoComplete
+//           key={item.place_id}
+//           options={options}
+//           onSelect={(value) => {
+//             console.log(value);
+//           }}
+//         />
+//       ))}
+//     </>
+//   );
+// };

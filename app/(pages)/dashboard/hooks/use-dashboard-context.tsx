@@ -9,7 +9,7 @@ export const useDashboardContext = () => {
   const ctx = React.useContext(DashboardContext);
   if (ctx === undefined) {
     throw new Error(
-      "useDashboardContext should be used inside DashboardContext"
+      "useDashboardContext should be used inside DashboardContext.Provider"
     );
   }
   return ctx;

@@ -17,9 +17,10 @@
     "nuqs": "^2.2.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "react-google-autocomplete": "^2.7.3"
+    "use-places-autocomplete": "^4.0.1"
   },
   "devDependencies": {
+    "@types/google.maps": "^3.58.1",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

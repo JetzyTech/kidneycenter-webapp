@@ -16,7 +16,9 @@ interface IFilter {
   setSortPrice: React.Dispatch<React.SetStateAction<string>>;
   setTempPriceRange: React.Dispatch<React.SetStateAction<[number, number]>>;
   setSelectedStars: React.Dispatch<React.SetStateAction<number[]>>;
-  setPlacesOptions: React.Dispatch<React.SetStateAction<{ label: string; value: string }[]>>;
+  setPlacesOptions: React.Dispatch<
+    React.SetStateAction<{ label: string; value: string }[]>
+  >;
 }
 
 export const useFilter = (): IFilter => {
@@ -48,28 +50,36 @@ export const useFilter = (): IFilter => {
     { label: string; value: string }[]
   >([]);
 
-
-  const updateField = (field: string, value: any) => {
-    switch (field) {
-      case 'check_in':
-        setCheckIn(value);
-        break;
-      case 'check_out':
-        setCheckOut(value);
-        break;
-      case 'guests':
-        setGuests(value);
-        break;
-      case 'rooms':
-        setRooms(value);
-        break;
-      case 'selected_price':
-        setSortPrice(value);
-        break;
-      default:
-        break;
-    }
-  };
+  const updateField = React.useCallback(
+    (field: string, value: any) => {
+      switch (field) {
+        case "checkIn":
+          setCheckIn(value);
+          break;
+        case "checkOut":
+          setCheckOut(value);
+          break;
+        case "guests":
+          setGuests(value);
+          break;
+        case "rooms":
+          setRooms(value);
+          break;
+        case "prices":
+          setSortPrice(value);
+          break;
+        case "star_ratings":
+          setSortPrice(value);
+          break;
+        case "price_range":
+          setSortPrice(value);
+          break;
+        default:
+          break;
+      }
+    },
+    [checkIn, checkOut, guests, rooms]
+  );
 
   return {
     checkIn,
@@ -88,4 +98,4 @@ export const useFilter = (): IFilter => {
     setSelectedStars,
     setPlacesOptions,
   };
-}
+};

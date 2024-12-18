@@ -1,7 +1,6 @@
 import { MinusSVG, PlusSVG } from "@/app/assets/icons";
 import { Button } from "antd";
 
-
 export const Counter: React.FC<{
   count: number;
   setCount: React.Dispatch<React.SetStateAction<number>>;
@@ -12,8 +11,6 @@ export const Counter: React.FC<{
   const handleIncrement = () => {
     setCount((prev) => Number(prev + 1));
   };
-
-  console.log({ count });
 
   return (
     <>
