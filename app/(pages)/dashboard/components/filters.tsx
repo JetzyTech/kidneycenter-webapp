@@ -1,7 +1,6 @@
 import React, { FormEvent, useCallback, useEffect, useState } from "react";
 import { useDashboardContext } from "../hooks/use-dashboard-context";
 import { ChevronDownSVG, Pins, SearchSVG, Stars } from "@/app/assets/icons";
-import { usePlacesWidget } from "react-google-autocomplete";
 import { Counter } from "./counter";
 import { useFilter } from "../hooks/use-filter";
 import {
@@ -147,19 +146,6 @@ export const Filters = () => {
     </Card>
   );
 
-  const { ref } = usePlacesWidget({
-    apiKey: process.env.NEXT_PUBLIC_GOOGLE_MAP_API_KEY,
-    onPlaceSelected: (place: any) => {
-      console.log({ place });
-      const options = [
-        {
-          label: place.description,
-          value: place.place_id,
-        },
-      ];
-      setPlacesOptions(options);
-    },
-  });
 
   return (
     <>
