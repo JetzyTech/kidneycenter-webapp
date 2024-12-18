@@ -79,8 +79,8 @@ export default function Dashboard() {
                   defaultCenter={{ lat: 22.54992, lng: 0 }}
                   style={{ width: "50vw", height: "683px" }}
                 >
-                  {hotelListings.docs &&
-                    hotelListings.docs.map((entry) => {
+                  {hotelListings?.docs &&
+                    hotelListings?.docs?.map((entry) => {
                       const latitude = Number(entry.geo?.latitude);
                       const longitude = Number(entry.geo?.longitude);
                       const position = { lat: latitude, lng: longitude };
