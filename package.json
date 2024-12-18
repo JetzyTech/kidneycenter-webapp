@@ -16,8 +16,7 @@
     "next": "15.1.0",
     "nuqs": "^2.2.3",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "use-places-autocomplete": "^4.0.1"
+    "react-dom": "^19.0.0"
   },
   "devDependencies": {
     "@types/google.maps": "^3.58.1",

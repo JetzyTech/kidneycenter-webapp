@@ -6,19 +6,17 @@ interface IFilter {
   checkOut: string;
   guests: number;
   rooms: number;
+  location: string;
   sortPrice: string;
   priceRange: [number, number];
   tempPriceRange: [number, number];
   selectedStars: number[];
-  placesOptions: { label: string; value: string }[];
   updateField: (field: keyof IFilter, value: any) => void;
+  setLocation: (location: string) => void;
   setPriceRange: React.Dispatch<React.SetStateAction<[number, number]>>;
   setSortPrice: React.Dispatch<React.SetStateAction<string>>;
   setTempPriceRange: React.Dispatch<React.SetStateAction<[number, number]>>;
   setSelectedStars: React.Dispatch<React.SetStateAction<number[]>>;
-  setPlacesOptions: React.Dispatch<
-    React.SetStateAction<{ label: string; value: string }[]>
-  >;
 }
 
 export const useFilter = (): IFilter => {
@@ -38,6 +36,7 @@ export const useFilter = (): IFilter => {
     "rooms",
     parseAsInteger.withDefault(1)
   );
+  const [location, setLocation] = useQueryState('location', parseAsString.withDefault(''))
   const [sortPrice, setSortPrice] = React.useState<string>("Any");
   const [priceRange, setPriceRange] = React.useState<[number, number]>([
     0, 1000,
@@ -46,9 +45,6 @@ export const useFilter = (): IFilter => {
     0, 1000,
   ]);
   const [selectedStars, setSelectedStars] = React.useState<number[]>([]);
-  const [placesOptions, setPlacesOptions] = React.useState<
-    { label: string; value: string }[]
-  >([]);
 
   const updateField = React.useCallback(
     (field: string, value: any) => {
@@ -74,6 +70,9 @@ export const useFilter = (): IFilter => {
         case "price_range":
           setSortPrice(value);
           break;
+        case "location":
+          setLocation(value);
+          break;
         default:
           break;
       }
@@ -87,15 +86,15 @@ export const useFilter = (): IFilter => {
     guests,
     rooms,
     sortPrice,
+    location,
+    setLocation,
     setSortPrice,
     priceRange,
     tempPriceRange,
     selectedStars,
-    placesOptions,
     updateField,
     setPriceRange,
     setTempPriceRange,
     setSelectedStars,
-    setPlacesOptions,
   };
 };

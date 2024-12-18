@@ -18,6 +18,7 @@ import {
   Typography,
 } from "antd";
 import { useMap, useMapsLibrary } from "@vis.gl/react-google-maps";
+import PlacesAutocomplete from "./autocomplete";
 
 const pricesItems = [
   {
@@ -45,29 +46,13 @@ export const Filters = () => {
     selectedStars,
     setSelectedStars,
     updateField,
-    setPlacesOptions,
+    location,
+    setLocation,
   } = useFilter();
 
-  // const getGooglePlaces = async () => {
-  //   try {
-  //     const url = `https://maps.googleapis.com/maps/api/place/autocomplete/json?key=${process.env.NEXT_PUBLIC_GOOGLE_MAP_API_KEY}`;
-
-  //     const result = await axios.get(url);
-
-  //     console.log({result})
-
-  //     if (!result) console.error('No Places Found!');
-
-  //     return result;
-
-  //   } catch (error: any) {
-  //     console.error(error.message)
-  //     message.error(error.message)
-  //   }
-  // }
+  console.log({location})
 
   // infinite scroll
-
   const handleSearch = () => hotelListingMutation.mutate();
 
   const pricesProps: MenuProps = {
@@ -160,6 +145,7 @@ export const Filters = () => {
                 </Typography.Text>
               }
             >
+              <PlacesAutocomplete setLocation={setLocation} />
               {/* <AutocompleteWhat /> */}
               {/* <AutoComplete ref={ref} /> */}
               {/* <Select
