@@ -12,7 +12,6 @@ import {
   APIProvider,
   Map,
   Marker,
-  Pin,
   AdvancedMarkerProps,
   useAdvancedMarkerRef,
   AdvancedMarker,
@@ -22,10 +21,12 @@ export default function Dashboard() {
   const [hotelListings, setHotelListings] = React.useState<{
     docs: IHotelListing[];
   }>({ docs: [] });
-  const { checkIn, checkOut, rooms, guests } = useFilter();
+  const { checkIn, checkOut, rooms, guests, lat, lng } = useFilter();
 
   const getHotelListings = async () => {
-    const url = `/v1/meetselect/hotels?rooms=${rooms}&perPage=10&page=1&adults=${guests}&check_in=${checkIn}&check_out=${checkOut}&latitude=37.785834&longitude=-122.406417`;
+    const url = `/v1/meetselect/hotels?rooms=${rooms}&perPage=10&page=1&adults=${guests}&check_in=${checkIn}&check_out=${checkOut}&latitude=${lat}&longitude=${lng}`;
+    // provide lat and longitude
+    // or try pakistan as a whole
     try {
       const result = await request.get(url);
 
@@ -75,8 +76,8 @@ export default function Dashboard() {
                 libraries={["marker"]}
               >
                 <Map
-                  defaultZoom={3}
-                  defaultCenter={{ lat: 22.54992, lng: 0 }}
+                  defaultZoom={10}
+                  defaultCenter={{ lat: Number(lat), lng: Number(lng) }}
                   style={{ width: "50vw", height: "683px" }}
                 >
                   {hotelListings?.docs &&

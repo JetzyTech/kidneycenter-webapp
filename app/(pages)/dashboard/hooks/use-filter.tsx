@@ -6,13 +6,13 @@ interface IFilter {
   checkOut: string;
   guests: number;
   rooms: number;
-  location: string;
   sortPrice: string;
   priceRange: [number, number];
   tempPriceRange: [number, number];
   selectedStars: number[];
+  lat: string;
+  lng: string;
   updateField: (field: keyof IFilter, value: any) => void;
-  setLocation: (location: string) => void;
   setPriceRange: React.Dispatch<React.SetStateAction<[number, number]>>;
   setSortPrice: React.Dispatch<React.SetStateAction<string>>;
   setTempPriceRange: React.Dispatch<React.SetStateAction<[number, number]>>;
@@ -36,7 +36,8 @@ export const useFilter = (): IFilter => {
     "rooms",
     parseAsInteger.withDefault(1)
   );
-  const [location, setLocation] = useQueryState('location', parseAsString.withDefault(''))
+  const [lat, setLat] = useQueryState('lat', parseAsString.withDefault(''));
+  const [lng, setLng] = useQueryState('lng', parseAsString.withDefault(''));
   const [sortPrice, setSortPrice] = React.useState<string>("Any");
   const [priceRange, setPriceRange] = React.useState<[number, number]>([
     0, 1000,
@@ -70,9 +71,11 @@ export const useFilter = (): IFilter => {
         case "price_range":
           setSortPrice(value);
           break;
-        case "location":
-          setLocation(value);
-          break;
+          case "lat":
+            setLat(value);
+            break;
+          case "lng":
+            setLng(value);
         default:
           break;
       }
@@ -86,8 +89,8 @@ export const useFilter = (): IFilter => {
     guests,
     rooms,
     sortPrice,
-    location,
-    setLocation,
+    lat,
+    lng,
     setSortPrice,
     priceRange,
     tempPriceRange,

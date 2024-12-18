@@ -2,11 +2,13 @@
 
 import { Pins } from "@/app/assets/icons";
 import React, { useEffect, useRef, useState } from "react";
+import { useFilter } from "../hooks/use-filter";
 
-export default function PlacesAutocomplete({setLocation}: {setLocation: (value: string) => void}) {
+export default function PlacesAutocomplete() {
   const [isLoaded, setIsLoaded] = useState(false);
   const [inputValue, setInputValue] = useState('');
   const inputRef = useRef<HTMLInputElement | null>(null);
+  const { updateField} = useFilter();
 
   const LOAD_PLACES = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAP_API_KEY}&libraries=places`
 
@@ -30,9 +32,13 @@ export default function PlacesAutocomplete({setLocation}: {setLocation: (value: 
 
     try {
       const places = new google.maps.places.Autocomplete(inputRef.current); 
+
       places.addListener("place_changed", () => {
         const place = places.getPlace();
-        setLocation(place)
+        const lat = place.geometry?.location?.lat();
+        const lng = place.geometry?.location?.lng();
+        updateField('lng', lng);
+        updateField('lat', lat);
       });
     } catch (error: any) {
       console.error(error.message);
@@ -45,7 +51,7 @@ export default function PlacesAutocomplete({setLocation}: {setLocation: (value: 
   };
 
   return (
-    <div className="relative">
+    <div className="relative w-max">
       <input 
         type="text"
         ref={inputRef} 

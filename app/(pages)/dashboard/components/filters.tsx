@@ -46,11 +46,11 @@ export const Filters = () => {
     selectedStars,
     setSelectedStars,
     updateField,
-    location,
-    setLocation,
+    lat,
+    lng,
   } = useFilter();
 
-  console.log({location})
+  console.log({lat, lng})
 
   // infinite scroll
   const handleSearch = () => hotelListingMutation.mutate();
@@ -145,7 +145,7 @@ export const Filters = () => {
                 </Typography.Text>
               }
             >
-              <PlacesAutocomplete setLocation={setLocation} />
+              <PlacesAutocomplete  />
               {/* <AutocompleteWhat /> */}
               {/* <AutoComplete ref={ref} /> */}
               {/* <Select
