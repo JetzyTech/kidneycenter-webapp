@@ -1,3 +1,5 @@
+'use client'
+
 import React, { FormEvent, useCallback, useEffect, useState } from "react";
 import { useDashboardContext } from "../hooks/use-dashboard-context";
 import { ChevronDownSVG, Pins, SearchSVG, Stars } from "@/app/assets/icons";
@@ -19,6 +21,9 @@ import {
 } from "antd";
 import { useMap, useMapsLibrary } from "@vis.gl/react-google-maps";
 import PlacesAutocomplete from "./autocomplete";
+import dayjs from "dayjs";
+import { useRouter } from "next/router";
+import { useSearchParams } from "next/navigation";
 
 const pricesItems = [
   {
@@ -32,9 +37,12 @@ const pricesItems = [
 ];
 
 export const Filters = () => {
+  const searchParams = useSearchParams();
+
   const { hotelListingMutation } = useDashboardContext();
   const {
     checkIn,
+    checkOut,
     guests,
     rooms,
     priceRange,
@@ -50,7 +58,18 @@ export const Filters = () => {
     lng,
   } = useFilter();
 
-  console.log({lat, lng})
+  React.useEffect(() => {
+    const checkIn = searchParams.get('check_in');
+    const checkOut = searchParams.get('check_out');
+    const guests = searchParams.get('adults');
+    const rooms = searchParams.get('rooms');
+    const lat = searchParams.get('lat');
+    const lng = searchParams.get('lng');
+
+    if (checkIn && checkOut && guests && rooms && lat && lng) {
+      hotelListingMutation.mutate();
+    }
+  }, []);
 
   // infinite scroll
   const handleSearch = () => hotelListingMutation.mutate();
@@ -168,6 +187,7 @@ export const Filters = () => {
               <DatePicker.RangePicker
                 size="large"
                 format="YYYY-MM-DD"
+                value={[dayjs(checkIn), dayjs(checkOut)]}
                 onChange={(dates, dateStrings) => {
                   console.log({ dateStrings });
                   updateField("checkIn", dateStrings[0]);

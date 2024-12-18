@@ -25,8 +25,6 @@ export default function Dashboard() {
 
   const getHotelListings = async () => {
     const url = `/v1/meetselect/hotels?rooms=${rooms}&perPage=10&page=1&adults=${guests}&check_in=${checkIn}&check_out=${checkOut}&latitude=${lat}&longitude=${lng}`;
-    // provide lat and longitude
-    // or try pakistan as a whole
     try {
       const result = await request.get(url);
 
@@ -61,6 +59,19 @@ export default function Dashboard() {
         </div>
 
         <Filters />
+
+        {hotelListings?.docs?.length === 0 ||
+          (hotelListings?.docs === undefined && (
+            <div className="flex flex-col">
+              <Typography.Text className="text-lg">
+                No Hotels Found
+              </Typography.Text>
+              <Typography.Text className="text-sm">
+                Please adjust your search criteria or try a different date
+                range.
+              </Typography.Text>
+            </div>
+          ))}
         {hotelListingMutation.isPending ? (
           <Spin size="large" />
         ) : (
@@ -70,60 +81,61 @@ export default function Dashboard() {
                 <HotelCard key={entry.id} entry={entry} />
               ))}
             </div>
-            <div className="pr-10 w-3/5">
-              <APIProvider
-                apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAP_API_KEY as string}
-                libraries={["marker"]}
-              >
-                <Map
-                  defaultZoom={10}
-                  defaultCenter={{ lat: Number(lat), lng: Number(lng) }}
-                  style={{ width: "50vw", height: "683px" }}
+            {hotelListings.docs.length && (
+              <div className="pr-10 w-3/5">
+                <APIProvider
+                  apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAP_API_KEY as string}
+                  libraries={["marker"]}
                 >
-                  {hotelListings?.docs &&
-                    hotelListings?.docs?.map((entry) => {
-                      const latitude = Number(entry.geo?.latitude);
-                      const longitude = Number(entry.geo?.longitude);
-                      const position = { lat: latitude, lng: longitude };
+                  <Map
+                    defaultZoom={12}
+                    defaultCenter={{ lat: Number(lat), lng: Number(lng) }}
+                    style={{ width: "50vw", height: "683px" }}
+                  >
+                    {hotelListings?.docs &&
+                      hotelListings?.docs?.map((entry) => {
+                        const latitude = Number(entry.geo?.latitude);
+                        const longitude = Number(entry.geo?.longitude);
+                        const position = { lat: latitude, lng: longitude };
 
-                      if (!isNaN(latitude) && !isNaN(longitude)) {
-                        console.log({ latitude, longitude });
-                        return (
-                          <>
-                            <Marker
-                              key={entry.id}
-                              position={position}
-                              title={entry.name}
-                            />
-                          </>
-                          // <AdvancedMarkerWithRef
-                          //   // onMarkerClick={(
-                          //   //   marker: google.maps.marker.AdvancedMarkerElement
-                          //   // ) => onMarkerClick(id, marker)}
-                          //   // onMouseEnter={() => onMouseEnter(id)}
-                          //   // onMouseLeave={onMouseLeave}
-                          //   key={entry.id}
-                          //   // zIndex={zIndex}
-                          //   className="custom-marker"
-                          //   // style={{
-                          //   //   transform: `scale(${[hoverId, selectedId].includes(id) ? 1.3 : 1})`,
-                          //   //   transformOrigin: AdvancedMarkerAnchorPoint['BOTTOM'].join(' ')
-                          //   // }}
-                          //   position={position}
-                          // >
-                          //   <Pin
-                          //     background="#22ccff"
-                          //     borderColor="#1e89a1"
-                          //     glyphColor="#0f677a"
-                          //   />
-                          // </AdvancedMarkerWithRef>
-                        );
-                      }
-                      return null;
-                    })}
-                </Map>
-              </APIProvider>
-            </div>
+                        if (!isNaN(latitude) && !isNaN(longitude)) {
+                          return (
+                            <>
+                              <Marker
+                                key={entry.id}
+                                position={position}
+                                title={entry.name}
+                              />
+                            </>
+                            // <AdvancedMarkerWithRef
+                            //   // onMarkerClick={(
+                            //   //   marker: google.maps.marker.AdvancedMarkerElement
+                            //   // ) => onMarkerClick(id, marker)}
+                            //   // onMouseEnter={() => onMouseEnter(id)}
+                            //   // onMouseLeave={onMouseLeave}
+                            //   key={entry.id}
+                            //   // zIndex={zIndex}
+                            //   className="custom-marker"
+                            //   // style={{
+                            //   //   transform: `scale(${[hoverId, selectedId].includes(id) ? 1.3 : 1})`,
+                            //   //   transformOrigin: AdvancedMarkerAnchorPoint['BOTTOM'].join(' ')
+                            //   // }}
+                            //   position={position}
+                            // >
+                            //   <Pin
+                            //     background="#22ccff"
+                            //     borderColor="#1e89a1"
+                            //     glyphColor="#0f677a"
+                            //   />
+                            // </AdvancedMarkerWithRef>
+                          );
+                        }
+                        return null;
+                      })}
+                  </Map>
+                </APIProvider>
+              </div>
+            )}
           </div>
         )}
       </div>
