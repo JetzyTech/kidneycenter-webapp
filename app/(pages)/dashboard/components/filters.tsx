@@ -1,29 +1,23 @@
 'use client'
 
-import React, { FormEvent, useCallback, useEffect, useState } from "react";
+import React from "react";
+import PlacesAutocomplete from "./autocomplete";
 import { useDashboardContext } from "../hooks/use-dashboard-context";
-import { ChevronDownSVG, Pins, SearchSVG, Stars } from "@/app/assets/icons";
+import { ChevronDownSVG, SearchSVG, Stars } from "@/app/assets/icons";
 import { Counter } from "./counter";
+import { useSearchParams } from "next/navigation";
 import { useFilter } from "../hooks/use-filter";
 import {
-  AutoComplete,
   Button,
   Card,
   Checkbox,
   DatePicker,
   Dropdown,
   Form,
-  Input,
   MenuProps,
-  Select,
   Slider,
   Typography,
 } from "antd";
-import { useMap, useMapsLibrary } from "@vis.gl/react-google-maps";
-import PlacesAutocomplete from "./autocomplete";
-import dayjs from "dayjs";
-import { useRouter } from "next/router";
-import { useSearchParams } from "next/navigation";
 
 const pricesItems = [
   {
@@ -165,16 +159,6 @@ export const Filters = () => {
               }
             >
               <PlacesAutocomplete  />
-              {/* <AutocompleteWhat /> */}
-              {/* <AutoComplete ref={ref} /> */}
-              {/* <Select
-                showSearch
-                ref={ref}
-                size="large"
-                defaultValue="Select Current Location"
-                // options={where}
-                suffixIcon={<Pins />}
-              /> */}
             </Form.Item>
             <Form.Item
               className="w-[283px]"
@@ -187,12 +171,9 @@ export const Filters = () => {
               <DatePicker.RangePicker
                 size="large"
                 format="YYYY-MM-DD"
-                // value={[dayjs(checkIn), dayjs(checkOut)]} 
                 onChange={(dates, dateStrings) => {
-                  console.log({ dateStrings });
                   updateField("checkIn", dateStrings[0]);
                   updateField("checkOut", dateStrings[1]);
-                  console.log({ checkIn });
                 }}
               />
             </Form.Item>
@@ -313,56 +294,3 @@ export const Filters = () => {
     </>
   );
 };
-
-// import usePlacesService from "react-google-autocomplete/lib/usePlacesAutocompleteService";
-
-// const AutocompleteWhat = () => {
-//   const [details, setDetails] = React.useState();
-//   const {
-//     placesService,
-//     placePredictions,
-//     getPlacePredictions,
-//     isPlacePredictionsLoading,
-//   } = usePlacesService({
-//     apiKey: process.env.REACT_APP_GOOGLE,
-//   });
-
-//   useEffect(() => {
-//     if (placePredictions.length)
-//       placesService?.getDetails(
-//         {
-//           placeId: placePredictions[0].place_id,
-//         },
-//         (placeDetails) => setDetails(placeDetails)
-//       );
-//   }, [placePredictions]);
-
-//   const options = placePredictions.map((place) => [
-//     {
-//       value: place.description,
-//     },
-//   ]);
-
-//   console.log({ placePredictions });
-
-//   return (
-//     <>
-//       <Input
-//         placeholder="Debounce 500 ms"
-//         disabled={isPlacePredictionsLoading}
-//         onChange={(evt) => {
-//           getPlacePredictions({ input: evt.target.value });
-//         }}
-//       />
-//       {placePredictions.map((item) => (
-//         <AutoComplete
-//           key={item.place_id}
-//           options={options}
-//           onSelect={(value) => {
-//             console.log(value);
-//           }}
-//         />
-//       ))}
-//     </>
-//   );
-// };
