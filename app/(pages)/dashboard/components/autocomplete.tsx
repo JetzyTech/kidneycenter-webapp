@@ -22,7 +22,7 @@ export default function PlacesAutocomplete() {
       script.async = true;
       script.onload = () => {
         setIsLoaded(true);
-        getPlaceFromCoordinates();
+        // getPlaceFromCoordinates();
       };
       document.body.appendChild(script);
     };
@@ -94,7 +94,7 @@ export default function PlacesAutocomplete() {
         style={{ width: 200 }}
         className="border border-[#C0C0C0] p-2 rounded-lg bg-[#F9F9F9]"
       />
-      <div className="absolute top-[10px] right-1 pointer-events-none">
+      <div className="absolute top-[10px] right-1 pointer-events-none bg-[#f9f9f9]">
         <Pins width={20} height={20} />
       </div>
     </div>

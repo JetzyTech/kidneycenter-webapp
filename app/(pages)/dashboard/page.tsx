@@ -1,4 +1,5 @@
 "use client";
+
 import React from "react";
 import request from "@/app/lib/request";
 import { message, Spin, Typography } from "antd";
@@ -47,6 +48,11 @@ export default function Dashboard() {
     },
   });
 
+  const onHotelSelect = (id: string) => {
+    console.log({id});
+
+  }
+
   return (
     <DashboardContext.Provider
       value={{ setHotelListings, hotelListingMutation }}
@@ -78,7 +84,11 @@ export default function Dashboard() {
           <div className="flex items-start justify-between gap-x-10 w-full">
             <div className="space-y-5 w-2/5 h-[683px] overflow-y-scroll">
               {hotelListings?.docs?.map((entry) => (
-                <HotelCard key={entry.id} entry={entry} />
+                <div key={entry.id} onClick={() => onHotelSelect(entry.id)} 
+                className="cursor-pointer"
+                >
+                  <HotelCard entry={entry} />
+                </div>
               ))}
             </div>
             {hotelListings.docs.length && (
@@ -88,6 +98,7 @@ export default function Dashboard() {
                   libraries={["marker"]}
                 >
                   <Map
+                    key='1'
                     defaultZoom={12}
                     defaultCenter={{ lat: Number(lat), lng: Number(lng) }}
                     style={{ width: "50vw", height: "683px" }}

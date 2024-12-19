@@ -42,7 +42,7 @@ export const HotelCard = ({ entry }: { entry: IHotel }) => {
           <div className="flex gap-x-1 pt-2 pb-3">
             <Rate
               disabled
-              allowHalf
+              // allowHalf
               defaultValue={entry.star_rating}
               className="text-black"
             />

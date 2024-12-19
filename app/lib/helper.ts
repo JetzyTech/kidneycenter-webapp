@@ -1,3 +1,7 @@
+import clsx from "clsx";
+import { ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
+
 export enum CURRENCY_SIGNS {
   USD = 'USD',
   PKR = 'PKR'
@@ -9,9 +13,13 @@ export const convertCurrencySign = (sign: CURRENCY_SIGNS): string => {
       return '$';
   
     case CURRENCY_SIGNS.PKR:
-      return '₨'; // Using the symbol for Pakistani Rupee
+      return '₨'; 
   
     default:
       throw new Error('Invalid currency sign');
   }
+}
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs))
 }

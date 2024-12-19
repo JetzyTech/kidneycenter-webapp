@@ -187,7 +187,7 @@ export const Filters = () => {
               <DatePicker.RangePicker
                 size="large"
                 format="YYYY-MM-DD"
-                value={[dayjs(checkIn), dayjs(checkOut)]}
+                // value={[dayjs(checkIn), dayjs(checkOut)]} 
                 onChange={(dates, dateStrings) => {
                   console.log({ dateStrings });
                   updateField("checkIn", dateStrings[0]);

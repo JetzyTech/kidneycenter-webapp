@@ -74,7 +74,8 @@ export const YouTubeSVG = (props: {fill?: string}) => {
   );
 };
 
-export const ArrowRight = () => {
+export const ArrowRight = (props: {stroke?: string}) => {
+  const stroke = props.stroke ?? 'white';
   return (
     <svg
       width="23"
@@ -85,14 +86,14 @@ export const ArrowRight = () => {
     >
       <path
         d="M3.9375 11H19.0625"
-        stroke="white"
+        stroke={stroke}
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
       <path
         d="M12.875 4.8125L19.0625 11L12.875 17.1875"
-        stroke="white"
+        stroke={stroke}
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -225,5 +226,46 @@ export const ChevronDownSVG = () => {
     <svg width="23" height="23" viewBox="0 0 23 23" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M5.75 8.625L11.5 14.375L17.25 8.625" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
+  )
+}
+
+export const ChevronLeftSVG = () => {
+  return (
+    <svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M16.25 19.5L9.75 13L16.25 6.5" stroke="#8C9094" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+</svg>
+
+  )
+}
+
+export const ChevronRightSVG = () => {
+  return (
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M7.5 15L12.5 10L7.5 5" stroke="#F79432" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+
+  )
+}
+
+export const CheckmarkSVG = () => {
+  return (
+    <>
+    <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect x="0.5" y="0.5" width="21" height="21" rx="10.5" fill="#F79432"/>
+<rect x="0.5" y="0.5" width="21" height="21" rx="10.5" stroke="white"/>
+<path d="M13.7191 7.78982L9.42908 12.0898L7.77907 10.4398C7.68943 10.3351 7.57911 10.2501 7.45504 10.1901C7.33098 10.1301 7.19585 10.0963 7.05813 10.091C6.92041 10.0857 6.78308 10.1089 6.65475 10.1592C6.52643 10.2095 6.40988 10.2857 6.31242 10.3832C6.21497 10.4806 6.13871 10.5972 6.08844 10.7255C6.03816 10.8538 6.01496 10.9911 6.02028 11.1289C6.0256 11.2666 6.05933 11.4017 6.11935 11.5258C6.17937 11.6499 6.26439 11.7602 6.36907 11.8498L8.71908 14.2098C8.81252 14.3025 8.92333 14.3758 9.04517 14.4256C9.16701 14.4754 9.29747 14.5006 9.42908 14.4998C9.69142 14.4987 9.94281 14.3946 10.1291 14.2098L15.1291 9.20982C15.2228 9.11685 15.2972 9.00625 15.348 8.88439C15.3987 8.76253 15.4249 8.63183 15.4249 8.49982C15.4249 8.3678 15.3987 8.2371 15.348 8.11524C15.2972 7.99338 15.2228 7.88278 15.1291 7.78982C14.9417 7.60356 14.6883 7.49902 14.4241 7.49902C14.1599 7.49902 13.9064 7.60356 13.7191 7.78982Z" fill="white"/>
+</svg>
+
+    </>
+  )
+}
+
+export const DirectionSVG = () => {
+  return (
+    <svg width="29" height="29" viewBox="0 0 29 29" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="29" height="29" rx="8" fill="#F79432"/>
+<path d="M17.7108 8.14482C17.4356 7.8696 16.9893 7.8696 16.7141 8.14482C16.4389 8.42004 16.4389 8.86627 16.7141 9.14149L19.4483 11.8757H10.8687C10.4948 11.8757 10.1363 12.0242 9.87188 12.2885C9.60751 12.5529 9.45898 12.9115 9.45898 13.2854V22.2951C9.45898 22.6844 9.77456 23 10.1638 23C10.5531 23 10.8687 22.6844 10.8687 22.2951V13.7854C10.8687 13.5092 11.0926 13.2854 11.3687 13.2854H19.4483L16.7141 16.0195C16.4389 16.2948 16.4389 16.741 16.7141 17.0162C16.9893 17.2914 17.4356 17.2914 17.7108 17.0162L21.4394 13.2876C21.8299 12.8971 21.8299 12.2639 21.4394 11.8734L17.7108 8.14482Z" fill="white"/>
+</svg>
+
   )
 }
