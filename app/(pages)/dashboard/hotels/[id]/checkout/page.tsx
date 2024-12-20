@@ -2,28 +2,8 @@
 import React from "react";
 import { Button, Card, Checkbox, Divider, Form, Input, Typography } from "antd";
 import request from "@/app/lib/request";
+import { BookingPayload } from "@Jetzy/types/hotel-booking";
 
-interface BookingPayload {
-  cvc_code: string;
-  country_code: string;
-  start_date: string;
-  end_date: string;
-  card_type: string;
-  card_number: string;
-  card_holder: string;
-  phone_number: string;
-  post_code: string;
-  address: string;
-  city: string;
-  expires_year: string;
-  expires_month: string;
-  email: string;
-  name_first: string;
-  name_last: string;
-  booking_request_id: string;
-  external_room_id: string;
-  external_hotel_id: string;
-}
 
 
 const bookHotel = async (payload: BookingPayload) => {

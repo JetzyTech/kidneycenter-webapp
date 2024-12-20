@@ -164,7 +164,7 @@ const router = useRouter();
   );
 }
 
-export const AdvancedMarkerWithRef = (
+const AdvancedMarkerWithRef = (
   props: AdvancedMarkerProps & {
     onMarkerClick?: (marker: google.maps.marker.AdvancedMarkerElement) => void;
   }
