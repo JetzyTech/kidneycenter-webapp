@@ -1,7 +1,7 @@
 import { Navbar } from "@/app/components";
 import { SimpleFooter } from "@/app/components/footer";
 import { ReactQueryProvider } from "@/app/providers/react-query-provider";
-import { authOptions } from "@Jetzy/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@Jetzy/app/api/auth/[...nextauth]/authOptions";
 import { ROUTES } from "@Jetzy/configs/routes";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
