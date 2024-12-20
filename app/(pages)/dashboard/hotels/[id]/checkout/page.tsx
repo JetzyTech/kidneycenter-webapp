@@ -1,6 +1,42 @@
 "use client";
 import React from "react";
 import { Button, Card, Checkbox, Divider, Form, Input, Typography } from "antd";
+import request from "@/app/lib/request";
+
+interface BookingPayload {
+  cvc_code: string;
+  country_code: string;
+  start_date: string;
+  end_date: string;
+  card_type: string;
+  card_number: string;
+  card_holder: string;
+  phone_number: string;
+  post_code: string;
+  address: string;
+  city: string;
+  expires_year: string;
+  expires_month: string;
+  email: string;
+  name_first: string;
+  name_last: string;
+  booking_request_id: string;
+  external_room_id: string;
+  external_hotel_id: string;
+}
+
+
+const bookHotel = async (payload: BookingPayload) => {
+  const url = `${process.env.NEXT_PUBLIC_API_ENDPOINT}/v1/meetselect/hotels/book`
+  try {
+    const result = await request.post(url, payload);
+
+    return result.data;
+
+  } catch (error: any) {
+    console.error(error?.message)
+  }
+}
 
 const Checkout = () => {
   return (
@@ -54,7 +90,37 @@ const RoomsInfo = () => {
   );
 };
 
+
 const CheckoutForm = () => {
+  const [form] = Form.useForm();
+
+
+  const onFinish = (values: BookingPayload) => {
+    const payload = {
+      // cvc_code: values.cvc,
+      // country_code: values.country,
+      // // start_date,
+      // // end_date,
+      // // card_type,
+      // // card_number,
+      // // card_holder,
+      // // phone_number,
+      // // post_code,
+      // // address,
+      // // city,
+      // // expires_year,
+      // // expires_month,
+      // // email,
+      // // name_first,
+      // // name_last,
+      // // booking_request_id,
+      // // external_room_id,
+      // // external_hotel_id,
+
+    }
+    console.log("Received values of form:", values);
+  };
+
   return (
     <>
       <div className="w-[45%]">
@@ -62,8 +128,9 @@ const CheckoutForm = () => {
           Payment Details
         </Typography.Text>
 
-        <Form layout="vertical">
+        <Form layout="vertical" onFinish={onFinish}>
           <Form.Item
+          name='cardHolderName' 
             label={
               <Typography.Text className="text-lg font-medium">
                 Card Holder&apos;s Name
@@ -78,6 +145,7 @@ const CheckoutForm = () => {
             />
           </Form.Item>
           <Form.Item
+          name='cardNumber' 
             label={
               <Typography.Text className="text-lg font-medium">
                 Card Number
@@ -93,6 +161,7 @@ const CheckoutForm = () => {
           </Form.Item>
           <div className="flex gap-x-5 w-full justify-between">
             <Form.Item
+            name='cvv' 
               className="w-1/2"
               label={
                 <Typography.Text className="text-lg font-medium">
@@ -108,6 +177,7 @@ const CheckoutForm = () => {
               />
             </Form.Item>
             <Form.Item
+            name='expiryDate' 
               className="w-1/2"
               label={
                 <Typography.Text className="text-lg font-medium">
@@ -124,6 +194,7 @@ const CheckoutForm = () => {
             </Form.Item>
           </div>
           <Form.Item
+          name='phoneNumber' 
             label={
               <Typography.Text className="text-lg font-medium">
                 Phone Number
@@ -138,6 +209,7 @@ const CheckoutForm = () => {
             />
           </Form.Item>
           <Form.Item
+          name='address' 
             label={
               <Typography.Text className="text-lg font-medium">
                 Address
@@ -152,6 +224,7 @@ const CheckoutForm = () => {
             />
           </Form.Item>
           <Form.Item
+          name='city' 
             label={
               <Typography.Text className="text-lg font-medium">
                 City
@@ -166,6 +239,7 @@ const CheckoutForm = () => {
             />
           </Form.Item>
           <Form.Item
+          name='postalCode' 
             label={
               <Typography.Text className="text-lg font-medium">
                 Postal Code
@@ -195,7 +269,7 @@ const CheckoutForm = () => {
               anytime during the one month free trial.
             </Typography.Text>
           </div>
-          <Form.Item>
+          <Form.Item name='termsAndCondition'>
             <Checkbox checked className="rounded-full text-[#7E7E7E]">
               By getting this deal you accept Jetzy{" "}
               <span className="text-primary underline font-medium">
@@ -204,7 +278,7 @@ const CheckoutForm = () => {
             </Checkbox>
           </Form.Item>
           <Form.Item>
-            <Button type="primary" size="large" className="w-full">
+            <Button type="primary" size="large" className="w-full" htmlType="submit">
               Continue
             </Button>
           </Form.Item>
