@@ -12,8 +12,8 @@ export const DetailsBackBtn = () => {
   };
 
   return (
-    <div className="flex gap-x-2 cursor-pointer" onClick={handleBackClick}>
-      <div className="border border-[#ededed] rounded-lg px-1">
+    <div className="flex gap-x-2 cursor-pointer">
+      <div className="border border-[#ededed] rounded-lg px-1" onClick={handleBackClick}>
         <ChevronLeftSVG />
       </div>
       <p className="font-semibold text-base">Details</p>

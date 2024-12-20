@@ -1,14 +1,20 @@
 "use client";
 
 import { DatePicker, Form, Typography, Button } from "antd";
+import { useSearchParams, useRouter } from "next/navigation";
 import { useFilter } from "../../hooks/use-filter";
 import { Counter } from "./counter";
-import { useSearchParams } from "next/navigation";
 
 export const Filters = () => {
   const { rooms, guests, updateField } = useFilter();
   const searchParams = useSearchParams();
+  const router = useRouter();
   const deal = searchParams.get("deal");
+  const id = searchParams.get('id');
+
+
+  const onProceed = () => router.push(`/dashboard/hotels/${id}/checkout?deal=${deal}`);
+
 
   return (
     <>
@@ -18,6 +24,7 @@ export const Filters = () => {
           type="primary"
           className="font-medium w-max"
           disabled={!deal}
+          onClick={onProceed}
         >
           Proceed to Checkout
         </Button>

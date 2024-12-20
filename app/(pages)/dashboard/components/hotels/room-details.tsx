@@ -7,8 +7,8 @@ export const RoomDetail = ({
   setSelectedDeal,
   room
 }: {
-  selectedDeal: string;
-  setSelectedDeal: (dealId: string) => void;
+  selectedDeal?: string;
+  setSelectedDeal?: (dealId: string) => void;
   room: Room
 }) => {
   return (
@@ -20,7 +20,7 @@ export const RoomDetail = ({
             ? "bg-secondary border-primary"
             : "bg-white border-[#C0C0C0]"
         )}
-        onClick={() => setSelectedDeal(room.id)}
+        onClick={() => setSelectedDeal?.(room.id)}
       >
         {selectedDeal === room.id && (
           <div className="absolute top-3 right-3">

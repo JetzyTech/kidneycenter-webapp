@@ -24,7 +24,7 @@ const Detail = ({ data }: { data: HotelDetail }) => {
             <Typography.Text className="text-[28px] font-bold">
               {data?.name}
             </Typography.Text>
-            <Rate defaultValue={data?.star_rating} className="text-primary" />
+            <Rate disabled defaultValue={data?.star_rating} className="text-primary" />
 
             <div className="flex gap-x-3">
               <Image

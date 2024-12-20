@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { IHotel } from "../types/dashboard.types";
+import { IHotel } from "../../types/dashboard.types";
 import { Rate, Tooltip, Typography } from "antd";
 import { convertCurrencySign, CURRENCY_SIGNS } from "@/app/lib/helper";
 
