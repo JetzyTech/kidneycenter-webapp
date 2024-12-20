@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { AppleIcon } from "@/app/assets/icons";
 import { GoogleIcon } from "@/app/assets/icons";
-import { Button, Divider, Form as AntdForm,   Typography } from "antd";
+import { Button as AntButton, Divider, Form as AntdForm, Input, Typography } from "antd";
 import { AuthCreateAccountThunk, getAuthState, useAppDispatch, useAppSelector } from "@Jetzy/redux";
 import React from "react";
 import { useRouter } from "next/navigation";
@@ -12,13 +12,11 @@ import { ServerErrors } from "@Jetzy/app/lib/_toaster";
 import { ROUTES } from "@Jetzy/configs/routes";
 import { ErrorMessage, Field,  Form,  Formik } from "formik"
 import { signupValidation } from "@Jetzy/validator/authValidtor";
-import { Box, Button as ChakraButton } from "@chakra-ui/react";
-import { appColors } from "@Jetzy/theme/theme";
+import { Box, Button, Flex } from "@chakra-ui/react";
 
-const {Item: FormItem} = AntdForm
+const {Item: FormItem} = AntdForm;
 
 const Login = () => {
-  
 
   const dispatcher = useAppDispatch()
 	const authState = useAppSelector(getAuthState)
@@ -61,6 +59,9 @@ const Login = () => {
 	}
 	// handle form submit
 	const handleSubmit = (data: SignUpFormData) => {
+    console.log('====================================');
+    console.log(data);
+    console.log('====================================');
 		dispatcher(AuthCreateAccountThunk
       ({ data })).then((res) => {
 			if (typeof res?.payload !== "undefined") {
@@ -78,34 +79,46 @@ const Login = () => {
         </Typography.Text>
 
         <Formik initialValues={InitialFormState} onSubmit={handleSubmit} validationSchema={signupValidation}>
-        {({ handleChange, values, errors }) => (
+        {({ handleChange, values, errors, handleSubmit }) => (
           <div className="">
           <Form>
-           
-            
-            <Box>
-                <Field value={values?.email} onChange={handleChange} name="email" variant="filled" size="large" placeholder="Enter your email address" />
-                {/* error message */}
-                <ErrorMessage name="email" component="div" className="text-red-500" />
-              </Box>
-              <Field type="password" value={values?.password} name="password"  variant="filled" size="large" placeholder="Enter your account password" />
- 
-              <Link href='/' className="text-primary hover:underline hover:text-primary">Forgot Password?</Link>
+           <Flex flexDir={'column'} gap={4}>
+           <Typography.Text className="font-medium text-lg leading-6">
+                Enter your email address
+                </Typography.Text>
+             <Box>
+             <Field value={values?.email} onChange={handleChange} name="email" variant="filled" size="large" placeholder="Enter your email address" />
+              {/* error message */}
+              <ErrorMessage name="email" component="div" className="text-red-500" />
+             </Box>
+            </Flex>
+            <Flex flexDir={'column'} gap={4}>
+            <Typography.Text className="font-medium text-lg leading-6">
+                Password
+                </Typography.Text>
+              <Field type="" value={values?.password} name="password"  variant="filled" size="large" placeholder="Enter your account password" className="bg-[#f5f5f5]" />
+              {/* error message */}
+              <ErrorMessage name="password" component="div" className="text-red-500" />
+            </Flex>
 
-            <FormItem>
-              <ChakraButton size='large' variant="filled" type='submit' bg={appColors.primary} borderRadius={'3xl'} className="w-full">Sign in</ChakraButton>
-            </FormItem>
+            <Flex className="text-end">
+              <Link href='/' className="text-primary hover:underline hover:text-primary">Forgot Password?</Link>
+            </Flex>
+
+            <Flex>
+              <Button size='large' variant="filled" type='submit'  className="w-full">Sign in</Button>
+            </Flex>
           </Form>
 
           <Divider />
           
           <div className="flex items-center gap-x-2">
-            <Button size="large" className="rounded-full font-medium px-6 py-6" icon={<GoogleIcon />}>
+            <AntButton size="large" className="rounded-full font-medium px-6 py-6" icon={<GoogleIcon />}>
               Sign in with Google
-            </Button>
-            <Button size="large" className="rounded-full font-medium px-6 py-6" icon={<AppleIcon />}>
+            </AntButton>
+            <AntButton size="large" className="rounded-full font-medium px-6 py-6" icon={<AppleIcon />}>
               Sign in with Apple
-            </Button>
+            </AntButton>
           </div>
         </div>
         )}
