@@ -1,8 +1,8 @@
 import React, { Suspense } from "react";
 import { Spin } from "antd";
-import Detail from "./Detail";
 import { fetchHotelDetail } from "../../hooks/use-room-detail";
 import { DetailsBackBtn } from "../../components/hotels/details-back-btn";
+import Detail from "./detail";
 
 export default async function HotelDetails({
   params,
