@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { AppleIcon } from "@/app/assets/icons";
 import { GoogleIcon } from "@/app/assets/icons";
-import { Button, Divider, Form, Input, Typography } from "antd";
+import { Button, Divider, Form as AntdForm,   Typography } from "antd";
 import { AuthCreateAccountThunk, getAuthState, useAppDispatch, useAppSelector } from "@Jetzy/redux";
 import React from "react";
 import { useRouter } from "next/navigation";
@@ -10,11 +10,15 @@ import { SignInFormData, SignUpFormData } from "@Jetzy/types";
 import { signIn } from "next-auth/react";
 import { ServerErrors } from "@Jetzy/app/lib/_toaster";
 import { ROUTES } from "@Jetzy/configs/routes";
-import { ErrorMessage, Field,  Formik } from "formik"
+import { ErrorMessage, Field,  Form,  Formik } from "formik"
 import { signupValidation } from "@Jetzy/validator/authValidtor";
+import { Box, Button as ChakraButton } from "@chakra-ui/react";
+import { appColors } from "@Jetzy/theme/theme";
+
+const {Item: FormItem} = AntdForm
 
 const Login = () => {
-  const [form] = Form.useForm();
+  
 
   const dispatcher = useAppDispatch()
 	const authState = useAppSelector(getAuthState)
@@ -72,37 +76,25 @@ const Login = () => {
         <Typography.Text className="text-[32px] font-extrabold">
           Sign in
         </Typography.Text>
-        <div className="">
-          <Form form={form} layout="vertical">
-            <Form.Item
-              name="emailAddress"
-              label={
-                <Typography.Text className="font-medium text-lg leading-6">
-                Enter your email address
-                </Typography.Text>
-              }
-            >
-              <Input   name="email" variant="filled" size="large" placeholder="Enter your email address" />
-              
-            </Form.Item>
-            <Form.Item
-              name="password"
-              label={
-                <Typography.Text className="font-medium text-lg leading-6">
-                Password
-                </Typography.Text>
-              }
-            >
-              <Input.Password   name="password"  variant="filled" size="large" placeholder="Enter your account password" />
-            </Form.Item>
 
-            <Form.Item className="text-end">
+        <Formik initialValues={InitialFormState} onSubmit={handleSubmit} validationSchema={signupValidation}>
+        {({ handleChange, values, errors }) => (
+          <div className="">
+          <Form>
+           
+            
+            <Box>
+                <Field value={values?.email} onChange={handleChange} name="email" variant="filled" size="large" placeholder="Enter your email address" />
+                {/* error message */}
+                <ErrorMessage name="email" component="div" className="text-red-500" />
+              </Box>
+              <Field type="password" value={values?.password} name="password"  variant="filled" size="large" placeholder="Enter your account password" />
+ 
               <Link href='/' className="text-primary hover:underline hover:text-primary">Forgot Password?</Link>
-            </Form.Item>
 
-            <Form.Item>
-              <Button size='large' variant="filled" type='primary' className="w-full">Sign in</Button>
-            </Form.Item>
+            <FormItem>
+              <ChakraButton size='large' variant="filled" type='submit' bg={appColors.primary} borderRadius={'3xl'} className="w-full">Sign in</ChakraButton>
+            </FormItem>
           </Form>
 
           <Divider />
@@ -116,6 +108,8 @@ const Login = () => {
             </Button>
           </div>
         </div>
+        )}
+      </Formik>
       </div>
     </>
   );
