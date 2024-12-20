@@ -102,7 +102,7 @@ const router = useRouter();
                 </div>
               ))}
             </div>
-            {hotelListings.docs.length && (
+            {hotelListings?.docs?.length && (
               <div className="pr-10 w-3/5">
                 <APIProvider
                   apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAP_API_KEY as string}
