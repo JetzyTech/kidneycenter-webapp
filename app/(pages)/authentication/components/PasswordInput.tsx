@@ -17,7 +17,7 @@ export default function PasswordInput({ value, handleChange, name, ...props }: P
 		<Box className="relative">
 			<Field
 				type={showPassword ? "text" : "password"}
-				className="p-3 border border-gray-300 rounded-md bg-slate-100/50 focus:bg-white w-full pr-10"
+				className="p-3 w-full rounded-md border-transparent shadow-sm focus:outline-primary bg-[#f5f5f5] pr-10"
 				value={value}
 				onChange={handleChange}
 				name={name}

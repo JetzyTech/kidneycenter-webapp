@@ -13,6 +13,7 @@ import { ROUTES } from "@Jetzy/configs/routes";
 import { ErrorMessage, Field,  Form,  Formik } from "formik"
 import { signupValidation } from "@Jetzy/validator/authValidtor";
 import { Box, Button, Flex } from "@chakra-ui/react";
+import PasswordInput from "./PasswordInput";
 
 const {Item: FormItem} = AntdForm;
 
@@ -59,21 +60,13 @@ const Login = () => {
 	}
 	// handle form submit
 	const handleSubmit = (data: SignUpFormData) => {
-    console.log('====================================');
-    console.log(data);
-    console.log('====================================');
-		dispatcher(AuthCreateAccountThunk
-      ({ data })).then((res) => {
-			if (typeof res?.payload !== "undefined") {
-				handleLogin({ email: data.email, password: data.password })
-			}
-		})
+     handleLogin(data)
 	}
 
 
   return (
     <>
-      <div className="space-y-5">
+      <div className="space-y-5 px-5">
         <Typography.Text className="text-[32px] font-extrabold">
           Sign in
         </Typography.Text>
@@ -82,12 +75,13 @@ const Login = () => {
         {({ handleChange, values, errors, handleSubmit }) => (
           <div className="">
           <Form>
+           <Flex flexDir="column" gap={8}>
            <Flex flexDir={'column'} gap={4}>
            <Typography.Text className="font-medium text-lg leading-6">
                 Enter your email address
                 </Typography.Text>
              <Box>
-             <Field value={values?.email} onChange={handleChange} name="email" variant="filled" size="large" placeholder="Enter your email address" />
+             <Field value={values?.email} onChange={handleChange} name="email" variant="filled" size="large" placeholder="Enter your email address" className="p-3 w-full rounded-md border-transparent shadow-sm focus:outline-primary bg-[#f5f5f5]" />
               {/* error message */}
               <ErrorMessage name="email" component="div" className="text-red-500" />
              </Box>
@@ -96,17 +90,19 @@ const Login = () => {
             <Typography.Text className="font-medium text-lg leading-6">
                 Password
                 </Typography.Text>
-              <Field type="" value={values?.password} name="password"  variant="filled" size="large" placeholder="Enter your account password" className="bg-[#f5f5f5]" />
+                <PasswordInput value={values?.password} handleChange={handleChange} name="password" />
+              {/* <Field type="password" value={values?.password} name="password"  variant="filled" size="large" placeholder="Enter your account password" className="p-3 rounded-md border-transparent shadow-sm focus:outline-primary bg-[#f5f5f5]" /> */}
               {/* error message */}
               <ErrorMessage name="password" component="div" className="text-red-500" />
             </Flex>
+           </Flex>
 
-            <Flex className="text-end">
+            <Flex w={"100%"} justifyContent="flex-end" mt={2} mb={4}>
               <Link href='/' className="text-primary hover:underline hover:text-primary">Forgot Password?</Link>
             </Flex>
 
             <Flex>
-              <Button size='large' variant="filled" type='submit'  className="w-full">Sign in</Button>
+              <Button isLoading={loader} size='large' variant="filled" type='submit'  className="w-full bg-primary p-3 rounded-md ">Sign in</Button>
             </Flex>
           </Form>
 
