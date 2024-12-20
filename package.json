@@ -9,17 +9,27 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@chakra-ui/react": "^2.8.2",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@reduxjs/toolkit": "^2.5.0",
     "@tanstack/react-query": "^5.62.7",
     "@vis.gl/react-google-maps": "^1.4.2",
     "antd": "^5.22.4",
     "axios": "^1.7.9",
     "clsx": "^2.1.1",
     "dayjs": "^1.11.13",
+    "formik": "^2.4.6",
+    "framer-motion": "^11.15.0",
     "next": "15.1.0",
+    "next-auth": "^4.24.11",
+    "next-redux-wrapper": "^8.1.0",
     "nuqs": "^2.2.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "tailwind-merge": "^2.5.5"
+    "react-redux": "^9.2.0",
+    "tailwind-merge": "^2.5.5",
+    "yup": "^1.6.1"
   },
   "devDependencies": {
     "@types/google.maps": "^3.58.1",
