@@ -2,7 +2,7 @@
 
 import { Pins } from "@/app/assets/icons";
 import React, { useEffect, useRef, useState } from "react";
-import { useFilter } from "../hooks/use-filter";
+import { useFilter } from "../../hooks/use-filter";
 import { useSearchParams } from "next/navigation";
 
 export default function PlacesAutocomplete() {

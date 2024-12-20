@@ -2,11 +2,11 @@
 
 import React from "react";
 import PlacesAutocomplete from "./autocomplete";
-import { useDashboardContext } from "../hooks/use-dashboard-context";
+import { useDashboardContext } from "../../hooks/use-dashboard-context";
 import { ChevronDownSVG, SearchSVG, Stars } from "@/app/assets/icons";
 import { Counter } from "./counter";
 import { useSearchParams } from "next/navigation";
-import { useFilter } from "../hooks/use-filter";
+import { useFilter } from "../../hooks/use-filter";
 import {
   Button,
   Card,
