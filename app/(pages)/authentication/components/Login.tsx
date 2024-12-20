@@ -24,9 +24,7 @@ const Login = () => {
 	const [loader, setLoader] = React.useState<boolean>(authState.isLoading)
 	const navigator = useRouter()
 
-	const InitialFormState: SignUpFormData = {
-		refCode: "",
-		role: "user",
+	const InitialFormState: SignInFormData = {
 		email: "",
 		password: "",
 	}
@@ -59,7 +57,7 @@ const Login = () => {
 		navigator?.push(ROUTES.dashboard)
 	}
 	// handle form submit
-	const handleSubmit = (data: SignUpFormData) => {
+	const handleSubmit = (data: SignInFormData) => {
      handleLogin(data)
 	}
 
