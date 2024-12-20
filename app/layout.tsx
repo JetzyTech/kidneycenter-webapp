@@ -1,15 +1,15 @@
+import theme from "@/theme";
+import AppSessionProvider from "./providers/SessionProvider";
+import ReduxProvider from "@Jetzy/redux/ReduxProvider";
 import type { Metadata } from "next";
 import { ThemeProvider } from "./providers/theme-provider";
 import { NuqsAdapter } from "nuqs/adapters/next";
-import theme from "@/theme";
+import { ChakraProvider } from "@chakra-ui/react";
+import { Poppins } from "next/font/google";
 import "./globals.css";
-import { ChakraProvider } from "@chakra-ui/react"
-import ReduxProvider from "@Jetzy/redux/ReduxProvider";
 
-import AppSessionProvider from "./providers/SessionProvider";
+const poppins = Poppins({ weight: ["100", "200", "300", "400", "500", "600", "700", "800"], subsets: ['latin'] });
 
-
- 
 export const metadata: Metadata = {
   title: "Jetzy",
   description:
@@ -21,31 +21,22 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-
- 
   return (
-   
-      <html lang="en">
-      <body
-        className={`  antialiased`}
-      >
-      <ThemeProvider theme={theme}>
+    <html lang="en">
+      <body className={`${poppins.className} antialiased`}>
+        <ThemeProvider theme={theme}>
           <NuqsAdapter>
-                  <div className="flex flex-col min-h-screen">
-                    <main className="flex-1">
-                      
-                    <AppSessionProvider>
-                      <ReduxProvider>
-                        <ChakraProvider>
-                          {children}
-                        </ChakraProvider>
-                      </ReduxProvider>
-                    </AppSessionProvider>
-                    </main>
-                  </div>
+            <div className="flex flex-col min-h-screen">
+              <main className="flex-1">
+                <AppSessionProvider>
+                  <ReduxProvider>
+                    <ChakraProvider>{children}</ChakraProvider>
+                  </ReduxProvider>
+                </AppSessionProvider>
+              </main>
+            </div>
           </NuqsAdapter>
         </ThemeProvider>
-        
       </body>
     </html>
   );
