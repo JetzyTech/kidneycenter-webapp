@@ -1,8 +1,6 @@
 export const ROUTES = {
 	// ----------------- Auth Routes -----------------
-	auth: `/auth`,
+	auth: `/authentication`,
 	// ----------------- App Routes -----------------
-	app: `/app`,
-	payment: "/app/payments/:slug",
-	confirmPayment: "/app/payments/confirm",
+	dashboard: `/dashboard`,
 }
