@@ -1,6 +1,6 @@
 'use client'
 
-import React from "react";
+import React, { Suspense } from "react";
 import PlacesAutocomplete from "./autocomplete";
 import { useDashboardContext } from "../../hooks/use-dashboard-context";
 import { ChevronDownSVG, SearchSVG, Stars } from "@/app/assets/icons";
@@ -16,6 +16,7 @@ import {
   Form,
   MenuProps,
   Slider,
+  Spin,
   Typography,
 } from "antd";
 
@@ -146,7 +147,7 @@ export const Filters = () => {
 
 
   return (
-    <>
+    <Suspense fallback={<Spin />}>
       <div>
         <Form colon={false} className="flex flex-col">
           <div className="flex items-center gap-x-10">
@@ -291,6 +292,6 @@ export const Filters = () => {
           </div>
         </Form>
       </div>
-    </>
+    </Suspense>
   );
 };

@@ -3,9 +3,10 @@ import { SimpleFooter } from "@/app/components/footer";
 import { ReactQueryProvider } from "@/app/providers/react-query-provider";
 import { authOptions } from "@Jetzy/app/api/auth/[...nextauth]/authOptions";
 import { ROUTES } from "@Jetzy/configs/routes";
+import { Spin } from "antd";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
-import React from "react";
+import React, { Suspense } from "react";
 
 export default async function DashboardLayout({children}: {children: React.ReactNode}) {
   // const session =  await getServerSession(authOptions)
@@ -16,6 +17,7 @@ export default async function DashboardLayout({children}: {children: React.React
 
 
   return (
+    <Suspense fallback={<Spin />}>
     <div className="flex flex-col min-h-screen">
       <ReactQueryProvider>
         <Navbar />
@@ -23,5 +25,6 @@ export default async function DashboardLayout({children}: {children: React.React
         <SimpleFooter />
       </ReactQueryProvider>
     </div>
+    </Suspense>
   )
 }

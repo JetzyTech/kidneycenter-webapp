@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { Suspense } from "react";
 import request from "@/app/lib/request";
 import { message, Spin, Typography } from "antd";
 import { IHotelListing } from "../types/dashboard.types";
@@ -64,6 +64,7 @@ const router = useRouter();
   }
 
   return (
+    <Suspense fallback={<Spin />}>
     <DashboardContext.Provider
       value={{ setHotelListings, hotelListingMutation }}
     >
@@ -161,6 +162,7 @@ const router = useRouter();
         )}
       </div>
     </DashboardContext.Provider>
+    </Suspense>
   );
 }
 

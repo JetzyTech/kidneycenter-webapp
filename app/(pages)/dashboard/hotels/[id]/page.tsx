@@ -1,6 +1,6 @@
-import React from "react";
+import React, { Suspense } from "react";
 import { Spin } from "antd";
-import Detail from "./detail";
+import Detail from "./Detail";
 import { fetchHotelDetail } from "../../hooks/use-room-detail";
 import { DetailsBackBtn } from "../../components/hotels/details-back-btn";
 
@@ -26,7 +26,7 @@ export default async function HotelDetails({
   );
 
   return (
-    <>
+    <Suspense fallback={<Spin />}>
       <div className="max-w-7xl mx-auto">
         <DetailsBackBtn />
         {data ? (
@@ -37,6 +37,6 @@ export default async function HotelDetails({
           </div>
         )}
       </div>
-    </>
+    </Suspense>
   );
 }
