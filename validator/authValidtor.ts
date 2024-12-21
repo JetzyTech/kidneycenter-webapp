@@ -15,6 +15,7 @@ export const loginValidatorScheme = yup.object().shape({
 
 export const signupValidation = yup.object().shape({
 	email: yup.string().email("Email must be a valid email address.").required("Email is required"),
+	phone: yup.string().required("Phone number is required"),
 	password: yup
 		.string()
 		.required("Password is required")

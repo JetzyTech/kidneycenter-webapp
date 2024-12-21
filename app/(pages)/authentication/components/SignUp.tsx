@@ -1,16 +1,78 @@
 import { AppleIcon, GoogleIcon } from "@/app/assets/icons";
 import { countries } from "@/app/lib/countries";
-import { Button, Divider, Input, Select, Typography, Form } from "antd";
+import { Box, Button, Flex } from "@chakra-ui/react";
+import { ServerErrors } from "@Jetzy/app/lib/_toaster";
+import { ROUTES } from "@Jetzy/configs/routes";
+import { AuthCreateAccountThunk, getAuthState, useAppDispatch, useAppSelector } from "@Jetzy/redux";
+import { SignInFormData, SignUpFormData } from "@Jetzy/types";
+import { Button as AntdButton, Divider, Input, Select, Typography } from "antd";
+import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import React from "react";
+import PasswordInput from "./PasswordInput";
+import { signupValidation } from "@Jetzy/validator/authValidtor";
 
 const Signup = () => {
-  const [form] = Form.useForm();
+ 
 
   const defaultValue = countries.find((entry) => entry.cca2 === 'US')?.cca2 || 'US';
+
+  const dispatcher = useAppDispatch()
+	const {isLoading} = useAppSelector(getAuthState)
+	const [loader, setLoader] = React.useState<boolean>(isLoading)
+	const navigator = useRouter()
+  const formRef = React.createRef<FormikProps<SignUpFormData>>()
+
+	const InitialFormState: SignUpFormData = {
+		refCode: "HBL50",
+    phone: "",
+		role: "user",
+		email: "",
+		password: "",
+	}
+
+	const handleLogin = async (values: SignInFormData) => {
+		setLoader(true)
+
+		//  Process user login
+		const res = await signIn("credentials", {
+			email: values?.email,
+			password: values?.password,
+			redirect: false,
+		})
+
+		// handle error
+		if (res?.error) {
+			setLoader(false)
+
+			// format an error message
+			const error = { message: res?.error }
+
+			ServerErrors("Sorry", [{ message: error?.message }])
+
+			return
+		}
+
+		// turn off loader
+		setLoader(false)
+
+		navigator?.push(ROUTES.dashboard)
+	}
+	// handle form submit
+	const handleSubmit = (data: SignUpFormData) => {
+		dispatcher(AuthCreateAccountThunk({ data })).then((res) => {
+			if (typeof res?.payload !== "undefined") {
+				handleLogin({ email: data.email, password: data.password })
+			}
+		})
+	}
 
   const onSelectPhoneNumberCode = (
     <Select
       showSearch
       defaultValue={defaultValue}
+      onChange={(value) => console.log(value)}
       className="w-24"
       labelInValue={false}
       optionLabelProp="label"
@@ -37,85 +99,97 @@ const Signup = () => {
 
   return (
     <>
-      <div className="space-y-5">
+      <div className="space-y-5 px-5">
         <Typography.Text className="text-[32px] font-extrabold">
           Sign up
         </Typography.Text>
 
         <div>
-          <Form form={form} layout="vertical" initialValues={{inviteCode: 'HBL50'}}>
-            <Form.Item
-              name="inviteCode"
-              label={
-                <Typography.Text className="font-medium text-lg leading-6">
+        <Formik innerRef={formRef} initialValues={InitialFormState} onSubmit={handleSubmit} validationSchema={signupValidation}>
+          {({ values, handleChange }) => (
+            <Form  className="space-y-4">
+               <Flex flexDir="column" gap={4}>
+              
+               <Typography.Text className="font-medium text-lg leading-6">
                   Invite Code
                 </Typography.Text>
-              }
-            >
-              <Input value="HBL50" variant="filled" size="large" disabled />
-            </Form.Item>
-            <Form.Item
-              name="emailAddress"
-              label={
-                <Typography.Text className="font-medium text-lg leading-6">
+              <Field value={values?.refCode} variant="filled" size="large" disabled className="p-3 w-full rounded-md border-transparent shadow-sm focus:outline-primary bg-[#f5f5f5]" />
+              
+            </Flex>
+
+
+            <Flex flexDir="column" gap={4}>
+            <Typography.Text className="font-medium text-lg leading-6">
                   Enter your email address
                 </Typography.Text>
-              }
-            >
-              <Input
+              <Field
+                value={values?.email}
+                name="email"
+                onChange={handleChange}
                 placeholder="Enter your email address"
                 variant="filled"
-                size="large"
+                className="p-3 w-full rounded-md border-transparent shadow-sm focus:outline-primary bg-[#f5f5f5]"
               />
-            </Form.Item>
-            <Form.Item
-              name="phoneNumber"
-              label={
-                <Typography.Text className="font-medium text-lg leading-6">
+              {/* error message */}
+              <ErrorMessage name="email" component="div" className="text-red-500" />
+            </Flex>
+
+
+            <Flex flexDir="column" gap={4}>
+            <Typography.Text className="font-medium text-lg leading-6">
                   Phone Number
                 </Typography.Text>
-              }
-            >
-              <Input
+              <Field
+                onChange={handleChange}
+                name="phone"
+                value={values?.phone}
                 size="large"
                 variant="filled" 
                 placeholder="Enter your Phone Number" 
+                component={({field, form, ...props}: {field: any, form: any})=> (
+                  <Input
                 addonBefore={onSelectPhoneNumberCode}
+                {...field}
+                {...props}
               />
-            </Form.Item>
-            <Form.Item
-              name="password"
-              label={
-                <Typography.Text className="font-medium text-lg leading-6">
+                )}
+              />
+              {/* error message */}
+              <ErrorMessage name="phone" component="div" className="text-red-500" />
+            </Flex>
+            <Flex flexDir="column"   gap={4}>
+            <Typography.Text className="font-medium text-lg leading-6">
                   Password
                 </Typography.Text>
-              }
-            >
-              <Input.Password
+              <PasswordInput 
+                value={values?.password}
+                handleChange={handleChange}
+                name="password"
                 placeholder="Password"
                 variant="filled"
                 size="large"
               />
-            </Form.Item>
-            <Button
-              size="large"
-              type="primary"
-              variant="filled"
-              className="w-full"
-            >
-              Signup
-            </Button>
-          </Form>
+              {/* error message */}
+              <ErrorMessage name="password" component="div" className="text-red-500" />
+            </Flex >
+            <Box mt={2} mb={4}>
+
+             <Button isLoading={isLoading || loader} size='large' variant="filled" type='submit'  className="w-full bg-primary p-3 rounded-md ">Signup</Button>
+            </Box>
+            </Form>
+          )}
+        </Formik>
+         
 
           <Divider />
 
           <div className="flex items-center gap-x-2">
-            <Button size="large" className="rounded-full font-medium px-6 py-6" icon={<GoogleIcon />}>
+            <AntdButton size="large" className="rounded-full font-medium px-6 py-6" icon={<GoogleIcon />}>
               Sign in with Google
-            </Button>
-            <Button size="large" className="rounded-full font-medium px-6 py-6" icon={<AppleIcon />}>
+            </AntdButton>
+            <AntdButton size="large" className="rounded-full font-medium px-6 py-6" icon={<AppleIcon />}>
               Sign in with Apple
-            </Button>
+            </AntdButton>
           </div>
         </div>
       </div>
