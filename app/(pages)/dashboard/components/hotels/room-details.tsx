@@ -9,7 +9,7 @@ export const RoomDetail = ({
   footer = true,
 }: {
   selectedDeal?: string;
-  setSelectedDeal?: (dealId: string) => void;
+  setSelectedDeal?: (dealId: string | null) => void;
   room: Room;
   footer?: boolean;
 }) => {

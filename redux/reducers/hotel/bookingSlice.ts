@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { IBooking } from "@Jetzy/types/hotel-booking";
+import { IBooking, Room } from "@Jetzy/types/hotel-booking";
 
 const initialState: IBooking = {
   detail: {
@@ -7,13 +7,21 @@ const initialState: IBooking = {
     external_room_id: null,
     external_hotel_id: null,
   },
-  // room: {
-  //   id: null,
-  //   name: "",
-  //   description: "",
-  //   rate_data: {
-  //   }
-  // },
+  room: {
+    id: null,
+    title: null,
+    description: null,
+    rate_data: {
+      ppn_bundle: null,
+      price_details: {
+        display_symbol: null,
+        source_sub_total: null,
+        source_taxes: null,
+        display_all_in_total: null,
+        night_price_data: [{ display_night_price: null }],
+      },
+    },
+  } as Room,
 };
 
 export const hotelBookingSlice = createSlice({

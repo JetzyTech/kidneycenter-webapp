@@ -25,25 +25,25 @@ interface GeoCoordinates {
 }
 
 interface Room {
-  id: string;
-  title: string;
-  description: string;
+  id: string | null;
+  title: string | null;
+  description: string | null;
   rate_data: RateData;
 }
 
 interface RateData {
   price_details: PriceDetails;
-  ppn_bundle?: string;
+  ppn_bundle?: string | null;
 }
 
 interface PriceDetails {
-  display_symbol: string;
+  display_symbol: string | null;
   night_price_data: NightPriceData[];
-  source_sub_total: number;
-  source_taxes: number;
-  display_all_in_total: number;
+  source_sub_total: number | null;
+  source_taxes: number | null;
+  display_all_in_total: number | null;
 }
 
 interface NightPriceData {
-  display_night_price: number;
+  display_night_price: number | null;
 }
