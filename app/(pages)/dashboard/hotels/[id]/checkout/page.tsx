@@ -10,6 +10,7 @@ import {
   Input,
   InputNumber,
   message,
+  Select,
   Typography,
 } from "antd";
 import request from "@/app/lib/request";
@@ -19,6 +20,7 @@ import { useMutation } from "@tanstack/react-query";
 import { RoomDetail } from "../../../components/hotels/room-details";
 import { Room } from "@Jetzy/types/hotel-booking";
 import { useFilter } from "../../../hooks/use-filter";
+import { countries } from "@Jetzy/app/lib/countries";
 
 const bookHotel = async (payload: BookingPayload) => {
   const url = `${process.env.NEXT_PUBLIC_API_ENDPOINT}/v1/meetselect/hotels/book`;
@@ -106,10 +108,14 @@ const CheckoutForm = () => {
   });
 
   console.log({ checkIn, checkOut });
+
   const onFinish = (values: BookingPayload) => {
+
     const expiresMonthValue =
       typeof values.expires_month === "string" ? values.expires_month : "";
+
     console.log({ values: values.expires_month });
+
     const [expires_month, expires_year] = expiresMonthValue.split("-");
 
     const payload = {
@@ -117,17 +123,17 @@ const CheckoutForm = () => {
       country_code: values.country_code,
       start_date: checkIn,
       end_date: checkOut,
-      card_type: values.card_type,
+      card_type: 'VI',
       card_number: values.card_number,
       card_holder: values.card_holder,
       phone_number: values.phone_number,
       post_code: values.post_code,
       address: values.address,
       city: values.city,
-      expires_year: `${expires_year}`, // Assuming the year is in YY format
+      expires_year: `${expires_year}`,
       expires_month,
-      email: values.email,
-      name_first: values.name_first,
+      email: user.email,
+      name_first: user.name_first,
       name_last: values.name_last,
       booking_request_id: hotelBookingDetail.booking_request_id as string,
       external_room_id: hotelBookingDetail.external_room_id as string,
@@ -235,22 +241,31 @@ const CheckoutForm = () => {
               />
             </Form.Item>
           </div>
-          <Form.Item
+            <Form.Item
             name="phone_number"
             label={
               <Typography.Text className="text-lg font-medium">
-                Phone Number
+              Phone Number
               </Typography.Text>
             }
             rules={[{ required: true, message: "Phone Number is Required" }]}
-          >
+            >
             <InputNumber
               size="large"
               variant="filled"
               placeholder="Enter Phone Number"
               className="border-[#EDEDED] border w-full"
+              addonBefore={
+              <Select className="w-24">
+                {countries.map((country) => (
+                <Select.Option key={country.code} value={country.code}>
+                 (+{country.code}) {country.name}
+                </Select.Option>
+                ))}
+              </Select>
+              }
             />
-          </Form.Item>
+            </Form.Item>
           <Form.Item
             name="address"
             label={
