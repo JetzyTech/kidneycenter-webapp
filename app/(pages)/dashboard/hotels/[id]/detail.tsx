@@ -8,6 +8,11 @@ import { Filters } from "../../components/hotels/detail-filters";
 import { RoomDetail } from "../../components/hotels/room-details";
 import { parseAsString, useQueryState } from "nuqs";
 import { cn } from "@/app/lib/helper";
+import { useAppDispatch } from "@Jetzy/redux";
+import {
+  setHotelBookingDetails,
+  setSelectedRoomDetails,
+} from "@Jetzy/redux/reducers/hotel/bookingSlice";
 
 const Detail = ({ data }: { data: HotelDetail }) => {
   const [selectedImageIdx, setSelectedImageIdx] = React.useState(0);
@@ -15,6 +20,31 @@ const Detail = ({ data }: { data: HotelDetail }) => {
     "deal",
     parseAsString.withDefault("")
   );
+
+  const dispatch = useAppDispatch();
+  const selectedRoom = data?.room_data?.find(
+    (room) => room.id === selectedDeal
+  );
+  const bookingRequestId =
+    selectedDeal &&
+    data?.room_data?.find((room) => room.id === selectedDeal)?.rate_data
+      ?.ppn_bundle;
+
+  React.useEffect(() => {
+    if (bookingRequestId && selectedDeal && data) {
+      dispatch(
+        setHotelBookingDetails({
+          booking_request_id: bookingRequestId,
+          external_room_id: selectedDeal,
+          external_hotel_id: data.id,
+        })
+      );
+    }
+
+    if (data) {
+      dispatch(setSelectedRoomDetails({ ...selectedRoom }));
+    }
+  }, [bookingRequestId, selectedDeal, data, selectedRoom]);
 
   return (
     <>
@@ -24,7 +54,11 @@ const Detail = ({ data }: { data: HotelDetail }) => {
             <Typography.Text className="text-[28px] font-bold">
               {data?.name}
             </Typography.Text>
-            <Rate disabled defaultValue={data?.star_rating} className="text-primary" />
+            <Rate
+              disabled
+              defaultValue={data?.star_rating}
+              className="text-primary"
+            />
 
             <div className="flex gap-x-3">
               <Image
@@ -40,7 +74,8 @@ const Detail = ({ data }: { data: HotelDetail }) => {
                 {data?.photo_data?.map((photo, idx) => (
                   <div
                     key={photo}
-                    className={cn('w-[60px]',
+                    className={cn(
+                      "w-[60px]",
                       selectedImageIdx === idx
                         ? "border-2 border-primary rounded-lg"
                         : ""

@@ -13,6 +13,7 @@ import Image2 from '../assets/images/hero/buildings.png';
 import Image3 from '../assets/images/hero/large-room.png';
 import Image4 from '../assets/images/hero/room.png';
 import Image5 from '../assets/images/hero/table.png';
+import Link from "next/link";
 
 const images = [Image1, Image2, Image3, Image4, Image5];
 
@@ -46,9 +47,9 @@ export default function Hero() {
           discounts, and unique benefits.
         </Typography.Text>
 
-        <button className="rounded-full bg-[#00B1B2] text-white w-[200px] h-[60px] text-base font-medium flex items-center justify-center gap-x-2 active:scale-95 transition duration-200 hover:bg-[#00b2b2e3]">
+        <Link href='/dashboard/hotels' className="rounded-full bg-[#00B1B2] text-white w-[200px] h-[60px] text-base font-medium flex items-center justify-center gap-x-2 active:scale-95 transition duration-200 hover:bg-[#00b2b2e3]">
           Get Started Now! <ArrowRight />
-        </button>
+        </Link>
       </div>
     </div>
 

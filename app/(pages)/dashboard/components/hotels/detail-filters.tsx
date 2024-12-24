@@ -1,23 +1,29 @@
 "use client";
 
-import { DatePicker, Form, Typography, Button } from "antd";
+import { DatePicker, Form, Typography, Button, Spin } from "antd";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useFilter } from "../../hooks/use-filter";
 import { Counter } from "./counter";
+import { Suspense } from "react";
 
 export const Filters = () => {
   const { rooms, guests, updateField } = useFilter();
   const searchParams = useSearchParams();
   const router = useRouter();
   const deal = searchParams.get("deal");
-  const id = searchParams.get('id');
+  const id = searchParams.get("id");
 
-
-  const onProceed = () => router.push(`/dashboard/hotels/${id}/checkout?deal=${deal}`);
-
+  const onProceed = () =>
+    router.push(`/dashboard/hotels/${id}/checkout?deal=${deal}`);
 
   return (
-    <>
+    <Suspense
+      fallback={
+        <div className="flex items-center justify-center h-screen">
+          <Spin />
+        </div>
+      }
+    >
       <div className="text-end mt-10">
         <Button
           size="large"
@@ -92,6 +98,6 @@ export const Filters = () => {
           </Button>
         </div>
       </Form>
-    </>
+    </Suspense>
   );
 };
