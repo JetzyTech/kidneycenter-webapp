@@ -11,7 +11,7 @@ export default async function HotelDetails({
   params: { id: string };
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
-  const { id: hotelId } = await await params;
+  const { id: hotelId } = await params;
   const checkIn = (await searchParams.check_in) as string;
   const checkOut = (await searchParams.check_out) as string;
   const guests = await Number(searchParams.guests);
@@ -26,11 +26,17 @@ export default async function HotelDetails({
   );
 
   return (
-    <Suspense fallback={<Spin />}>
+    <Suspense
+      fallback={
+        <div className="flex items-center justify-center h-screen">
+          <Spin />
+        </div>
+      }
+    >
       <div className="max-w-7xl mx-auto">
         <DetailsBackBtn />
         {data ? (
-          <Detail data={data} />
+          <Detail key={hotelId} data={data} />
         ) : (
           <div className="flex items-center justify-center h-screen">
             <Spin size="large" />

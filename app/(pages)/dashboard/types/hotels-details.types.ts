@@ -33,6 +33,7 @@ interface Room {
 
 interface RateData {
   price_details: PriceDetails;
+  ppn_bundle?: string;
 }
 
 interface PriceDetails {

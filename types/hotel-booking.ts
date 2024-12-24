@@ -19,9 +19,11 @@ export interface BookingPayload {
   external_room_id: string;
   external_hotel_id: string;
 }
-
 export interface IBooking {
-  detail: Partial<{
-    [K in keyof BookingPayload]: BookingPayload[K] | null;
-  }>;
+  detail: {
+    booking_request_id: BookingPayload["booking_request_id"] | null;
+    external_room_id: BookingPayload["external_room_id"] | null;
+    external_hotel_id: BookingPayload["external_hotel_id"] | null;
+  };
+  room: Room;
 }

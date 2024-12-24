@@ -1,22 +1,32 @@
 "use client";
 import React from "react";
-import { Button, Card, Checkbox, Divider, Form, Input, Typography } from "antd";
+import {
+  Button,
+  Card,
+  Checkbox,
+  Divider,
+  Form,
+  Input,
+  InputNumber,
+  message,
+  Typography,
+} from "antd";
 import request from "@/app/lib/request";
 import { BookingPayload } from "@Jetzy/types/hotel-booking";
-
-
+import { getAuthUser, useAppSelector } from "@Jetzy/redux";
+import { useMutation } from "@tanstack/react-query";
+import { RoomDetail } from "../../../components/hotels/room-details";
 
 const bookHotel = async (payload: BookingPayload) => {
-  const url = `${process.env.NEXT_PUBLIC_API_ENDPOINT}/v1/meetselect/hotels/book`
+  const url = `${process.env.NEXT_PUBLIC_API_ENDPOINT}/v1/meetselect/hotels/book`;
   try {
     const result = await request.post(url, payload);
 
     return result.data;
-
   } catch (error: any) {
-    console.error(error?.message)
+    console.error(error?.message);
   }
-}
+};
 
 const Checkout = () => {
   return (
@@ -37,23 +47,24 @@ const Checkout = () => {
 export default Checkout;
 
 const RoomsInfo = () => {
+  const room = useAppSelector((state) => state.hotelBooking.room);
+  console.log({ room });
   return (
     <>
-      <div className="flex flex-col gap-y-5 w-[40%]">
+      <div className="flex flex-col gap-y-5 w-[444px]">
         <Typography.Text className="text-base font-medium">
           Rooms Selected
         </Typography.Text>
-        {/* <RoomDetail
-        room={room}
-      /> */}
+        <RoomDetail footer={false} room={room} />
 
         <Card size="small" className="border-[#C0C0C0]">
           <div className="flex items-center justify-between">
             <Typography.Text className="text-sm text-[#5A5A5A]">
-              Single Queen
+              {room?.title}
             </Typography.Text>
             <Typography.Text className="text-sm text-[#5A5A5A]">
-              13500 Rs
+              {room?.rate_data?.price_details?.display_symbol}{" "}
+              {room?.rate_data?.price_details?.source_sub_total}
             </Typography.Text>
           </div>
           <div className="flex items-center justify-between mt-2">
@@ -61,7 +72,8 @@ const RoomsInfo = () => {
               Sub Total
             </Typography.Text>
             <Typography.Text className="text-sm text-[#212121] font-semibold">
-              13500 Rs
+              {room?.rate_data?.price_details?.display_symbol}{" "}
+              {room?.rate_data?.price_details?.display_all_in_total}
             </Typography.Text>
           </div>
         </Card>
@@ -70,35 +82,48 @@ const RoomsInfo = () => {
   );
 };
 
-
 const CheckoutForm = () => {
   const [form] = Form.useForm();
 
+  const user = useAppSelector(getAuthUser);
+  console.log({ user });
+
+  const hotelBookingDetail = useAppSelector(
+    (state) => state.hotelBooking.detail
+  );
+
+  const onCheckoutSubmit = useMutation({
+    mutationKey: ["booking::hotel::checkout"],
+    mutationFn: bookHotel,
+    onSuccess: () => message.success("Your payment has been processed."),
+    onError: () => message.error("Something Went Wrong!"),
+  });
 
   const onFinish = (values: BookingPayload) => {
     const payload = {
-      // cvc_code: values.cvc,
-      // country_code: values.country,
-      // // start_date,
-      // // end_date,
-      // // card_type,
-      // // card_number,
-      // // card_holder,
-      // // phone_number,
-      // // post_code,
-      // // address,
-      // // city,
-      // // expires_year,
-      // // expires_month,
-      // // email,
-      // // name_first,
-      // // name_last,
-      // // booking_request_id,
-      // // external_room_id,
-      // // external_hotel_id,
+      cvc_code: values.cvc_code,
+      country_code: values.country_code,
+      start_date: values.start_date,
+      end_date: values.end_date,
+      card_type: values.card_type,
+      card_number: values.card_number,
+      card_holder: values.card_holder,
+      phone_number: values.phone_number,
+      post_code: values.post_code,
+      address: values.address,
+      city: values.city,
+      expires_year: values.expires_year,
+      expires_month: values.expires_month,
+      email: values.email,
+      name_first: values.name_first,
+      name_last: values.name_last,
+      booking_request_id: hotelBookingDetail.booking_request_id as string,
+      external_room_id: hotelBookingDetail.external_room_id as string,
+      external_hotel_id: hotelBookingDetail.external_hotel_id as string,
+    };
 
-    }
-    console.log("Received values of form:", values);
+    // onCheckoutSubmit.mutate(payload);
+    console.log("Received values of form:", payload);
   };
 
   return (
@@ -108,14 +133,17 @@ const CheckoutForm = () => {
           Payment Details
         </Typography.Text>
 
-        <Form layout="vertical" onFinish={onFinish}>
+        <Form layout="vertical" form={form} onFinish={onFinish}>
           <Form.Item
-          name='cardHolderName' 
+            name="card_holder"
             label={
               <Typography.Text className="text-lg font-medium">
                 Card Holder&apos;s Name
               </Typography.Text>
             }
+            rules={[
+              { required: true, message: "Card Holder&apos; name is Required" },
+            ]}
           >
             <Input
               size="large"
@@ -125,12 +153,13 @@ const CheckoutForm = () => {
             />
           </Form.Item>
           <Form.Item
-          name='cardNumber' 
+            name="card_number"
             label={
               <Typography.Text className="text-lg font-medium">
                 Card Number
               </Typography.Text>
             }
+            rules={[{ required: true, message: "Card Number is Required" }]}
           >
             <Input
               size="large"
@@ -141,13 +170,14 @@ const CheckoutForm = () => {
           </Form.Item>
           <div className="flex gap-x-5 w-full justify-between">
             <Form.Item
-            name='cvv' 
+              name="cvc_code"
               className="w-1/2"
               label={
                 <Typography.Text className="text-lg font-medium">
                   CVV
                 </Typography.Text>
               }
+              rules={[{ required: true, message: "CVV is Required" }]}
             >
               <Input
                 size="large"
@@ -157,29 +187,32 @@ const CheckoutForm = () => {
               />
             </Form.Item>
             <Form.Item
-            name='expiryDate' 
+              name="expiryDate"
               className="w-1/2"
               label={
                 <Typography.Text className="text-lg font-medium">
                   Expiry Date
                 </Typography.Text>
               }
+              rules={[{ required: true, message: "Expiry Date is Required" }]}
             >
-              <Input
+              <InputNumber
                 size="large"
                 variant="filled"
                 placeholder="DD / MM"
-                className="border-[#EDEDED] border"
+                className="border border-[#EDEDED] w-full"
+                changeOnWheel={false}
               />
             </Form.Item>
           </div>
           <Form.Item
-          name='phoneNumber' 
+            name="phone_number"
             label={
               <Typography.Text className="text-lg font-medium">
                 Phone Number
               </Typography.Text>
             }
+            rules={[{ required: true, message: "Phone Number is Required" }]}
           >
             <Input
               size="large"
@@ -189,12 +222,13 @@ const CheckoutForm = () => {
             />
           </Form.Item>
           <Form.Item
-          name='address' 
+            name="address"
             label={
               <Typography.Text className="text-lg font-medium">
                 Address
               </Typography.Text>
             }
+            rules={[{ required: true, message: "Address is Required" }]}
           >
             <Input
               size="large"
@@ -204,12 +238,13 @@ const CheckoutForm = () => {
             />
           </Form.Item>
           <Form.Item
-          name='city' 
+            name="city"
             label={
               <Typography.Text className="text-lg font-medium">
                 City
               </Typography.Text>
             }
+            rules={[{ required: true, message: "City is Required" }]}
           >
             <Input
               size="large"
@@ -219,12 +254,13 @@ const CheckoutForm = () => {
             />
           </Form.Item>
           <Form.Item
-          name='postalCode' 
+            name="post_code"
             label={
               <Typography.Text className="text-lg font-medium">
                 Postal Code
               </Typography.Text>
             }
+            rules={[{ required: true, message: "Post Code is Required" }]}
           >
             <Input
               size="large"
@@ -239,18 +275,29 @@ const CheckoutForm = () => {
               This deal is reserved for Jetzy Select Concierge members. Continue
               to sign up for Jetzy Select Concierge.
             </Typography.Text>
-            <Typography.Text className="text-[#7E7E7E]">
-              You can cancel any time at{" "}
-              <span className="underline text-primary">this link</span>
-            </Typography.Text>
-            <Typography.Text className="text-[15px] text-[#7E7E7E] my-3">
-              Get 70% discounts at 1.6 million hotels globally. Start with a
-              30-day free trial and then 100rs/month. No charge today; cancel
-              anytime during the one month free trial.
-            </Typography.Text>
+
+            <Form.Item name="jetzy_pro">
+              <>
+                <Checkbox
+                  defaultChecked
+                  className="rounded-full text-[15px] text-[#7E7E7E] my-3 "
+                >
+                  By getting this deal you become a member of Jetzy Select
+                  Concierge. With this membership you get upto 70% discounts at
+                  1.6 million hotels globally. Start with a 30-day free trial
+                  and then 100rs/month. No charge today; cancel anytime during
+                  the one month free trial.
+                </Checkbox>
+                <Typography.Text className="text-[#7E7E7E] pl-6">
+                  You can cancel any time at&nbsp;
+                  <span className="underline text-primary">this link</span>
+                </Typography.Text>
+              </>
+            </Form.Item>
           </div>
-          <Form.Item name='termsAndCondition'>
-            <Checkbox checked className="rounded-full text-[#7E7E7E]">
+
+          <Form.Item name="termsAndCondition">
+            <Checkbox defaultChecked className="rounded-full text-[#7E7E7E]">
               By getting this deal you accept Jetzy{" "}
               <span className="text-primary underline font-medium">
                 terms & condition
@@ -258,7 +305,12 @@ const CheckoutForm = () => {
             </Checkbox>
           </Form.Item>
           <Form.Item>
-            <Button type="primary" size="large" className="w-full" htmlType="submit">
+            <Button
+              type="primary"
+              size="large"
+              className="w-full"
+              htmlType="submit"
+            >
               Continue
             </Button>
           </Form.Item>

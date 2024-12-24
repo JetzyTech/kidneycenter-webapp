@@ -11,14 +11,19 @@ export const Filters = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
   const deal = searchParams.get("deal");
-  const id = searchParams.get('id');
+  const id = searchParams.get("id");
 
-
-  const onProceed = () => router.push(`/dashboard/hotels/${id}/checkout?deal=${deal}`);
-
+  const onProceed = () =>
+    router.push(`/dashboard/hotels/${id}/checkout?deal=${deal}`);
 
   return (
-    <Suspense fallback={<Spin/>}>
+    <Suspense
+      fallback={
+        <div className="flex items-center justify-center h-screen">
+          <Spin />
+        </div>
+      }
+    >
       <div className="text-end mt-10">
         <Button
           size="large"

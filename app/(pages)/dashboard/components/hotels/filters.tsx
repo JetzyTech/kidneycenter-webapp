@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import React, { Suspense } from "react";
 import PlacesAutocomplete from "./autocomplete";
@@ -54,12 +54,12 @@ export const Filters = () => {
   } = useFilter();
 
   React.useEffect(() => {
-    const checkIn = searchParams.get('check_in');
-    const checkOut = searchParams.get('check_out');
-    const guests = searchParams.get('adults');
-    const rooms = searchParams.get('rooms');
-    const lat = searchParams.get('lat');
-    const lng = searchParams.get('lng');
+    const checkIn = searchParams.get("check_in");
+    const checkOut = searchParams.get("check_out");
+    const guests = searchParams.get("adults");
+    const rooms = searchParams.get("rooms");
+    const lat = searchParams.get("lat");
+    const lng = searchParams.get("lng");
 
     if (checkIn && checkOut && guests && rooms && lat && lng) {
       hotelListingMutation.mutate();
@@ -145,9 +145,14 @@ export const Filters = () => {
     </Card>
   );
 
-
   return (
-    <Suspense fallback={<Spin />}>
+    <Suspense
+      fallback={
+        <div className="flex items-center justify-center h-screen">
+          <Spin />
+        </div>
+      }
+    >
       <div>
         <Form colon={false} className="flex flex-col">
           <div className="flex items-center gap-x-10">
@@ -159,7 +164,7 @@ export const Filters = () => {
                 </Typography.Text>
               }
             >
-              <PlacesAutocomplete  />
+              <PlacesAutocomplete />
             </Form.Item>
             <Form.Item
               className="w-[283px]"
