@@ -4,6 +4,7 @@ import {
   Button,
   Card,
   Checkbox,
+  DatePicker,
   Divider,
   Form,
   Input,
@@ -16,6 +17,8 @@ import { BookingPayload } from "@Jetzy/types/hotel-booking";
 import { getAuthUser, useAppSelector } from "@Jetzy/redux";
 import { useMutation } from "@tanstack/react-query";
 import { RoomDetail } from "../../../components/hotels/room-details";
+import { Room } from "@Jetzy/types/hotel-booking";
+import { useFilter } from "../../../hooks/use-filter";
 
 const bookHotel = async (payload: BookingPayload) => {
   const url = `${process.env.NEXT_PUBLIC_API_ENDPOINT}/v1/meetselect/hotels/book`;
@@ -47,14 +50,16 @@ const Checkout = () => {
 export default Checkout;
 
 const RoomsInfo = () => {
-  const room = useAppSelector((state) => state.hotelBooking.room);
+  const room: Room = useAppSelector((state) => state.hotelBooking.room);
   console.log({ room });
+
   return (
     <>
       <div className="flex flex-col gap-y-5 w-[444px]">
         <Typography.Text className="text-base font-medium">
           Rooms Selected
         </Typography.Text>
+
         <RoomDetail footer={false} room={room} />
 
         <Card size="small" className="border-[#C0C0C0]">
@@ -84,6 +89,7 @@ const RoomsInfo = () => {
 
 const CheckoutForm = () => {
   const [form] = Form.useForm();
+  const { checkIn, checkOut } = useFilter();
 
   const user = useAppSelector(getAuthUser);
   console.log({ user });
@@ -99,12 +105,18 @@ const CheckoutForm = () => {
     onError: () => message.error("Something Went Wrong!"),
   });
 
+  console.log({ checkIn, checkOut });
   const onFinish = (values: BookingPayload) => {
+    const expiresMonthValue =
+      typeof values.expires_month === "string" ? values.expires_month : "";
+    console.log({ values: values.expires_month });
+    const [expires_month, expires_year] = expiresMonthValue.split("-");
+
     const payload = {
       cvc_code: values.cvc_code,
       country_code: values.country_code,
-      start_date: values.start_date,
-      end_date: values.end_date,
+      start_date: checkIn,
+      end_date: checkOut,
       card_type: values.card_type,
       card_number: values.card_number,
       card_holder: values.card_holder,
@@ -112,8 +124,8 @@ const CheckoutForm = () => {
       post_code: values.post_code,
       address: values.address,
       city: values.city,
-      expires_year: values.expires_year,
-      expires_month: values.expires_month,
+      expires_year: `${expires_year}`, // Assuming the year is in YY format
+      expires_month,
       email: values.email,
       name_first: values.name_first,
       name_last: values.name_last,
@@ -159,13 +171,18 @@ const CheckoutForm = () => {
                 Card Number
               </Typography.Text>
             }
-            rules={[{ required: true, message: "Card Number is Required" }]}
+            rules={[
+              {
+                required: true,
+                message: "Card Number is Required",
+              },
+            ]}
           >
-            <Input
+            <InputNumber
               size="large"
               variant="filled"
               placeholder="XXXX XXXX XXXX"
-              className="border-[#EDEDED] border"
+              className="border-[#EDEDED] border w-full"
             />
           </Form.Item>
           <div className="flex gap-x-5 w-full justify-between">
@@ -177,17 +194,30 @@ const CheckoutForm = () => {
                   CVV
                 </Typography.Text>
               }
-              rules={[{ required: true, message: "CVV is Required" }]}
+              rules={[
+                {
+                  required: true,
+                  message: "CVV is Required",
+                  len: 3,
+                  validator: (_, value) =>
+                    value && value.toString().length === 3
+                      ? Promise.resolve()
+                      : Promise.reject(
+                          new Error("CVV must be exactly 3 digits")
+                        ),
+                },
+              ]}
             >
-              <Input
+              <InputNumber
                 size="large"
                 variant="filled"
                 placeholder="Enter CVV Number"
-                className="border-[#EDEDED] border"
+                className="border-[#EDEDED] border w-full"
+                maxLength={3}
               />
             </Form.Item>
             <Form.Item
-              name="expiryDate"
+              name="expires_month"
               className="w-1/2"
               label={
                 <Typography.Text className="text-lg font-medium">
@@ -196,12 +226,12 @@ const CheckoutForm = () => {
               }
               rules={[{ required: true, message: "Expiry Date is Required" }]}
             >
-              <InputNumber
+              <DatePicker
                 size="large"
-                variant="filled"
-                placeholder="DD / MM"
+                picker="month"
+                format="MM/YY"
+                placeholder="MM / YY"
                 className="border border-[#EDEDED] w-full"
-                changeOnWheel={false}
               />
             </Form.Item>
           </div>
@@ -214,11 +244,11 @@ const CheckoutForm = () => {
             }
             rules={[{ required: true, message: "Phone Number is Required" }]}
           >
-            <Input
+            <InputNumber
               size="large"
               variant="filled"
               placeholder="Enter Phone Number"
-              className="border-[#EDEDED] border"
+              className="border-[#EDEDED] border w-full"
             />
           </Form.Item>
           <Form.Item
@@ -262,11 +292,11 @@ const CheckoutForm = () => {
             }
             rules={[{ required: true, message: "Post Code is Required" }]}
           >
-            <Input
+            <InputNumber
               size="large"
               variant="filled"
               placeholder="Enter Postal Code"
-              className="border-[#EDEDED] border"
+              className="border-[#EDEDED] border w-full"
             />
           </Form.Item>
 

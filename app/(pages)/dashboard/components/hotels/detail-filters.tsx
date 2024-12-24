@@ -7,14 +7,17 @@ import { Counter } from "./counter";
 import { Suspense } from "react";
 
 export const Filters = () => {
-  const { rooms, guests, updateField } = useFilter();
+  const { rooms, guests, updateField, checkIn, checkOut, lat, lng } =
+    useFilter();
   const searchParams = useSearchParams();
   const router = useRouter();
   const deal = searchParams.get("deal");
   const id = searchParams.get("id");
 
   const onProceed = () =>
-    router.push(`/dashboard/hotels/${id}/checkout?deal=${deal}`);
+    router.push(
+      `/dashboard/hotels/${id}/checkout?check_in=${checkIn}&check_out=${checkOut}&lat=${lat}&lng=${lng}&deal=${deal}`
+    );
 
   return (
     <Suspense
