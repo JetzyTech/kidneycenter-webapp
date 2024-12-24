@@ -6,11 +6,12 @@ import { ROUTES } from "@Jetzy/configs/routes"
 import { AuthCreateAccountThunk, getAuthState, useAppDispatch, useAppSelector } from "@Jetzy/redux"
 import { SignInFormData, SignUpFormData } from "@Jetzy/types"
 import { Button as AntdButton, Divider, Input, Select, Typography } from "antd"
-import { Field, Form, Formik, FormikProps } from "formik"
+import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik"
 import { signIn } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import React from "react"
 import PasswordInput from "./PasswordInput"
+import { signupValidation } from "@Jetzy/validator/authValidtor"
 
 const Signup = () => {
 	const defaultValue = countries.find((entry) => entry.cca2 === "US")?.cca2 || "US"
@@ -93,7 +94,7 @@ const Signup = () => {
 				<Typography.Text className="text-[32px] font-extrabold">Sign up</Typography.Text>
 
 				<div>
-					<Formik innerRef={formRef} initialValues={InitialFormState} onSubmit={handleSubmit}>
+					<Formik innerRef={formRef} initialValues={InitialFormState} onSubmit={handleSubmit} validationSchema={signupValidation}>
 						{({ values, handleChange }) => (
 							<Form className="space-y-4">
 								<Flex flexDir="column" gap={4}>
@@ -111,15 +112,29 @@ const Signup = () => {
 										variant="filled"
 										className="p-3 w-full rounded-md border-transparent shadow-sm focus:outline-primary bg-[#f5f5f5]"
 									/>
+									{/* error message */}
+									<ErrorMessage name="email" component="div" className="text-red-500" />
 								</Flex>
 
 								<Flex flexDir="column" gap={4}>
 									<Typography.Text className="font-medium text-lg leading-6">Phone Number</Typography.Text>
-									<Input onChange={handleChange} name="phone" value={values?.phone} size="large" variant="filled" placeholder="Enter your Phone Number" addonBefore={onSelectPhoneNumberCode} />
+									<Field
+										onChange={handleChange}
+										name="phone"
+										value={values?.phone}
+										size="large"
+										variant="filled"
+										placeholder="Enter your Phone Number"
+										component={({ field, form, ...props }: { field: any; form: any }) => <Input addonBefore={onSelectPhoneNumberCode} {...field} {...props} />}
+									/>
+									{/* error message */}
+									<ErrorMessage name="phone" component="div" className="text-red-500" />
 								</Flex>
 								<Flex flexDir="column" gap={4}>
 									<Typography.Text className="font-medium text-lg leading-6">Password</Typography.Text>
 									<PasswordInput value={values?.password} handleChange={handleChange} name="password" placeholder="Password" variant="filled" size="large" />
+									{/* error message */}
+									<ErrorMessage name="password" component="div" className="text-red-500" />
 								</Flex>
 								<Box mt={2} mb={4}>
 									<Button isLoading={isLoading || loader} size="large" variant="filled" type="submit" className="w-full bg-primary p-3 rounded-md ">
