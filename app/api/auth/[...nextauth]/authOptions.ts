@@ -1,8 +1,13 @@
 import Credentials from "next-auth/providers/credentials"
 import { NextAuthOptions } from "next-auth"
-import { AuthorizedUserAccountApi, AuthorizeUserApi } from "@Jetzy/services/auth/authapis"
+import GoogleProvider from "next-auth/providers/google"
+import { AuthorizedUserAccountApi, AuthorizeUserApi, AuthVerifyApi } from "@Jetzy/services/auth/authapis"
+import { ROUTES } from "@Jetzy/configs/routes"
 
 export const authOptions: NextAuthOptions = {
+	session: {
+		strategy: "jwt",
+	},
 	providers: [
 		Credentials({
 			// The name to display on the sign in form (e.g. 'Sign in with...')
@@ -41,5 +46,62 @@ export const authOptions: NextAuthOptions = {
 				}
 			},
 		}),
-	]
- }
+		GoogleProvider({
+			clientId: process.env.GOOGLE_CLIENT_ID as string,
+			clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+			authorization: {
+				params: {
+					scope: "openid email profile",
+				},
+			},
+		}),
+	],
+	pages: {
+		signIn: ROUTES.auth,
+		error: ROUTES.auth,
+		signOut: ROUTES.auth,
+	},
+	callbacks: {
+		async signIn({ account, profile }) {
+			switch (account?.provider) {
+				case "google":
+					const res = await AuthVerifyApi({ data: { idToken: account?.id_token as string } })
+					if (!res?.status) {
+						throw new Error(res?.message)
+					}
+
+					// @ts-ignore
+					profile.googleAuth = res?.data
+
+					break
+				default:
+					break
+			}
+			return true
+		},
+		async jwt({ token, user, profile }) {
+			if (user) {
+				token.profile = user
+			}
+
+			// @ts-ignore
+			if (profile?.googleAuth) {
+				// @ts-ignore
+				token.profile = profile?.googleAuth
+			}
+			return token
+		},
+
+		async session({ session, user, token }) {
+			//   @ts-ignore
+			if (token?.profile) {
+				// @ts-ignore
+				session.profile = token?.profile
+				session.user = token?.profile
+			}
+
+			return session
+		},
+	},
+	secret: process.env.NEXTAUTH_SECRET,
+}

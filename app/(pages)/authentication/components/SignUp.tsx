@@ -1,4 +1,3 @@
-import { AppleIcon, GoogleIcon } from "@/app/assets/icons"
 import { countries } from "@/app/lib/countries"
 import { Box, Button, Flex } from "@chakra-ui/react"
 import { ServerErrors } from "@Jetzy/app/lib/_toaster"
@@ -12,6 +11,7 @@ import { useRouter } from "next/navigation"
 import React from "react"
 import PasswordInput from "./PasswordInput"
 import { signupValidation } from "@Jetzy/validator/authValidtor"
+import AuthFooter from "./AuthFooter"
 
 const Signup = () => {
 	const defaultValue = countries.find((entry) => entry.cca2 === "US")?.cca2 || "US"
@@ -147,14 +147,7 @@ const Signup = () => {
 
 					<Divider />
 
-					<div className="flex items-center gap-x-2">
-						<AntdButton size="large" className="rounded-full font-medium px-6 py-6" icon={<GoogleIcon />}>
-							Sign in with Google
-						</AntdButton>
-						<AntdButton size="large" className="rounded-full font-medium px-6 py-6" icon={<AppleIcon />}>
-							Sign in with Apple
-						</AntdButton>
-					</div>
+					<AuthFooter />
 				</div>
 			</div>
 		</>
