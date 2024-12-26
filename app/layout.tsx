@@ -6,14 +6,15 @@ import { ThemeProvider } from "./providers/theme-provider";
 import { NuqsAdapter } from "nuqs/adapters/next";
 import { ChakraProvider } from "@chakra-ui/react";
 import "./globals.css";
+import { getServerSession } from "next-auth";
 export const metadata: Metadata = {
   title: "Jetzy",
   description:
     "The world's first geo-based social app to connect you with travel and lifestyle enthusiasts with similar interests.",
   other: {
     "http-equiv": "Permissions-Policy",
-    content: "interest-cohort=()"
-  }
+    content: "interest-cohort=()",
+  },
 };
 
 export default async function RootLayout({
@@ -21,6 +22,8 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await getServerSession();
+
   return (
     <html lang="en">
       <ThemeProvider theme={theme}>
@@ -29,7 +32,7 @@ export default async function RootLayout({
             <NuqsAdapter>
               <div className="flex flex-col min-h-screen">
                 <main className="flex-1">
-                  <AppSessionProvider>
+                  <AppSessionProvider session={session}>
                     <ReduxProvider>{children}</ReduxProvider>
                   </AppSessionProvider>
                 </main>
