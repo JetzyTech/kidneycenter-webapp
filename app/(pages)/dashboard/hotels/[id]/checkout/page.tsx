@@ -6,11 +6,14 @@ import {
   Checkbox,
   DatePicker,
   Divider,
+  Dropdown,
   Form,
   Input,
   InputNumber,
+  Menu,
+  MenuProps,
   message,
-  Select,
+  Modal,
   Typography,
 } from "antd";
 import request from "@/app/lib/request";
@@ -21,6 +24,9 @@ import { RoomDetail } from "../../../components/hotels/room-details";
 import { Room } from "@Jetzy/types/hotel-booking";
 import { useFilter } from "../../../hooks/use-filter";
 import { countries } from "@Jetzy/app/lib/countries";
+import { ChevronDownSVG, GreenCheckmarkSVG } from "@Jetzy/app/assets/icons";
+import dayjs from "dayjs";
+import Link from "next/link";
 
 const bookHotel = async (payload: BookingPayload) => {
   const url = `${process.env.NEXT_PUBLIC_API_ENDPOINT}/v1/meetselect/hotels/book`;
@@ -53,7 +59,6 @@ export default Checkout;
 
 const RoomsInfo = () => {
   const room: Room = useAppSelector((state) => state.hotelBooking.room);
-  console.log({ room });
 
   return (
     <>
@@ -90,11 +95,12 @@ const RoomsInfo = () => {
 };
 
 const CheckoutForm = () => {
+  const [selectedCountryCode, setSelectedCountryCode] =
+    React.useState<number>(0);
   const [form] = Form.useForm();
   const { checkIn, checkOut } = useFilter();
 
   const user = useAppSelector(getAuthUser);
-  console.log({ user });
 
   const hotelBookingDetail = useAppSelector(
     (state) => state.hotelBooking.detail
@@ -103,45 +109,83 @@ const CheckoutForm = () => {
   const onCheckoutSubmit = useMutation({
     mutationKey: ["booking::hotel::checkout"],
     mutationFn: bookHotel,
-    onSuccess: () => message.success("Your payment has been processed."),
+    onSuccess: () => {
+      Modal.success({
+        centered: true,
+        className: "w-[464px] h-[430px] rounded-[24px]",
+        destroyOnClose: true,
+        icon: null,
+        onCancel: () => false,
+        title: (
+          <div className="flex flex-col gap-y-10 items-center justify-center text-center">
+            <GreenCheckmarkSVG />
+            <Typography.Text className="text-[#5A5A5A] text-[26px] font-medium leading-[36px]">
+              Your payment has been processed
+            </Typography.Text>
+
+            <Link
+              className="w-full bg-primary font-semibold py-[10px] rounded-lg text-white text-lg hover:text-white active:scale-95"
+              href="/dashboard/hotels"
+            >
+              View Booking
+            </Link>
+          </div>
+        ),
+        footer: null,
+      });
+    },
     onError: () => message.error("Something Went Wrong!"),
   });
 
-  console.log({ checkIn, checkOut });
-
   const onFinish = (values: BookingPayload) => {
+    const formatExpiresAt = values.expires_month
+      ? dayjs(values.expires_month).format("MM/YY")
+      : null;
 
-    const expiresMonthValue =
-      typeof values.expires_month === "string" ? values.expires_month : "";
-
-    console.log({ values: values.expires_month });
-
-    const [expires_month, expires_year] = expiresMonthValue.split("-");
+    const expires_month = formatExpiresAt?.split("/")[0] as string;
+    const expires_year = formatExpiresAt?.split("/")[1] as string;
 
     const payload = {
       cvc_code: values.cvc_code,
-      country_code: values.country_code,
+      country_code: `+${selectedCountryCode.toString()}`,
       start_date: checkIn,
       end_date: checkOut,
-      card_type: 'VI',
+      card_type: "VI",
       card_number: values.card_number,
       card_holder: values.card_holder,
       phone_number: values.phone_number,
       post_code: values.post_code,
       address: values.address,
       city: values.city,
-      expires_year: `${expires_year}`,
+      expires_year,
       expires_month,
       email: user.email,
-      name_first: user.name_first,
-      name_last: values.name_last,
+      name_first: user.firstName,
+      name_last: user.lastName,
       booking_request_id: hotelBookingDetail.booking_request_id as string,
       external_room_id: hotelBookingDetail.external_room_id as string,
       external_hotel_id: hotelBookingDetail.external_hotel_id as string,
     };
 
-    // onCheckoutSubmit.mutate(payload);
-    console.log("Received values of form:", payload);
+    onCheckoutSubmit.mutate(payload);
+  };
+
+  const countryCode: MenuProps = {
+    items: countries.map((country) => ({
+      key: country.code,
+      label: (
+        <div className="flex items-center gap-x-2">
+          <Typography.Text className="inline-block w-16 text-xs">{`(+${country.code})`}</Typography.Text>
+          <Typography.Text className="inline-block w-5 text-xs">{`${country.flag}`}</Typography.Text>
+          <Typography.Text className="font-medium text-xs">{`${country.name}`}</Typography.Text>
+        </div>
+      ),
+    })),
+    className: "h-96",
+
+    onClick: (e) => {
+      setSelectedCountryCode(Number(e.key));
+    },
   };
 
   return (
@@ -241,31 +285,30 @@ const CheckoutForm = () => {
               />
             </Form.Item>
           </div>
-            <Form.Item
+          <Form.Item
             name="phone_number"
             label={
               <Typography.Text className="text-lg font-medium">
-              Phone Number
+                Phone Number
               </Typography.Text>
             }
             rules={[{ required: true, message: "Phone Number is Required" }]}
-            >
+          >
             <InputNumber
               size="large"
               variant="filled"
               placeholder="Enter Phone Number"
-              className="border-[#EDEDED] border w-full"
+              className="w-full"
               addonBefore={
-              <Select className="w-24">
-                {countries.map((country) => (
-                <Select.Option key={country.code} value={country.code}>
-                 (+{country.code}) {country.name}
-                </Select.Option>
-                ))}
-              </Select>
+                <Dropdown menu={countryCode} trigger={["click"]}>
+                  <Typography.Text className="inline-flex items-center gap-x-1 w-12 cursor-pointer">
+                    {`+(${selectedCountryCode})`}
+                    <ChevronDownSVG height={16} width={16} />
+                  </Typography.Text>
+                </Dropdown>
               }
             />
-            </Form.Item>
+          </Form.Item>
           <Form.Item
             name="address"
             label={
@@ -322,7 +365,7 @@ const CheckoutForm = () => {
             </Typography.Text>
 
             <Form.Item name="jetzy_pro">
-              <>
+              <div>
                 <Checkbox
                   defaultChecked
                   className="rounded-full text-[15px] text-[#7E7E7E] my-3 "
@@ -337,7 +380,7 @@ const CheckoutForm = () => {
                   You can cancel any time at&nbsp;
                   <span className="underline text-primary">this link</span>
                 </Typography.Text>
-              </>
+              </div>
             </Form.Item>
           </div>
 
@@ -355,6 +398,10 @@ const CheckoutForm = () => {
               size="large"
               className="w-full"
               htmlType="submit"
+              loading={onCheckoutSubmit.isPending}
+              disabled={
+                onCheckoutSubmit.isPending || onCheckoutSubmit.isSuccess
+              }
             >
               Continue
             </Button>

@@ -11,19 +11,13 @@ export default async function HotelDetails({
   params: { id: string };
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
-  const { id: hotelId } = await params;
-  const checkIn = (await searchParams.check_in) as string;
-  const checkOut = (await searchParams.check_out) as string;
-  const guests = await Number(searchParams.guests);
-  const rooms = await Number(searchParams.rooms);
+  const { id: hotelId } = params; 
+  const checkIn = searchParams.check_in as string;
+  const checkOut = searchParams.check_out as string;
+  const guests = Number(searchParams.guests);
+  const rooms = Number(searchParams.rooms);
 
-  const data = await fetchHotelDetail(
-    hotelId,
-    checkIn,
-    checkOut,
-    guests,
-    rooms
-  );
+  const data = await fetchHotelDetail(hotelId, checkIn, checkOut, guests, rooms);
 
   return (
     <Suspense

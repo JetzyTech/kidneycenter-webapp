@@ -176,6 +176,7 @@ const Detail = ({ data }: { data: HotelDetail }) => {
 
           {data?.room_data?.map((room) => (
             <RoomDetail
+              key={room.id}
               selectedDeal={selectedDeal}
               setSelectedDeal={setSelectedDeal}
               room={room}

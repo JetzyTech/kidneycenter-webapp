@@ -1,7 +1,7 @@
 "use client";
 
 import { DatePicker, Form, Typography, Button, Spin } from "antd";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { useFilter } from "../../hooks/use-filter";
 import { Counter } from "./counter";
 import { Suspense } from "react";
@@ -11,8 +11,9 @@ export const Filters = () => {
     useFilter();
   const searchParams = useSearchParams();
   const router = useRouter();
+  const pathname = usePathname();
   const deal = searchParams.get("deal");
-  const id = searchParams.get("id");
+  const id = pathname.split("/").pop();
 
   const onProceed = () =>
     router.push(

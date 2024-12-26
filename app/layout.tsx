@@ -6,11 +6,14 @@ import { ThemeProvider } from "./providers/theme-provider";
 import { NuqsAdapter } from "nuqs/adapters/next";
 import { ChakraProvider } from "@chakra-ui/react";
 import "./globals.css";
-
 export const metadata: Metadata = {
   title: "Jetzy",
   description:
     "The world's first geo-based social app to connect you with travel and lifestyle enthusiasts with similar interests.",
+  other: {
+    "http-equiv": "Permissions-Policy",
+    content: "interest-cohort=()"
+  }
 };
 
 export default async function RootLayout({
