@@ -73,7 +73,11 @@ export default function Dashboard() {
 
   React.useEffect(() => {
     if (session?.status === "authenticated") {
-      dispatcher(LOGIN(session?.data?.user));
+      try {
+        dispatcher(LOGIN(session?.data?.user));
+      } catch (error) {
+        console.error("Error during session handling:", error);
+      }
     }
   }, [session?.status]);
 
