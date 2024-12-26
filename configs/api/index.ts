@@ -41,7 +41,7 @@ HTTPClient.interceptors.request.use((configs: any) => {
     // Rewrite the api base endpoint for session base request
     if (isProtected === "session") {
       // get the nextAuth url
-      configs.baseURL = process.env.NEXTAUTH_URL;
+      configs.baseURL = process.env.NEXT_PUBLIC_AUTH_URL;
     }
 
     // Rewrite the api base endpoint for openai services
