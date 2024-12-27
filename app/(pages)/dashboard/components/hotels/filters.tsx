@@ -19,6 +19,7 @@ import {
   Spin,
   Typography,
 } from "antd";
+import dayjs from "dayjs";
 
 const pricesItems = [
   {
@@ -36,8 +37,6 @@ export const Filters = () => {
 
   const { infiniteListing } = useDashboardContext();
   const {
-    checkIn,
-    checkOut,
     guests,
     rooms,
     priceRange,
@@ -49,8 +48,6 @@ export const Filters = () => {
     selectedStars,
     setSelectedStars,
     updateField,
-    lat,
-    lng,
   } = useFilter();
 
   React.useEffect(() => {
@@ -66,7 +63,6 @@ export const Filters = () => {
     }
   }, []);
 
-  // infinite scroll
   const handleSearch = () => infiniteListing.refetch();
 
   const pricesProps: MenuProps = {
@@ -177,7 +173,10 @@ export const Filters = () => {
               <DatePicker.RangePicker
                 size="large"
                 format="YYYY-MM-DD"
-                onChange={(dates, dateStrings) => {
+                disabledDate={(current) =>
+                  current && current < dayjs().startOf("day")
+                }
+                onChange={(_, dateStrings) => {
                   updateField("checkIn", dateStrings[0]);
                   updateField("checkOut", dateStrings[1]);
                 }}

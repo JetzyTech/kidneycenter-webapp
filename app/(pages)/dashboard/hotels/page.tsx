@@ -126,8 +126,6 @@ export default function Dashboard() {
     }
   }, [inView, infiniteListing.hasNextPage, infiniteListing.fetchNextPage]);
 
-  console.log({ currentUserLocation });
-
   return (
     <Suspense
       fallback={
@@ -146,18 +144,6 @@ export default function Dashboard() {
 
           <Filters />
 
-          {hotelListings?.docs?.length === 0 ||
-            (hotelListings?.docs === undefined && (
-              <div className="flex flex-col">
-                <Typography.Text className="text-lg">
-                  No Hotels Found
-                </Typography.Text>
-                <Typography.Text className="text-sm">
-                  Please adjust your search criteria or try a different date
-                  range.
-                </Typography.Text>
-              </div>
-            ))}
           {infiniteListing.isPending ? (
             <div className="flex items-center justify-center">
               <Spin size="large" />
@@ -176,6 +162,7 @@ export default function Dashboard() {
                     </div>
                   ))
                 )}
+
                 <div
                   ref={ref}
                   className="h-10 flex justify-center items-center"
