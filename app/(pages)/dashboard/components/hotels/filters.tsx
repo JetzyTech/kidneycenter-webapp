@@ -34,7 +34,7 @@ const pricesItems = [
 export const Filters = () => {
   const searchParams = useSearchParams();
 
-  const { hotelListingMutation } = useDashboardContext();
+  const { infiniteListing } = useDashboardContext();
   const {
     checkIn,
     checkOut,
@@ -62,12 +62,12 @@ export const Filters = () => {
     const lng = searchParams.get("lng");
 
     if (checkIn && checkOut && guests && rooms && lat && lng) {
-      hotelListingMutation.mutate();
+      infiniteListing.refetch();
     }
   }, []);
 
   // infinite scroll
-  const handleSearch = () => hotelListingMutation.mutate();
+  const handleSearch = () => infiniteListing.refetch();
 
   const pricesProps: MenuProps = {
     items: pricesItems,
