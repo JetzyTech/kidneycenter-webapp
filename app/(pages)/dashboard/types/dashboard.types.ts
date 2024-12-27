@@ -1,4 +1,4 @@
-import { UseMutationResult } from "@tanstack/react-query";
+import { UseInfiniteQueryResult } from "@tanstack/react-query";
 
 export interface IHotel {
   id: string;
@@ -15,6 +15,11 @@ export interface IHotel {
   };
 }
 
+interface InfiniteData<T> {
+  pages: T[];
+  pageParams: unknown[];
+}
+
 export interface IHotelListing extends IHotel {
   docs: IHotel[];
 }
@@ -23,5 +28,5 @@ export interface IDashboardCtx {
   setHotelListings: React.Dispatch<
     React.SetStateAction<{ docs: IHotelListing[] }>
   >;
-  hotelListingMutation: UseMutationResult<any, Error, void, unknown>;
+  infiniteListing: UseInfiniteQueryResult<InfiniteData<IHotelListing>, unknown>;
 }

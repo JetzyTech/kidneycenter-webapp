@@ -2,13 +2,13 @@
 
 import React, { Suspense } from "react";
 import request from "@/app/lib/request";
-import { message, Spin, Typography } from "antd";
+import { Button, message, Spin, Typography } from "antd";
 import { IHotelListing } from "../types/dashboard.types";
 import { Filters } from "../components/hotels/filters";
 import { HotelCard } from "../components/hotels/hotel-card";
 import { DashboardContext } from "../hooks/use-dashboard-context";
 import { useFilter } from "../hooks/use-filter";
-import { useMutation } from "@tanstack/react-query";
+import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
 import {
   APIProvider,
   Map,
@@ -20,16 +20,24 @@ import {
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { LOGIN, useAppDispatch } from "@Jetzy/redux";
+import { useInView } from "react-intersection-observer";
 
 export default function Dashboard() {
   const [hotelListings, setHotelListings] = React.useState<{
     docs: IHotelListing[];
   }>({ docs: [] });
+  const [currentUserLocation, setCurrentUserLocation] = React.useState<{
+    lat: number;
+    lng: number;
+  } | null>(null);
   const { checkIn, checkOut, rooms, guests, lat, lng } = useFilter();
   const router = useRouter();
+  const session = useSession();
+  const dispatcher = useAppDispatch();
+  const { ref, inView } = useInView();
 
-  const getHotelListings = async () => {
-    const url = `/v1/meetselect/hotels?rooms=${rooms}&perPage=10&page=1&adults=${guests}&check_in=${checkIn}&check_out=${checkOut}&latitude=${lat}&longitude=${lng}`;
+  const getHotelListings = async ({ page }: { page: string }) => {
+    const url = `/v1/meetselect/hotels?rooms=${rooms}&perPage=10&page=${page}&adults=${guests}&check_in=${checkIn}&check_out=${checkOut}&latitude=${lat}&longitude=${lng}`;
     try {
       const result = await request.get(url);
 
@@ -42,13 +50,16 @@ export default function Dashboard() {
     }
   };
 
-  const hotelListingMutation = useMutation({
-    mutationKey: ["hotel-listings"],
-    mutationFn: getHotelListings,
-    onSettled: (data) => setHotelListings(data),
-    onError: (error) => {
-      console.error(error.message);
-      message.error(error.message);
+  const infiniteListing = useInfiniteQuery({
+    queryKey: ["infinite:listing"],
+    queryFn: ({ pageParam = 1 }) =>
+      getHotelListings({ page: String(pageParam) }),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage) => {
+      if (lastPage.nextPage) {
+        return lastPage.nextPage;
+      }
+      return undefined;
     },
   });
 
@@ -66,10 +77,38 @@ export default function Dashboard() {
     router.push(`/dashboard/hotels/${id}?${new URLSearchParams(queryParams)}`);
   };
 
-  // =======> [Auth Session] <======
-  const session = useSession();
+  React.useEffect(() => {
+    console.log("Checking geolocation support...");
 
-  const dispatcher = useAppDispatch();
+    if (navigator.geolocation) {
+      console.log("Geolocation is supported. Requesting location...");
+
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          console.log("Location retrieved successfully:", position);
+          setCurrentUserLocation({
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          });
+        },
+        (error) => {
+          switch (error.code) {
+            case error.PERMISSION_DENIED:
+              console.error("User denied the request for Geolocation.");
+              break;
+            case error.POSITION_UNAVAILABLE:
+              console.error("Location information is unavailable.");
+              break;
+            case error.TIMEOUT:
+              console.error("The request to get user location timed out.");
+              break;
+          }
+        }
+      );
+    } else {
+      console.error("Geolocation is not supported by this browser.");
+    }
+  }, []);
 
   React.useEffect(() => {
     if (session?.status === "authenticated") {
@@ -81,7 +120,13 @@ export default function Dashboard() {
     }
   }, [session?.status]);
 
-  // =======> [Auth Session] <======
+  React.useEffect(() => {
+    if (inView && infiniteListing.hasNextPage) {
+      infiniteListing.fetchNextPage();
+    }
+  }, [inView, infiniteListing.hasNextPage, infiniteListing.fetchNextPage]);
+
+  console.log({ currentUserLocation });
 
   return (
     <Suspense
@@ -91,9 +136,7 @@ export default function Dashboard() {
         </div>
       }
     >
-      <DashboardContext.Provider
-        value={{ setHotelListings, hotelListingMutation }}
-      >
+      <DashboardContext.Provider value={{ setHotelListings, infiniteListing }}>
         <div className="space-y-5">
           <div>
             <Typography.Text className="text-[32px] font-semibold">
@@ -115,81 +158,73 @@ export default function Dashboard() {
                 </Typography.Text>
               </div>
             ))}
-          {hotelListingMutation.isPending ? (
+          {infiniteListing.isPending ? (
             <div className="flex items-center justify-center">
               <Spin size="large" />
             </div>
           ) : (
             <div className="flex items-start justify-between gap-x-10 w-full">
               <div className="space-y-5 w-2/5 h-[683px] overflow-y-scroll">
-                {hotelListings?.docs?.map((entry) => (
-                  <div
-                    key={entry.id}
-                    className="cursor-pointer"
-                    onClick={() => onHotelSelect(entry.id)}
-                  >
-                    <HotelCard entry={entry} />
-                  </div>
-                ))}
-              </div>
-              {hotelListings?.docs?.length > 0 && (
-                <div className="pr-10 w-3/5">
-                  <APIProvider
-                    apiKey={
-                      process.env.NEXT_PUBLIC_GOOGLE_MAP_API_KEY as string
-                    }
-                    libraries={["marker"]}
-                  >
-                    <Map
-                      key={1}
-                      defaultZoom={12}
-                      defaultCenter={{ lat: Number(lat), lng: Number(lng) }}
-                      style={{ width: "50vw", height: "683px" }}
+                {infiniteListing.data?.pages?.map((page) =>
+                  page.docs?.map((entry: IHotelListing) => (
+                    <div
+                      key={entry.id}
+                      className="cursor-pointer"
+                      onClick={() => onHotelSelect(entry.id)}
                     >
-                      {hotelListings?.docs &&
-                        hotelListings?.docs?.map((entry) => {
-                          const latitude = Number(entry.geo?.latitude);
-                          const longitude = Number(entry.geo?.longitude);
-                          const position = { lat: latitude, lng: longitude };
-
-                          if (!isNaN(latitude) && !isNaN(longitude)) {
-                            return (
-                              <>
-                                <Marker
-                                  key={entry.id}
-                                  position={position}
-                                  title={entry.name}
-                                />
-                              </>
-                              // <AdvancedMarkerWithRef
-                              //   // onMarkerClick={(
-                              //   //   marker: google.maps.marker.AdvancedMarkerElement
-                              //   // ) => onMarkerClick(id, marker)}
-                              //   // onMouseEnter={() => onMouseEnter(id)}
-                              //   // onMouseLeave={onMouseLeave}
-                              //   key={entry.id}
-                              //   // zIndex={zIndex}
-                              //   className="custom-marker"
-                              //   // style={{
-                              //   //   transform: `scale(${[hoverId, selectedId].includes(id) ? 1.3 : 1})`,
-                              //   //   transformOrigin: AdvancedMarkerAnchorPoint['BOTTOM'].join(' ')
-                              //   // }}
-                              //   position={position}
-                              // >
-                              //   <Pin
-                              //     background="#22ccff"
-                              //     borderColor="#1e89a1"
-                              //     glyphColor="#0f677a"
-                              //   />
-                              // </AdvancedMarkerWithRef>
-                            );
-                          }
-                          return null;
-                        })}
-                    </Map>
-                  </APIProvider>
+                      <HotelCard entry={entry} />
+                    </div>
+                  ))
+                )}
+                <div
+                  ref={ref}
+                  className="h-10 flex justify-center items-center"
+                >
+                  {infiniteListing.isFetchingNextPage ? (
+                    <div className="flex items-center justify-center">
+                      <Spin />
+                    </div>
+                  ) : infiniteListing.hasNextPage ? (
+                    <Typography.Text className="text-muted flex items-center justify-center text-sm">
+                      Scroll to load more
+                    </Typography.Text>
+                  ) : (
+                    <Typography.Text className="text-muted text-sm">
+                      No records to show
+                    </Typography.Text>
+                  )}
                 </div>
-              )}
+              </div>
+              <div className="pr-10 w-3/5">
+                <APIProvider
+                  apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAP_API_KEY as string}
+                  libraries={["marker"]}
+                >
+                  <Map
+                    key={JSON.stringify(infiniteListing.data?.pages)}
+                    defaultZoom={12}
+                    defaultCenter={{ lat: Number(lat), lng: Number(lng) }}
+                    style={{ width: "50vw", height: "683px" }}
+                  >
+                    {infiniteListing.data?.pages.map((page) =>
+                      page.docs.map((entry: IHotelListing) => {
+                        const latitude = Number(entry.geo?.latitude);
+                        const longitude = Number(entry.geo?.longitude);
+                        const position = { lat: latitude, lng: longitude };
+                        if (!isNaN(latitude) && !isNaN(longitude)) {
+                          return (
+                            <Marker
+                              key={entry.id}
+                              position={position || currentUserLocation}
+                              title={entry.name}
+                            />
+                          );
+                        }
+                      })
+                    )}
+                  </Map>
+                </APIProvider>
+              </div>
             </div>
           )}
         </div>
