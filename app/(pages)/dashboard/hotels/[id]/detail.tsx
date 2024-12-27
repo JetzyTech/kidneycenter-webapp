@@ -70,7 +70,7 @@ const Detail = ({ data }: { data: HotelDetail }) => {
                 height={393}
                 className="object-cover w-[680px] h-[393px]"
               />
-              <div className="w-[60px] h-[393px] overflow-y-scroll space-y-3">
+              <div className="w-[60px] h-[393px] overflow-y-scroll space-y-3 hide-scrollbar">
                 {data?.photo_data?.map((photo, idx) => (
                   <div
                     key={photo}
