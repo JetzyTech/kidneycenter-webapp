@@ -29,6 +29,10 @@ export const authOptions: NextAuthOptions = {
 				// You can also use the `req` object to obtain additional parameters
 				// (i.e., the request IP address)
 
+				console.log("====================================")
+				console.log("Next auth url: ", process.env.NEXTAUTH_URL)
+				console.log("====================================")
+
 				let serverRes
 				if (credentials?.password !== "auto-login") {
 					serverRes = await AuthorizeUserApi({ data: credentials })

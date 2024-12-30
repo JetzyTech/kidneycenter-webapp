@@ -21,9 +21,6 @@ export default async function RootLayout({
 }: Readonly<{
 	children: React.ReactNode
 }>) {
-	console.log("====================================")
-	console.log("Next auth url: ", process.env.NEXTAUTH_URL)
-	console.log("====================================")
 	return (
 		<html lang="en">
 			<ThemeProvider theme={theme}>
