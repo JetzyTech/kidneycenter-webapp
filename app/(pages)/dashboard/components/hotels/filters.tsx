@@ -33,8 +33,6 @@ const pricesItems = [
 ];
 
 export const Filters = () => {
-  const searchParams = useSearchParams();
-
   const { infiniteListing } = useDashboardContext();
   const {
     guests,
@@ -49,19 +47,6 @@ export const Filters = () => {
     setSelectedStars,
     updateField,
   } = useFilter();
-
-  React.useEffect(() => {
-    const checkIn = searchParams.get("check_in");
-    const checkOut = searchParams.get("check_out");
-    const guests = searchParams.get("adults");
-    const rooms = searchParams.get("rooms");
-    const lat = searchParams.get("lat");
-    const lng = searchParams.get("lng");
-
-    if (checkIn && checkOut && guests && rooms && lat && lng) {
-      infiniteListing.refetch();
-    }
-  }, []);
 
   const handleSearch = () => infiniteListing.refetch();
 
@@ -217,6 +202,9 @@ export const Filters = () => {
                 icon={<SearchSVG />}
                 iconPosition="end"
                 onClick={handleSearch}
+                disabled={
+                  infiniteListing.isFetching || infiniteListing.isPending
+                }
               >
                 Search
               </Button>

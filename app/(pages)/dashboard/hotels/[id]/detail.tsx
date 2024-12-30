@@ -140,31 +140,24 @@ const Detail = ({ data }: { data: HotelDetail }) => {
                 </Typography.Text>
 
                 <div>
-                  <APIProvider
-                    libraries={["marker"]}
-                    apiKey={
-                      process.env.NEXT_PUBLIC_GOOGLE_MAP_API_KEY as string
-                    }
+                  <Map
+                    key="1"
+                    defaultZoom={15}
+                    defaultCenter={{
+                      lat: Number(data?.geo?.latitude),
+                      lng: Number(data?.geo?.longitude),
+                    }}
+                    style={{ width: "100%", height: "320px" }}
                   >
-                    <Map
-                      key="1"
-                      defaultZoom={15}
-                      defaultCenter={{
+                    <Marker
+                      key={data?.name}
+                      position={{
                         lat: Number(data?.geo?.latitude),
                         lng: Number(data?.geo?.longitude),
                       }}
-                      style={{ width: "100%", height: "320px" }}
-                    >
-                      <Marker
-                        key={data?.name}
-                        position={{
-                          lat: Number(data?.geo?.latitude),
-                          lng: Number(data?.geo?.longitude),
-                        }}
-                        title={data?.name}
-                      />
-                    </Map>
-                  </APIProvider>
+                      title={data?.name}
+                    />
+                  </Map>
                 </div>
               </div>
             </div>

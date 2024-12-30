@@ -30,6 +30,7 @@ export default async function DashboardLayout({
       <div className="flex flex-col min-h-screen">
         <ReactQueryProvider>
           <Navbar />
+
           <main className="flex-1 pl-10 py-10">{children}</main>
           <SimpleFooter />
         </ReactQueryProvider>

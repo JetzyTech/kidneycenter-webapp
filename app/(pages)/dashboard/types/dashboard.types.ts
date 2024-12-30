@@ -25,8 +25,5 @@ export interface IHotelListing extends IHotel {
 }
 
 export interface IDashboardCtx {
-  setHotelListings: React.Dispatch<
-    React.SetStateAction<{ docs: IHotelListing[] }>
-  >;
   infiniteListing: UseInfiniteQueryResult<InfiniteData<IHotelListing>, unknown>;
 }
