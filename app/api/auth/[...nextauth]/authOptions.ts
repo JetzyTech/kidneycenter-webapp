@@ -63,7 +63,7 @@ export const authOptions: NextAuthOptions = {
   pages: {
     signIn: ROUTES.auth,
     error: ROUTES.auth,
-    signOut: ROUTES.auth,
+    signOut: `${process.env.NEXTAUTH_URL}${ROUTES.auth}`,
   },
   callbacks: {
     async signIn({ account, profile }) {

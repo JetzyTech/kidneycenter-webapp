@@ -140,24 +140,33 @@ const Detail = ({ data }: { data: HotelDetail }) => {
                 </Typography.Text>
 
                 <div>
-                  <Map
-                    key="1"
-                    defaultZoom={15}
-                    defaultCenter={{
-                      lat: Number(data?.geo?.latitude),
-                      lng: Number(data?.geo?.longitude),
-                    }}
-                    style={{ width: "100%", height: "320px" }}
+                  <APIProvider
+                    apiKey={
+                      process.env.NEXT_PUBLIC_GOOGLE_MAP_API_KEY as string
+                    }
+                    libraries={["marker"]}
+                    onLoad={() => console.log("Maps API has loaded.")}
+                    onError={(error) => console.log("Map Error: ", error)}
                   >
-                    <Marker
-                      key={data?.name}
-                      position={{
+                    <Map
+                      key="1"
+                      defaultZoom={15}
+                      defaultCenter={{
                         lat: Number(data?.geo?.latitude),
                         lng: Number(data?.geo?.longitude),
                       }}
-                      title={data?.name}
-                    />
-                  </Map>
+                      style={{ width: "100%", height: "320px" }}
+                    >
+                      <Marker
+                        key={data?.name}
+                        position={{
+                          lat: Number(data?.geo?.latitude),
+                          lng: Number(data?.geo?.longitude),
+                        }}
+                        title={data?.name}
+                      />
+                    </Map>
+                  </APIProvider>
                 </div>
               </div>
             </div>
