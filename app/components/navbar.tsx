@@ -19,10 +19,7 @@ export default function Navbar() {
 
   // handle logout
   const handleLogout = async () =>
-    signOut({
-      redirect: true,
-      callbackUrl: `${process.env.NEXT_PUBLIC_URL}${ROUTES.auth}`,
-    });
+    signOut({ redirect: true, callbackUrl: ROUTES.auth });
 
   return (
     <div className="bg-white z-50 sticky top-0 left-0 right-0 flex items-center justify-between py-4 px-10 border-b border-b-[#EDEDED]">
