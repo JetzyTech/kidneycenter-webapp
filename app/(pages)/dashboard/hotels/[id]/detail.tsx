@@ -14,37 +14,74 @@ import {
   setSelectedRoomDetails,
 } from "@Jetzy/redux/reducers/hotel/bookingSlice";
 
-const Detail = ({ data }: { data: HotelDetail }) => {
+interface RateData {
+  ppn_bundle: string;
+  price_details: PriceDetails;
+}
+
+interface Room {
+  id: string;
+  rate_data: RateData;
+  title: string;
+  description: string;
+}
+
+interface PriceDetails {
+  display_symbol: string | null;
+  night_price_data: NightPriceData[];
+  source_sub_total: number | null;
+  source_taxes: number | null;
+  display_all_in_total: number | null;
+}
+
+interface NightPriceData {
+  display_night_price: number | null;
+}
+
+interface RoomData {
+  room_data: Room[];
+}
+
+const Detail = ({
+  hotelData,
+  roomData,
+}: {
+  hotelData: HotelDetail;
+  roomData: RoomData;
+}) => {
   const [selectedImageIdx, setSelectedImageIdx] = React.useState(0);
   const [selectedDeal, setSelectedDeal] = useQueryState(
     "deal",
     parseAsString.withDefault("")
   );
 
+  console.log({ hotelData, roomData });
+
   const dispatch = useAppDispatch();
-  const selectedRoom = data?.room_data?.find(
+  const selectedRoom = roomData?.room_data?.find(
     (room) => room.id === selectedDeal
   );
+
   const bookingRequestId =
     selectedDeal &&
-    data?.room_data?.find((room) => room.id === selectedDeal)?.rate_data
+    roomData?.room_data?.find((room) => room.id === selectedDeal)?.rate_data
       ?.ppn_bundle;
 
   React.useEffect(() => {
-    if (bookingRequestId && selectedDeal && data) {
+    if (bookingRequestId && selectedDeal && hotelData) {
       dispatch(
         setHotelBookingDetails({
           booking_request_id: bookingRequestId,
           external_room_id: selectedDeal,
-          external_hotel_id: data.id,
+          external_hotel_id: hotelData.id,
         })
       );
     }
 
-    if (data) {
+    if (hotelData) {
       dispatch(setSelectedRoomDetails({ ...selectedRoom }));
     }
-  }, [bookingRequestId, selectedDeal, data, selectedRoom]);
+  }, [bookingRequestId, selectedDeal, hotelData, selectedRoom]);
 
   return (
     <>
@@ -52,26 +89,28 @@ const Detail = ({ data }: { data: HotelDetail }) => {
         <div className="max-w-3xl">
           <div className="flex flex-col mt-10 space-y-5">
             <Typography.Text className="text-[28px] font-bold">
-              {data?.name}
+              {hotelData?.name}
             </Typography.Text>
             <Rate
               disabled
-              defaultValue={data?.star_rating}
+              defaultValue={hotelData?.star_rating}
               className="text-primary"
             />
 
             <div className="flex gap-x-3">
               <Image
                 src={
-                  (data?.photo_data && data?.photo_data[selectedImageIdx]) ?? ""
+                  (hotelData?.photo_data &&
+                    hotelData?.photo_data[selectedImageIdx]) ??
+                  ""
                 }
-                alt={data?.name ?? ""}
+                alt={hotelData?.name ?? ""}
                 width={680}
                 height={393}
                 className="object-cover w-[680px] h-[393px]"
               />
               <div className="w-[60px] h-[393px] overflow-y-scroll space-y-3 hide-scrollbar">
-                {data?.photo_data?.map((photo, idx) => (
+                {hotelData?.photo_data?.map((photo, idx) => (
                   <div
                     key={photo}
                     className={cn(
@@ -83,7 +122,7 @@ const Detail = ({ data }: { data: HotelDetail }) => {
                   >
                     <Image
                       src={photo}
-                      alt={data?.name}
+                      alt={hotelData?.name}
                       width={59}
                       height={40}
                       className="object-cover h-[40px] w-[59px] cursor-pointer rounded-md"
@@ -100,18 +139,18 @@ const Detail = ({ data }: { data: HotelDetail }) => {
                   About
                 </Typography.Text>
                 <Typography.Text className="font-normal text-base text-muted">
-                  {data?.hotel_description}
+                  {hotelData?.hotel_description}
                 </Typography.Text>
               </div>
               <div className="space-y-5">
                 <Typography.Text className="font-medium text-xl">
                   Amenities
                 </Typography.Text>
-                {data?.amenity_data?.length === 0 ? (
+                {hotelData?.amenity_data?.length === 0 ? (
                   <Typography.Text>No Amemity found</Typography.Text>
                 ) : (
                   <div className="flex flex-wrap gap-2">
-                    {data?.amenity_data?.map((entry) => (
+                    {hotelData?.amenity_data?.map((entry) => (
                       <Tag
                         key={entry.id}
                         className="w-max px-2 py-1 bg-[#F6F6F6] text-[#0A141B]"
@@ -125,9 +164,11 @@ const Detail = ({ data }: { data: HotelDetail }) => {
               </div>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-x-1">
-                  <Pins />
+                  <div>
+                    <Pins />
+                  </div>
                   <Typography.Text className="text-[#0A141B]">
-                    {data?.address?.one_line}
+                    {hotelData?.address?.one_line}
                   </Typography.Text>
                 </div>
                 <div>
@@ -140,24 +181,33 @@ const Detail = ({ data }: { data: HotelDetail }) => {
                 </Typography.Text>
 
                 <div>
-                  <Map
-                    key="1"
-                    defaultZoom={15}
-                    defaultCenter={{
-                      lat: Number(data?.geo?.latitude),
-                      lng: Number(data?.geo?.longitude),
-                    }}
-                    style={{ width: "100%", height: "320px" }}
+                  <APIProvider
+                    apiKey={
+                      process.env.NEXT_PUBLIC_GOOGLE_MAP_API_KEY as string
+                    }
+                    libraries={["marker"]}
+                    onLoad={() => console.log("Maps API has loaded.")}
+                    onError={(error) => console.log("Map Error: ", error)}
                   >
-                    <Marker
-                      key={data?.name}
-                      position={{
-                        lat: Number(data?.geo?.latitude),
-                        lng: Number(data?.geo?.longitude),
+                    <Map
+                      key="1"
+                      defaultZoom={15}
+                      defaultCenter={{
+                        lat: Number(hotelData?.geo?.latitude),
+                        lng: Number(hotelData?.geo?.longitude),
                       }}
-                      title={data?.name}
-                    />
-                  </Map>
+                      style={{ width: "100%", height: "320px" }}
+                    >
+                      <Marker
+                        key={hotelData?.name}
+                        position={{
+                          lat: Number(hotelData?.geo?.latitude),
+                          lng: Number(hotelData?.geo?.longitude),
+                        }}
+                        title={hotelData?.name}
+                      />
+                    </Map>
+                  </APIProvider>
                 </div>
               </div>
             </div>
@@ -167,7 +217,7 @@ const Detail = ({ data }: { data: HotelDetail }) => {
         <div className="flex flex-col gap-y-5">
           <Filters />
 
-          {data?.room_data?.map((room) => (
+          {roomData?.room_data?.map((room) => (
             <RoomDetail
               key={room.id}
               selectedDeal={selectedDeal}

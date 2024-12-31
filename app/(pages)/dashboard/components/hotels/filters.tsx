@@ -5,7 +5,6 @@ import PlacesAutocomplete from "./autocomplete";
 import { useDashboardContext } from "../../hooks/use-dashboard-context";
 import { ChevronDownSVG, SearchSVG, Stars } from "@/app/assets/icons";
 import { Counter } from "./counter";
-import { useSearchParams } from "next/navigation";
 import { useFilter } from "../../hooks/use-filter";
 import {
   Button,
@@ -46,6 +45,8 @@ export const Filters = () => {
     selectedStars,
     setSelectedStars,
     updateField,
+    checkIn,
+    checkOut,
   } = useFilter();
 
   const handleSearch = () => infiniteListing.refetch();
@@ -160,6 +161,14 @@ export const Filters = () => {
                 format="YYYY-MM-DD"
                 disabledDate={(current) =>
                   current && current < dayjs().startOf("day")
+                }
+                value={
+                  checkIn && checkOut
+                    ? [
+                        dayjs(checkIn, "YYYY-MM-DD"),
+                        dayjs(checkOut, "YYYY-MM-DD"),
+                      ]
+                    : null
                 }
                 onChange={(_, dateStrings) => {
                   updateField("checkIn", dateStrings[0]);

@@ -76,7 +76,7 @@ export default function Authentication() {
         <Image
           src={AuthBgImg}
           alt="Jetzy signup"
-          className="w-[896px] h-[900px] object-cover"
+          className="w-[896px] h-screen object-cover"
         />
 
         <div className="absolute top-1/2 left-0 right-0 flex flex-col items-center text-center w-[564px] mx-auto justify-center">

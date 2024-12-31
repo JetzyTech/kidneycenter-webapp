@@ -1,7 +1,25 @@
 import request from "@/app/lib/request";
 import { useQuery } from "@tanstack/react-query";
 
-export const fetchHotelDetail = async (
+export const fetchHotelDetail = async (hotelId: string) => {
+  // https://sandbox.jetzy.com/api/v1/meetselect/hotels/707276819
+
+  const url = `/v1/meetselect/hotels/${hotelId}`;
+
+  try {
+    const response = await request.get(url);
+
+    if (!response.data) {
+      throw new Error("No Hotels Found!");
+    }
+
+    return response.data;
+  } catch (error: any) {
+    console.error(error?.message);
+  }
+};
+
+export const fetchHotelRooms = async (
   hotelId: string,
   checkIn: string,
   checkOut: string,
@@ -10,13 +28,17 @@ export const fetchHotelDetail = async (
 ) => {
   const url = `/v1/meetselect/hotels/rooms/list?hotel_id=${hotelId}&rooms=${rooms}&check_in=${checkIn}&check_out=${checkOut}&adults=${guests}`;
 
-  const response = await request.get(url);
+  try {
+    const response = await request.get(url);
 
-  if (!response.data) {
-    throw new Error("No Hotels Found!");
+    if (!response.data) {
+      throw new Error("No Hotel Rooms Found!");
+    }
+
+    return response.data;
+  } catch (error: any) {
+    console.error(error?.message);
   }
-
-  return response.data;
 };
 
 const useHotelDetail = (
@@ -27,9 +49,9 @@ const useHotelDetail = (
   rooms: number
 ) => {
   return useQuery<HotelDetail, Error>({
-    queryKey: ["hotel-detail", hotelId, checkIn, checkOut, guests, rooms],
-    queryFn: () => fetchHotelDetail(hotelId, checkIn, checkOut, guests, rooms),
-    enabled: !!hotelId && !!checkIn && !!checkOut, 
+    queryKey: ["hotel-detail", hotelId],
+    queryFn: () => fetchHotelDetail(hotelId),
+    enabled: !!hotelId,
   });
 };
 
