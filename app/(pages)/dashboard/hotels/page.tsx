@@ -27,11 +27,26 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { LOGIN, useAppDispatch } from "@Jetzy/redux";
 import { useInView } from "react-intersection-observer";
+import {
+  filterByPriceRange,
+  filterByStarRating,
+  sortListings,
+} from "@Jetzy/app/lib/helper";
 
 export default function Dashboard() {
   const [searchLoading, setSearchLoading] = React.useState(false);
 
-  const { checkIn, checkOut, rooms, guests, lat, lng } = useFilter();
+  const {
+    checkIn,
+    checkOut,
+    rooms,
+    guests,
+    lat,
+    lng,
+    selectedStars,
+    sortPrice,
+    priceRange,
+  } = useFilter();
   const router = useRouter();
   const session = useSession();
   const dispatcher = useAppDispatch();
@@ -110,9 +125,34 @@ export default function Dashboard() {
     }
   }, []);
 
-  const empty = infiniteListing.data?.pages?.map(
-    (page: any) => page.docs.length === 0
+  const getFilteredListings = (
+    infiniteListing: UseInfiniteQueryResult<InfiniteData<IHotelListing>>,
+    selectedStars: number | null,
+    priceRange: number[],
+    sortPrice: string
+  ): IHotelListing[] => {
+    const allListings =
+      infiniteListing.data?.pages?.flatMap((page: any) => page.docs) || [];
+
+    // Step 1: Filter by star rating
+    const starRatedListings = filterByStarRating(allListings, selectedStars);
+
+    // Step 2: Filter by price range
+    const filteredListings = filterByPriceRange(starRatedListings, priceRange);
+
+    // Step 3: Sort the filtered listings
+    return sortListings(filteredListings, sortPrice);
+  };
+
+  // Usage example
+  const filteredAndSortedListings = getFilteredListings(
+    infiniteListing,
+    selectedStars,
+    priceRange,
+    sortPrice
   );
+
+  console.log({ filteredAndSortedListings, priceRange });
 
   return (
     <Suspense
@@ -143,17 +183,27 @@ export default function Dashboard() {
               {(infiniteListing.fetchStatus === "fetching" ||
                 infiniteListing.isLoading) && <Spin size="large" />}
 
-              {infiniteListing.data?.pages?.map((page: any) =>
-                page.docs?.map((entry: IHotelListing) => (
-                  <div
-                    key={entry.id}
-                    className="cursor-pointer"
-                    onClick={() => onHotelSelect(entry.id)}
-                  >
-                    <HotelCard entry={entry} />
-                  </div>
-                ))
+              {filteredAndSortedListings?.map(
+                (entry: any) =>
+                  entry?.length === 0 && (
+                    <div>
+                      <Typography.Text>No Records Found...</Typography.Text>
+                      <Typography.Text>
+                        Please adjust your filters...
+                      </Typography.Text>
+                    </div>
+                  )
               )}
+
+              {filteredAndSortedListings?.map((entry: IHotelListing) => (
+                <div
+                  key={entry.id}
+                  className="cursor-pointer"
+                  onClick={() => onHotelSelect(entry.id)}
+                >
+                  <HotelCard entry={entry} />
+                </div>
+              ))}
 
               <div ref={ref} className="h-10 flex justify-center items-center">
                 {infiniteListing.isFetchingNextPage ? (
@@ -232,10 +282,10 @@ const RenderMap = ({
     >
       <Map
         key={JSON.stringify(infiniteListing.data.pages)}
-        defaultZoom={12}
+        defaultZoom={10}
         defaultCenter={{
-          lat: currentUserLocation ? currentUserLocation.lat : lat,
-          lng: currentUserLocation ? currentUserLocation.lng : lng,
+          lat: lat || (currentUserLocation ? currentUserLocation.lat : lat),
+          lng: lng || (currentUserLocation ? currentUserLocation.lng : lng),
         }}
         style={{ width: "50vw", height: "683px" }}
       >

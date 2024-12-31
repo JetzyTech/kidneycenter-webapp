@@ -27,3 +27,10 @@ export interface IHotelListing extends IHotel {
 export interface IDashboardCtx {
   infiniteListing: UseInfiniteQueryResult<InfiniteData<IHotelListing>, unknown>;
 }
+
+// FILTERS
+
+export enum SORT_PRICE {
+  LOW_TO_HIGH = "LOW TO HIGH",
+  HIGH_TO_LOW = "HIGH TO LOW",
+}

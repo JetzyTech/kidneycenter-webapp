@@ -281,6 +281,14 @@ const CheckoutForm = () => {
                 picker="month"
                 format="MM/YY"
                 placeholder="MM / YY"
+                value={
+                  checkIn && checkOut
+                    ? [
+                        dayjs(checkIn, "YYYY-MM-DD"),
+                        dayjs(checkOut, "YYYY-MM-DD"),
+                      ]
+                    : null
+                }
                 className="border border-[#EDEDED] w-full"
               />
             </Form.Item>

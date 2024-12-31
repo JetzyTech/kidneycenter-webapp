@@ -7,16 +7,18 @@ interface IFilter {
   guests: number;
   rooms: number;
   sortPrice: string;
+  urlPriceRange: number;
   priceRange: [number, number];
   tempPriceRange: [number, number];
-  selectedStars: number[];
+  selectedStars: number;
   lat: string;
   lng: string;
   updateField: (field: keyof IFilter, value: any) => void;
   setPriceRange: React.Dispatch<React.SetStateAction<[number, number]>>;
   setSortPrice: React.Dispatch<React.SetStateAction<string>>;
   setTempPriceRange: React.Dispatch<React.SetStateAction<[number, number]>>;
-  setSelectedStars: React.Dispatch<React.SetStateAction<number[]>>;
+  setSelectedStars: React.Dispatch<React.SetStateAction<number>>;
+  setUrlPriceRange: React.Dispatch<React.SetStateAction<number>>;
 }
 
 export const useFilter = (): IFilter => {
@@ -36,16 +38,26 @@ export const useFilter = (): IFilter => {
     "rooms",
     parseAsInteger.withDefault(1)
   );
-  const [lat, setLat] = useQueryState('lat', parseAsString.withDefault(''));
-  const [lng, setLng] = useQueryState('lng', parseAsString.withDefault(''));
-  const [sortPrice, setSortPrice] = React.useState<string>("Any");
+  const [lat, setLat] = useQueryState("lat", parseAsString.withDefault(""));
+  const [lng, setLng] = useQueryState("lng", parseAsString.withDefault(""));
+  const [sortPrice, setSortPrice] = useQueryState(
+    "sort",
+    parseAsString.withDefault("")
+  );
+  const [selectedStars, setSelectedStars] = useQueryState(
+    "stars",
+    parseAsInteger.withDefault(0)
+  );
+  const [urlPriceRange, setUrlPriceRange] = useQueryState(
+    "range",
+    parseAsInteger.withDefault(0)
+  );
   const [priceRange, setPriceRange] = React.useState<[number, number]>([
     0, 1000,
   ]);
   const [tempPriceRange, setTempPriceRange] = React.useState<[number, number]>([
     0, 1000,
   ]);
-  const [selectedStars, setSelectedStars] = React.useState<number[]>([]);
 
   const updateField = React.useCallback(
     (field: string, value: any) => {
@@ -62,25 +74,36 @@ export const useFilter = (): IFilter => {
         case "rooms":
           setRooms(value);
           break;
-        case "prices":
+        case "stars":
+          setSelectedStars(value);
+          break;
+        case "sortPrice":
           setSortPrice(value);
           break;
-        case "star_ratings":
-          setSortPrice(value);
+        case "priceRange":
+          setPriceRange(value);
+          setUrlPriceRange(value);
           break;
-        case "price_range":
-          setSortPrice(value);
+        case "lat":
+          setLat(value);
           break;
-          case "lat":
-            setLat(value);
-            break;
-          case "lng":
-            setLng(value);
+        case "lng":
+          setLng(value);
         default:
           break;
       }
     },
-    [checkIn, checkOut, guests, rooms]
+    [
+      checkIn,
+      checkOut,
+      guests,
+      rooms,
+      selectedStars,
+      lat,
+      lng,
+      priceRange,
+      sortPrice,
+    ]
   );
 
   return {
@@ -92,6 +115,7 @@ export const useFilter = (): IFilter => {
     lat,
     lng,
     setSortPrice,
+    urlPriceRange,
     priceRange,
     tempPriceRange,
     selectedStars,
@@ -99,5 +123,6 @@ export const useFilter = (): IFilter => {
     setPriceRange,
     setTempPriceRange,
     setSelectedStars,
+    setUrlPriceRange,
   };
 };
