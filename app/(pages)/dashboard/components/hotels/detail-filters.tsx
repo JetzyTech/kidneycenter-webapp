@@ -5,6 +5,7 @@ import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { useFilter } from "../../hooks/use-filter";
 import { Counter } from "./counter";
 import { Suspense } from "react";
+import dayjs from "dayjs";
 
 export const Filters = () => {
   const { rooms, guests, updateField, checkIn, checkOut, lat, lng } =
@@ -52,6 +53,14 @@ export const Filters = () => {
             <DatePicker.RangePicker
               size="large"
               format="YYYY-MM-DD"
+              value={
+                checkIn && checkOut
+                  ? [
+                      dayjs(checkIn, "YYYY-MM-DD"),
+                      dayjs(checkOut, "YYYY-MM-DD"),
+                    ]
+                  : null
+              }
               onChange={(dates, dateStrings) => {
                 updateField("checkIn", dateStrings[0]);
                 updateField("checkOut", dateStrings[1]);

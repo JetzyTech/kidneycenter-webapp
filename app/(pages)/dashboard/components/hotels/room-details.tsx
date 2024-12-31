@@ -3,9 +3,9 @@ import { CheckmarkSVG, ChevronRightSVG } from "@/app/assets/icons";
 import { cn } from "@/app/lib/helper";
 
 export const RoomDetail = ({
+  room,
   selectedDeal,
   setSelectedDeal,
-  room,
   footer = true,
 }: {
   selectedDeal?: string;
