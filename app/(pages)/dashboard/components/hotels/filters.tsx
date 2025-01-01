@@ -40,92 +40,117 @@ export const Filters = () => {
     tempPriceRange,
     setTempPriceRange,
     setPriceRange,
-    setSortPrice,
     sortPrice,
     selectedStars,
     setSelectedStars,
     updateField,
     checkIn,
     checkOut,
+    urlPriceRange,
   } = useFilter();
 
-  const handleSearch = () => infiniteListing.refetch();
+  const handleSearch = () => {
+    infiniteListing.refetch();
+  };
 
   const pricesProps: MenuProps = {
     items: pricesItems,
     onClick: (e) => {
-      setSortPrice(
+      updateField(
+        "sortPrice",
         pricesItems.find((item) => item.key === e.key)?.label || "Any"
       );
     },
   };
 
-  const PriceRangeContent = () => (
-    <Card className="w-[378px] drop-shadow-xl">
-      <Slider
-        range
-        min={0}
-        max={1000}
-        value={tempPriceRange}
-        onChange={(value) => setTempPriceRange(value as [number, number])}
-        className="[&_.ant-slider-track]:!bg-primary [&_.ant-slider-handle]:!border-primary"
-      />
-      <div className="flex justify-end mt-4">
-        <div className="flex justify-end gap-x-2">
-          <Button
-            size="small"
-            type="text"
-            className="text-muted"
-            onClick={() => {
-              setTempPriceRange([0, 1000]);
-              setPriceRange([0, 1000]);
-            }}
-          >
-            Cancel
-          </Button>
-          <Typography.Text
-            className="text-primary underline hover:text-primary cursor-pointer"
-            onClick={() => setPriceRange(tempPriceRange)}
-          >
-            Apply
-          </Typography.Text>
+  const handleApplyClick = () => {
+    if (Array.isArray(tempPriceRange) && tempPriceRange.length === 2) {
+      const [minPrice, maxPrice] = tempPriceRange;
+
+      if (!isNaN(minPrice) && !isNaN(maxPrice)) {
+        const formattedValues = `${minPrice.toString()}-${maxPrice.toString()}`;
+        updateField("priceRange", formattedValues);
+      } else {
+        console.error("Invalid price range values");
+      }
+    } else {
+      console.error("Invalid price range");
+    }
+  };
+
+  const PriceRangeContent = React.useCallback(
+    () => (
+      <Card className="w-[378px] drop-shadow-xl">
+        <Slider
+          range
+          min={0}
+          max={1000}
+          value={tempPriceRange}
+          onChange={(value) => {
+            setTempPriceRange(value as [number, number]);
+          }}
+          className="[&_.ant-slider-track]:!bg-primary [&_.ant-slider-handle]:!border-primary"
+        />
+        <div className="flex justify-end mt-4">
+          <div className="flex justify-end gap-x-2">
+            <Button
+              size="small"
+              type="text"
+              className="text-muted"
+              onClick={() => {
+                setTempPriceRange([0, 1000]);
+                setPriceRange([0, 1000]);
+              }}
+            >
+              Cancel
+            </Button>
+            <Typography.Text
+              className="text-primary underline hover:text-primary cursor-pointer"
+              onClick={handleApplyClick}
+            >
+              Apply
+            </Typography.Text>
+          </div>
         </div>
-      </div>
-    </Card>
+      </Card>
+    ),
+    [tempPriceRange, priceRange]
   );
 
-  const StarRatingContent = ({
-    selectedStars,
-    setSelectedStars,
-  }: {
-    selectedStars: number[];
-    setSelectedStars: React.Dispatch<React.SetStateAction<number[]>>;
-  }) => (
-    <Card className="w-[176px] drop-shadow-xl">
-      <div className="space-y-2">
-        {[1, 2, 3, 4, 5].map((star) => (
-          <Checkbox
-            key={star}
-            className="flex"
-            checked={selectedStars.includes(star)}
-            onChange={() => {
-              if (selectedStars.includes(star)) {
-                setSelectedStars(selectedStars.filter((s) => s !== star));
-              } else {
-                setSelectedStars([...selectedStars, star]);
-              }
-            }}
-          >
-            <div className="flex gap-x-2">
-              {Array.from({ length: star }, (_, i) => (
-                <Stars key={i} />
-              ))}
-            </div>
-          </Checkbox>
-        ))}
-      </div>
-    </Card>
+  const StarRatingContent = React.useCallback(
+    ({
+      selectedStars,
+      setSelectedStars,
+    }: {
+      selectedStars: number[];
+      setSelectedStars: React.Dispatch<React.SetStateAction<number>>;
+    }) => (
+      <Card className="w-[176px] drop-shadow-xl">
+        <div className="space-y-2 flex flex-col">
+          {[1, 2, 3, 4, 5].map((star) => (
+            <Checkbox
+              key={star}
+              checked={selectedStars.includes(star)}
+              onChange={() => {
+                setSelectedStars(star);
+              }}
+            >
+              <div className="flex gap-x-2">
+                {Array.from({ length: star }, (_, i) => (
+                  <Stars key={i} />
+                ))}
+              </div>
+            </Checkbox>
+          ))}
+        </div>
+      </Card>
+    ),
+    [selectedStars, setSelectedStars]
   );
+
+  const priceRangeArray = urlPriceRange
+    ? urlPriceRange.split("-").map(Number)
+    : [0, 1000];
 
   return (
     <Suspense
@@ -233,16 +258,14 @@ export const Filters = () => {
                 trigger={["click"]}
                 dropdownRender={() => (
                   <StarRatingContent
-                    selectedStars={selectedStars}
-                    setSelectedStars={setSelectedStars}
+                    selectedStars={[selectedStars]}
+                    setSelectedStars={(star) => setSelectedStars(star)}
                   />
                 )}
               >
                 <Typography.Text className="inline-flex font-medium">
-                  {selectedStars.length > 0
-                    ? `${selectedStars.length} Star${
-                        selectedStars.length > 1 ? "s" : ""
-                      }`
+                  {selectedStars > 0
+                    ? `${selectedStars} Star${selectedStars > 1 ? "s" : ""}`
                     : "All"}
                   &nbsp;
                   <ChevronDownSVG />
@@ -263,7 +286,7 @@ export const Filters = () => {
                 trigger={["click"]}
               >
                 <Typography.Text className="inline-flex font-medium">
-                  {sortPrice}&nbsp;
+                  {sortPrice.trim() === "" ? "All" : sortPrice}&nbsp;
                   <ChevronDownSVG />
                 </Typography.Text>
               </Dropdown>
@@ -282,9 +305,9 @@ export const Filters = () => {
                 trigger={["click"]}
               >
                 <Typography.Text className="inline-flex font-medium">
-                  {priceRange[0] === 0 && priceRange[1] === 1000
+                  {priceRangeArray[0] === 0 && priceRangeArray[1] === 1000
                     ? "All"
-                    : `$${priceRange[0]} - $${priceRange[1]}`}
+                    : `$${priceRangeArray[0]} - $${priceRangeArray[1]}`}
                   &nbsp;
                   <ChevronDownSVG />
                 </Typography.Text>
