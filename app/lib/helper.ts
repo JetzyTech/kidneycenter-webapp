@@ -42,11 +42,14 @@ export const filterByStarRating = (
 // Function to filter listings by price range
 export const filterByPriceRange = (
   listings: IHotelListing[],
-  priceRange: number[]
+  priceRange: string
 ): IHotelListing[] => {
   return listings.filter((entry: IHotelListing) => {
-    const entryPrice = entry.price_non_saving; // Assuming price_non_saving is the price field
-    return entryPrice >= priceRange[0] && entryPrice <= priceRange[1];
+    if (!priceRange || typeof priceRange !== "string") return;
+    const entryPrice = entry.price_non_saving;
+    let range;
+    range = priceRange.split("-");
+    return entryPrice >= Number(range[0]) && entryPrice <= Number(range[1]);
   });
 };
 

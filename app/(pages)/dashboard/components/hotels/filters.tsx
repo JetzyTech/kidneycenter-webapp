@@ -46,6 +46,7 @@ export const Filters = () => {
     updateField,
     checkIn,
     checkOut,
+    urlPriceRange,
   } = useFilter();
 
   const handleSearch = () => {
@@ -64,10 +65,14 @@ export const Filters = () => {
 
   const handleApplyClick = () => {
     if (Array.isArray(tempPriceRange) && tempPriceRange.length === 2) {
-      setPriceRange(tempPriceRange);
-      console.log({ priceRange, tempPriceRange });
-      const formattedValues = `${tempPriceRange[0]}-${tempPriceRange[1]}`;
-      updateField("priceRange", formattedValues);
+      const [minPrice, maxPrice] = tempPriceRange;
+
+      if (!isNaN(minPrice) && !isNaN(maxPrice)) {
+        const formattedValues = `${minPrice.toString()}-${maxPrice.toString()}`;
+        updateField("priceRange", formattedValues);
+      } else {
+        console.error("Invalid price range values");
+      }
     } else {
       console.error("Invalid price range");
     }
@@ -142,6 +147,10 @@ export const Filters = () => {
     ),
     [selectedStars, setSelectedStars]
   );
+
+  const priceRangeArray = urlPriceRange
+    ? urlPriceRange.split("-").map(Number)
+    : [0, 1000];
 
   return (
     <Suspense
@@ -277,7 +286,7 @@ export const Filters = () => {
                 trigger={["click"]}
               >
                 <Typography.Text className="inline-flex font-medium">
-                  {sortPrice}&nbsp;
+                  {sortPrice.trim() === "" ? "All" : sortPrice}&nbsp;
                   <ChevronDownSVG />
                 </Typography.Text>
               </Dropdown>
@@ -296,9 +305,9 @@ export const Filters = () => {
                 trigger={["click"]}
               >
                 <Typography.Text className="inline-flex font-medium">
-                  {priceRange[0] === 0 && priceRange[1] === 1000
+                  {priceRangeArray[0] === 0 && priceRangeArray[1] === 1000
                     ? "All"
-                    : `$${priceRange}`}
+                    : `$${priceRangeArray[0]} - $${priceRangeArray[1]}`}
                   &nbsp;
                   <ChevronDownSVG />
                 </Typography.Text>

@@ -7,7 +7,7 @@ interface IFilter {
   guests: number;
   rooms: number;
   sortPrice: string;
-  urlPriceRange: number;
+  urlPriceRange: string;
   priceRange: [number, number];
   tempPriceRange: [number, number];
   selectedStars: number;
@@ -18,7 +18,7 @@ interface IFilter {
   setSortPrice: React.Dispatch<React.SetStateAction<string>>;
   setTempPriceRange: React.Dispatch<React.SetStateAction<[number, number]>>;
   setSelectedStars: React.Dispatch<React.SetStateAction<number>>;
-  setUrlPriceRange: React.Dispatch<React.SetStateAction<number>>;
+  setUrlPriceRange: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export const useFilter = (): IFilter => {
@@ -50,7 +50,7 @@ export const useFilter = (): IFilter => {
   );
   const [urlPriceRange, setUrlPriceRange] = useQueryState(
     "range",
-    parseAsInteger.withDefault(0)
+    parseAsString.withDefault("")
   );
   const [priceRange, setPriceRange] = React.useState<[number, number]>([
     0, 1000,

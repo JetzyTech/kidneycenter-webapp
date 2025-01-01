@@ -46,6 +46,7 @@ export default function Dashboard() {
     selectedStars,
     sortPrice,
     priceRange,
+    urlPriceRange,
   } = useFilter();
   const router = useRouter();
   const session = useSession();
@@ -128,31 +129,35 @@ export default function Dashboard() {
   const getFilteredListings = (
     infiniteListing: UseInfiniteQueryResult<InfiniteData<IHotelListing>>,
     selectedStars: number | null,
-    priceRange: number[],
+    urlPriceRange: string,
     sortPrice: string
   ): IHotelListing[] => {
     const allListings =
       infiniteListing.data?.pages?.flatMap((page: any) => page.docs) || [];
 
-    // Step 1: Filter by star rating
-    const starRatedListings = filterByStarRating(allListings, selectedStars);
+    let filteredListings = allListings;
 
-    // Step 2: Filter by price range
-    const filteredListings = filterByPriceRange(starRatedListings, priceRange);
+    if (selectedStars !== null) {
+      filteredListings = filterByStarRating(filteredListings, selectedStars);
+    }
 
-    // Step 3: Sort the filtered listings
-    return sortListings(filteredListings, sortPrice);
+    if (urlPriceRange) {
+      filteredListings = filterByPriceRange(filteredListings, urlPriceRange);
+    }
+
+    if (sortPrice) {
+      filteredListings = sortListings(filteredListings, sortPrice);
+    }
+
+    return filteredListings;
   };
 
-  // Usage example
   const filteredAndSortedListings = getFilteredListings(
     infiniteListing,
     selectedStars,
-    priceRange,
+    urlPriceRange,
     sortPrice
   );
-
-  console.log({ filteredAndSortedListings, priceRange });
 
   return (
     <Suspense
@@ -278,7 +283,7 @@ const RenderMap = ({
       apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAP_API_KEY as string}
       libraries={["marker"]}
       onLoad={() => console.log("Maps API has loaded.")}
-      onError={(error) => console.log("Map Error: ", error)}
+      onError={(error) => console.error("Map Error: ", error)}
     >
       <Map
         key={JSON.stringify(infiniteListing.data.pages)}
