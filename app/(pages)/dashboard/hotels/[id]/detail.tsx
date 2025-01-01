@@ -121,7 +121,7 @@ const Detail = ({
 
             <Link
               className="w-full bg-primary text-center font-semibold py-[10px] rounded-lg text-white text-base hover:text-white active:scale-95"
-              href="#"
+              href="/dashboard/packages"
             >
               Sign Up for Jetzy Select Membership
             </Link>

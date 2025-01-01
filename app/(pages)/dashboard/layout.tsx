@@ -31,7 +31,7 @@ export default async function DashboardLayout({
         <ReactQueryProvider>
           <Navbar />
 
-          <main className="flex-1 pl-10 py-10">{children}</main>
+          <main className="flex-1 p-10">{children}</main>
           <SimpleFooter />
         </ReactQueryProvider>
       </div>
