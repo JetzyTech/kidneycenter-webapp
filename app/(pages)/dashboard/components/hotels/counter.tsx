@@ -3,7 +3,7 @@ import { cn } from "@/app/lib/helper";
 import { Button } from "antd";
 
 export const Counter: React.FC<{
-  className?: string,
+  className?: string;
   count: number;
   iconHeight?: number;
   iconWidth?: number;
@@ -18,7 +18,12 @@ export const Counter: React.FC<{
 
   return (
     <>
-      <div className={cn("flex items-center justify-between gap-4 w-[131px] h-[40px] rounded-xl bg-[#F9F9F9] border border-[#C0C0C0] px-3", className)}>
+      <div
+        className={cn(
+          "flex items-center justify-between gap-4 w-[200px] h-[40px] rounded-xl bg-[#F9F9F9] border border-[#C0C0C0] px-3",
+          className
+        )}
+      >
         <span className="text-sm min-w-[1ch] text-center">{count}</span>
         <div className="flex items-center">
           <Button
