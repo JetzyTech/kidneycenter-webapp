@@ -1,4 +1,4 @@
-import React, { Suspense } from "react";
+import React from "react";
 import { Spin } from "antd";
 import { fetchHotelDetail, fetchHotelRooms } from "../../hooks/use-room-detail";
 import { DetailsBackBtn } from "../../components/hotels/details-back-btn";
@@ -27,13 +27,7 @@ export default async function HotelDetails({
   );
 
   return (
-    <Suspense
-      fallback={
-        <div className="flex items-center justify-center h-screen">
-          <Spin />
-        </div>
-      }
-    >
+    <>
       <div className="max-w-7xl mx-auto">
         <DetailsBackBtn />
         {hotelData ? (
@@ -44,6 +38,6 @@ export default async function HotelDetails({
           </div>
         )}
       </div>
-    </Suspense>
+    </>
   );
 }

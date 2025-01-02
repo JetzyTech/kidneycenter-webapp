@@ -1,7 +1,7 @@
 "use client";
 import { DirectionSVG, Pins } from "@/app/assets/icons";
 import { APIProvider, Map, Marker } from "@vis.gl/react-google-maps";
-import { Modal, Rate, Tag, Typography } from "antd";
+import { Rate, Tag, Typography } from "antd";
 import Image from "next/image";
 import React from "react";
 import { Filters } from "../../components/hotels/detail-filters";
@@ -13,8 +13,6 @@ import {
   setHotelBookingDetails,
   setSelectedRoomDetails,
 } from "@Jetzy/redux/reducers/hotel/bookingSlice";
-import Link from "next/link";
-import JetzyPro from "@/app/assets/images/jetzy-pro.png";
 
 interface RateData {
   ppn_bundle: string;
@@ -82,54 +80,6 @@ const Detail = ({
       dispatch(setSelectedRoomDetails({ ...selectedRoom }));
     }
   }, [bookingRequestId, selectedDeal, hotelData, selectedRoom]);
-
-  React.useEffect(() => {
-    Modal.info({
-      centered: true,
-      className:
-        "w-[652px] h-[617px] [&_.ant-modal]:!rounded-3xl [&_.ant-modal-content]:!rounded-3xl",
-      width: 652,
-      destroyOnClose: true,
-      icon: null,
-      onCancel: () => false,
-      footer: null,
-      title: (
-        <div className="flex flex-col gap-y-10 items-center justify-center">
-          <Image
-            src={JetzyPro}
-            alt="jetzy-pro"
-            className="w-[237px] h-[177px]"
-          />
-          <div className="flex flex-col gap-y-5 px-10">
-            <Typography.Text className="text-[28px] font-bold leading-[32px]">
-              This deal is reserved for Jetzy Select Concierge members
-            </Typography.Text>
-            <Typography.Text className="text-[#5A5A5A] text-[22px] font-semibold leading-[25px]">
-              Jetzy select concierge offers
-            </Typography.Text>
-            <ul className="flex flex-col items-start justify-start list-disc px-8">
-              <li className="text-xl text-[#5a5a5a] font-normal">
-                VIP perks & discounts globally
-              </li>
-              <li className="text-xl text-[#5a5a5a] font-normal">
-                Up to <strong className="text-black">70% off</strong> hotels
-              </li>
-              <li className="text-xl text-[#5a5a5a] font-normal">
-                No refund for cancellations after check-in time
-              </li>
-            </ul>
-
-            <Link
-              className="w-full bg-primary text-center font-semibold py-[10px] rounded-lg text-white text-base hover:text-white active:scale-95"
-              href="/dashboard/packages"
-            >
-              Sign Up for Jetzy Select Membership
-            </Link>
-          </div>
-        </div>
-      ),
-    });
-  }, []);
 
   return (
     <>

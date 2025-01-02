@@ -1,13 +1,17 @@
 "use client";
 
-import { DatePicker, Form, Typography, Button, Spin } from "antd";
+import React, { Suspense } from "react";
+import { DatePicker, Form, Typography, Button, Spin, Modal } from "antd";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { useFilter } from "../../hooks/use-filter";
 import { Counter } from "./counter";
-import { Suspense } from "react";
 import dayjs from "dayjs";
+import JetzyPro from "@/app/assets/images/jetzy-pro.png";
+import Link from "next/link";
+import Image from "next/image";
 
 export const Filters = () => {
+  const [openModal, setOpenModal] = React.useState(false);
   const { rooms, guests, updateField, checkIn, checkOut, lat, lng } =
     useFilter();
   const searchParams = useSearchParams();
@@ -16,11 +20,14 @@ export const Filters = () => {
   const deal = searchParams.get("deal");
   const id = pathname.split("/").pop();
 
-  const onProceed = () =>
-    router.push(
-      `/dashboard/hotels/${id}/checkout?check_in=${checkIn}&check_out=${checkOut}&lat=${lat}&lng=${lng}&deal=${deal}`
-    );
-
+  const onProceed = () => {
+    // TODO:
+    // make an api call to make sure if the user has subscription or not
+    setOpenModal(true);
+    // router.push(
+    //   `/dashboard/hotels/${id}/checkout?check_in=${checkIn}&check_out=${checkOut}&lat=${lat}&lng=${lng}&deal=${deal}`
+    // );
+  };
   return (
     <Suspense
       fallback={
@@ -111,6 +118,49 @@ export const Filters = () => {
           </Button>
         </div>
       </Form>
+
+      <Modal
+        centered
+        width={652}
+        footer={null}
+        open={openModal}
+        onCancel={() => setOpenModal(false)}
+        className="w-[652px] h-[617px] [&_.ant-modal]:!rounded-3xl [&_.ant-modal-content]:!rounded-3xl"
+      >
+        <div className="flex flex-col gap-y-10 items-center justify-center">
+          <Image
+            src={JetzyPro}
+            alt="jetzy-pro"
+            className="w-[237px] h-[177px]"
+          />
+          <div className="flex flex-col gap-y-5 px-10">
+            <Typography.Text className="text-[28px] font-bold leading-[32px]">
+              This deal is reserved for Jetzy Select Concierge members
+            </Typography.Text>
+            <Typography.Text className="text-[#5A5A5A] text-[22px] font-semibold leading-[25px]">
+              Jetzy select concierge offers
+            </Typography.Text>
+            <ul className="flex flex-col items-start justify-start list-disc px-8">
+              <li className="text-xl text-[#5a5a5a] font-normal">
+                VIP perks & discounts globally
+              </li>
+              <li className="text-xl text-[#5a5a5a] font-normal">
+                Up to <strong className="text-black">70% off</strong> hotels
+              </li>
+              <li className="text-xl text-[#5a5a5a] font-normal">
+                No refund for cancellations after check-in time
+              </li>
+            </ul>
+
+            <Link
+              className="w-full bg-primary text-center font-semibold py-[10px] rounded-lg text-white text-base hover:text-white active:scale-95"
+              href="/dashboard/packages"
+            >
+              Sign Up for Jetzy Select Membership
+            </Link>
+          </div>
+        </div>
+      </Modal>
     </Suspense>
   );
 };
