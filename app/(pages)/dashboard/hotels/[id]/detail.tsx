@@ -1,5 +1,5 @@
 "use client";
-import { DirectionSVG, Pins } from "@/app/assets/icons";
+import { ChevronLeftSVG, ChevronRightSVG, DirectionSVG, Pins } from "@/app/assets/icons";
 import { APIProvider, Map, Marker } from "@vis.gl/react-google-maps";
 import { Rate, Tag, Typography } from "antd";
 import Image from "next/image";
@@ -9,10 +9,13 @@ import { RoomDetail } from "../../components/hotels/room-details";
 import { parseAsString, useQueryState } from "nuqs";
 import { cn } from "@/app/lib/helper";
 import { useAppDispatch } from "@Jetzy/redux";
+import Slider from 'react-slick';
 import {
   setHotelBookingDetails,
   setSelectedRoomDetails,
 } from "@Jetzy/redux/reducers/hotel/bookingSlice";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 interface RateData {
   ppn_bundle: string;
@@ -83,19 +86,24 @@ const Detail = ({
 
   return (
     <>
-      <div className="flex items-start justify-between">
-        <div className="max-w-3xl">
-          <div className="flex flex-col mt-10 space-y-5">
+      <div className="flex flex-col xl:flex-row items-start justify-between px-2">
+        <div className="max-w-sm xl:max-w-3xl mx-auto xl:mx-0">
+          <div className="flex flex-col mt-10 space-y-4">
             <Typography.Text className="text-[28px] font-bold">
               {hotelData?.name}
             </Typography.Text>
-            <Rate
-              disabled
-              defaultValue={hotelData?.star_rating}
-              className="text-primary"
-            />
+            <div className="bg-[#FFF8ED] xl:bg-transparent rounded-[10px] w-max">
+              <Rate
+                disabled
+                defaultValue={hotelData?.star_rating}
+                className="text-primary p-2"
+              />
+            </div>  
 
-            <div className="flex gap-x-3">
+            <div className="xl:hidden">
+            <DetailImageCarousal images={hotelData?.photo_data} />
+            </div>
+            <div className="hidden xl:flex gap-x-3">
               <Image
                 src={
                   (hotelData?.photo_data &&
@@ -107,7 +115,7 @@ const Detail = ({
                 height={393}
                 className="object-cover w-[680px] h-[393px]"
               />
-              <div className="w-[60px] h-[393px] overflow-y-scroll space-y-3 hide-scrollbar">
+              <div className="hidden xl:block w-[60px] h-[393px] overflow-y-scroll space-y-3 hide-scrollbar">
                 {hotelData?.photo_data?.map((photo, idx) => (
                   <div
                     key={photo}
@@ -161,9 +169,9 @@ const Detail = ({
                 )}
               </div>
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-x-1">
-                  <div>
-                    <Pins />
+                <div className="flex items-start gap-x-1">
+                  <div className="mt-1">
+                    <Pins stroke="#000" />
                   </div>
                   <Typography.Text className="text-[#0A141B]">
                     {hotelData?.address?.one_line}
@@ -212,7 +220,7 @@ const Detail = ({
           </div>
         </div>
 
-        <div className="flex flex-col gap-y-5">
+        <div className="flex flex-col gap-y-5 max-w-sm xl:max-w-3xl mx-auto xl:mx-0 my-10 xl:my-0">
           <Filters />
 
           {roomData?.room_data?.map((room) => (
@@ -221,6 +229,7 @@ const Detail = ({
               selectedDeal={selectedDeal}
               setSelectedDeal={setSelectedDeal}
               room={room}
+              className="w-full xl:w-[444px]"
             />
           ))}
         </div>
@@ -230,3 +239,53 @@ const Detail = ({
 };
 
 export default Detail;
+
+
+
+const DetailImageCarousal = ({images}) => {
+  const settings = {
+    infinite: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    arrows: true,
+    nextArrow: <CustomArrow><ChevronRightSVG stroke="#fff" width={16} height={16} /></CustomArrow>,
+    prevArrow: <CustomArrow><ChevronLeftSVG stroke="#fff" width={16} height={16} /></CustomArrow>
+  };
+  return (
+    <div className="relative">
+    <Slider {...settings}>
+    {images?.map((photo) => (
+                  <div
+                    key={photo}
+                    className="w-[440px]"
+                  >
+                    <Image
+                      src={photo}
+                      alt='hotel images jetzy'
+                      width={440}
+                      height={340}
+                      className="object-cover h-[340px] w-[440px] cursor-pointer rounded-md"
+                    />
+                  </div>
+                ))}
+    </Slider>
+    </div>
+  )
+}
+
+function CustomArrow(props: { className?: string; onClick?: () => void; children?: React.ReactNode }) {
+  const { className, onClick, children } = props;
+  return (
+    <div
+      className={`absolute top-1/2 transform -translate-y-1/2 z-10 cursor-pointer ${
+        className?.includes("slick-next") ? "right-4" : "left-4"
+      }`}
+      onClick={onClick}
+    >
+      <div className="p-2 bg-[#00000033] rounded-full w-max backdrop-blur-md">
+        {children}
+      </div>
+    </div>
+  );
+}

@@ -27,11 +27,11 @@ export default async function DashboardLayout({
         </div>
       }
     >
-      <div className="flex flex-col min-h-screen">
+      <div className="flex flex-col min-h-screen overflow-x-hidden">
         <ReactQueryProvider>
           <Navbar />
 
-          <main className="flex-1 p-10">{children}</main>
+          <main className="flex-1 xl:p-10">{children}</main>
           <SimpleFooter />
         </ReactQueryProvider>
       </div>
