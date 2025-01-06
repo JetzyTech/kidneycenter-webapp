@@ -15,7 +15,7 @@ const nextConfig = {
 	},
 	env: {
 		// Fix: this resolve the deployment issue on AWS Amplify
-		// NEXTAUTH_URL: "https://jetzy-dev.jetzy.com", // On development comment this line to avoid conflict with NEXTAUTH_URL
+		NEXTAUTH_URL: "https://jetzy-dev.jetzy.com", // On development comment this line to avoid conflict with NEXTAUTH_URL
 
 		NEXT_PUBLIC_API_ENDPOINT: process.env.NEXT_PUBLIC_API_ENDPOINT,
 
