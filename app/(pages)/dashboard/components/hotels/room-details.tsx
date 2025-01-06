@@ -7,11 +7,13 @@ export const RoomDetail = ({
   selectedDeal,
   setSelectedDeal,
   footer = true,
+  className
 }: {
   selectedDeal?: string;
   setSelectedDeal?: (dealId: string | null) => void;
   room: Room;
   footer?: boolean;
+  className?: string
 }) => {
   return (
     <>
@@ -20,7 +22,8 @@ export const RoomDetail = ({
           "relative border rounded-xl w-[444px] h-max p-3 cursor-pointer",
           selectedDeal === room.id
             ? "bg-secondary border-primary"
-            : "bg-white border-[#C0C0C0]"
+            : "bg-white border-[#C0C0C0]",
+          className
         )}
         onClick={() => setSelectedDeal?.(room.id)}
       >

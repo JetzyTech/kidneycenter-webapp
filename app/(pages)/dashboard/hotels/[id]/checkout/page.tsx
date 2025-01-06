@@ -24,7 +24,7 @@ import { RoomDetail } from "../../../components/hotels/room-details";
 import { Room } from "@Jetzy/types/hotel-booking";
 import { useFilter } from "../../../hooks/use-filter";
 import { countries } from "@Jetzy/app/lib/countries";
-import { ChevronDownSVG, GreenCheckmarkSVG } from "@Jetzy/app/assets/icons";
+import { ChevronDownSVG, ChevronLeftSVG, GreenCheckmarkSVG } from "@Jetzy/app/assets/icons";
 import dayjs from "dayjs";
 import Link from "next/link";
 
@@ -41,14 +41,20 @@ const bookHotel = async (payload: BookingPayload) => {
 
 const Checkout = () => {
   return (
-    <div className="max-w-6xl mx-auto">
+    <div className="max-w-xl xl:max-w-6xl mx-auto">
+      <div className="max-w-xs">
+      <div className="flex items-center justify-between">
+      <Link href='/' className="xl:hidden bg-[#C5C5C533] rounded-xl p-3">
+        <ChevronLeftSVG width={30} height={30} />
+      </Link>
       <Typography.Text className="text-[28px] font-bold">
         Checkout
       </Typography.Text>
-
-      <div className="flex items-start justify-between w-full mt-8">
+      </div>
+      </div>
+      <div className="flex flex-col xl:flex-row items-start justify-between gap-y-10 xl:gap-y-0 w-full mt-8">
         <RoomsInfo />
-        <Divider type="vertical" className="h-[937px] bg-[#DADADA]" />
+        <Divider type="vertical" className="hidden xl:block h-[937px] bg-[#DADADA]" />
         <CheckoutForm />
       </div>
     </div>
@@ -62,12 +68,12 @@ const RoomsInfo = () => {
 
   return (
     <>
-      <div className="flex flex-col gap-y-5 w-[444px]">
+      <div className="flex flex-col gap-y-5 w-full xl:w-[444px]">
         <Typography.Text className="text-base font-medium">
           Rooms Selected
         </Typography.Text>
 
-        <RoomDetail footer={false} room={room} />
+        <RoomDetail footer={false} room={room} className="w-full xl:w-[444px]" />
 
         <Card size="small" className="border-[#C0C0C0]">
           <div className="flex items-center justify-between">
@@ -112,7 +118,7 @@ const CheckoutForm = () => {
     onSuccess: () => {
       Modal.success({
         centered: true,
-        className: "w-[464px] h-[430px] rounded-[24px]",
+        className: "w-full h-full xl:w-[464px] xl:h-[430px] rounded-[24px]",
         destroyOnClose: true,
         icon: null,
         onCancel: () => false,
@@ -122,7 +128,7 @@ const CheckoutForm = () => {
             <Typography.Text className="text-[#5A5A5A] text-[26px] font-medium leading-[36px]">
               Your payment has been processed
             </Typography.Text>
-
+  
             <Link
               className="w-full bg-primary font-semibold py-[10px] rounded-lg text-white text-lg hover:text-white active:scale-95"
               href="/dashboard/hotels"
@@ -190,7 +196,7 @@ const CheckoutForm = () => {
 
   return (
     <>
-      <div className="w-[45%]">
+      <div className="w-full xl:w-[45%]">
         <Typography.Text className="text-base font-medium mb-5 inline-block">
           Payment Details
         </Typography.Text>
@@ -366,13 +372,13 @@ const CheckoutForm = () => {
             />
           </Form.Item>
 
-          <div className="flex flex-col gap-y-1">
+          <div className="flex flex-col gap-y-1 mb-4">
             <Typography.Text className="text-primary">
               This deal is reserved for Jetzy Select Concierge members. Continue
               to sign up for Jetzy Select Concierge.
             </Typography.Text>
 
-            <Form.Item name="jetzy_pro">
+            {/* <Form.Item name="jetzy_pro">
               <div>
                 <Checkbox
                   defaultChecked
@@ -389,17 +395,17 @@ const CheckoutForm = () => {
                   <span className="underline text-primary">this link</span>
                 </Typography.Text>
               </div>
-            </Form.Item>
+            </Form.Item> */}
           </div>
 
-          <Form.Item name="termsAndCondition">
+          {/* <Form.Item name="termsAndCondition">
             <Checkbox defaultChecked className="rounded-full text-[#7E7E7E]">
               By getting this deal you accept Jetzy{" "}
               <span className="text-primary underline font-medium">
                 terms & condition
               </span>
             </Checkbox>
-          </Form.Item>
+          </Form.Item> */}
           <Form.Item>
             <Button
               type="primary"
