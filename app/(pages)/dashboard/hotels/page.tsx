@@ -14,15 +14,7 @@ import {
   UseInfiniteQueryResult,
   InfiniteData,
 } from "@tanstack/react-query";
-import {
-  APIProvider,
-  Map,
-  Marker,
-  AdvancedMarkerProps,
-  useAdvancedMarkerRef,
-  AdvancedMarker,
-  Pin,
-} from "@vis.gl/react-google-maps";
+import { APIProvider, Map, Marker } from "@vis.gl/react-google-maps";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { LOGIN, useAppDispatch } from "@Jetzy/redux";
@@ -33,9 +25,37 @@ import {
   sortListings,
 } from "@Jetzy/app/lib/helper";
 
-export default function Dashboard() {
-  const [searchLoading, setSearchLoading] = React.useState(false);
+const getHotelListings = async ({
+  page,
+  rooms,
+  guests,
+  checkIn,
+  checkOut,
+  lng,
+  lat,
+}: {
+  page: string;
+  rooms: number;
+  guests: number;
+  checkIn: string;
+  checkOut: string;
+  lat: string;
+  lng: string;
+}) => {
+  const url = `/v1/meetselect/hotels?rooms=${rooms}&perPage=10&page=${page}&adults=${guests}&check_in=${checkIn}&check_out=${checkOut}&latitude=${lat}&longitude=${lng}`;
+  try {
+    const result = await request.get(url);
 
+    if (!result) message.error("No Hotels Found!");
+
+    return result.data;
+  } catch (error: any) {
+    console.error(error?.message);
+    message.error(error.message);
+  }
+};
+
+export default function Dashboard() {
   const {
     checkIn,
     checkOut,
@@ -45,7 +65,6 @@ export default function Dashboard() {
     lng,
     selectedStars,
     sortPrice,
-    priceRange,
     urlPriceRange,
   } = useFilter();
   const router = useRouter();
@@ -54,33 +73,37 @@ export default function Dashboard() {
   const { ref, inView } = useInView();
   const searchParams = useSearchParams();
 
-  const getHotelListings = async ({ page }: { page: string }) => {
-    const url = `/v1/meetselect/hotels?rooms=${rooms}&perPage=10&page=${page}&adults=${guests}&check_in=${checkIn}&check_out=${checkOut}&latitude=${lat}&longitude=${lng}`;
-    try {
-      const result = await request.get(url);
-
-      if (!result) message.error("No Hotels Found!");
-
-      return result.data;
-    } catch (error: any) {
-      console.error(error?.message);
-      message.error(error.message);
-    }
-  };
-
   const infiniteListing: InfiniteQueryObserverResult<any, any> =
     useInfiniteQuery({
       gcTime: 0,
       initialPageParam: 1,
-      queryKey: ["infinite:listing"],
+      queryKey: [
+        "infinite:listing",
+        checkIn,
+        checkOut,
+        lat,
+        lng,
+        guests,
+        rooms,
+      ],
       queryFn: ({ pageParam = 1 }) =>
-        getHotelListings({ page: String(pageParam) }),
+        getHotelListings({
+          page: String(pageParam),
+          rooms,
+          guests,
+          checkIn,
+          checkOut,
+          lng,
+          lat,
+        }),
       getNextPageParam: (lastPage) => {
-        if (lastPage.nextPage) {
+        if (lastPage && lastPage.nextPage) {
           return lastPage.nextPage;
         }
         return undefined;
       },
+      enabled: !!checkIn && !!checkOut && !!lat && !!lng && !!guests && !!rooms,
+
     });
 
   const onHotelSelect = (id: string) => {
@@ -126,31 +149,34 @@ export default function Dashboard() {
     }
   }, []);
 
-  const getFilteredListings = (
-    infiniteListing: UseInfiniteQueryResult<InfiniteData<IHotelListing>>,
-    selectedStars: number | null,
-    urlPriceRange: string,
-    sortPrice: string
-  ): IHotelListing[] => {
-    const allListings =
-      infiniteListing.data?.pages?.flatMap((page: any) => page.docs) || [];
+  const getFilteredListings = React.useCallback(
+    (
+      infiniteListing: UseInfiniteQueryResult<InfiniteData<IHotelListing>>,
+      selectedStars: number | null,
+      urlPriceRange: string,
+      sortPrice: string
+    ): IHotelListing[] => {
+      const allListings =
+        infiniteListing.data?.pages?.flatMap((page: any) => page?.docs) || [];
 
-    let filteredListings = allListings;
+      let filteredListings = allListings;
 
-    if (selectedStars !== null) {
-      filteredListings = filterByStarRating(filteredListings, selectedStars);
-    }
+      if (selectedStars !== null) {
+        filteredListings = filterByStarRating(filteredListings, selectedStars);
+      }
 
-    if (urlPriceRange) {
-      filteredListings = filterByPriceRange(filteredListings, urlPriceRange);
-    }
+      if (urlPriceRange) {
+        filteredListings = filterByPriceRange(filteredListings, urlPriceRange);
+      }
 
-    if (sortPrice) {
-      filteredListings = sortListings(filteredListings, sortPrice);
-    }
+      if (sortPrice) {
+        filteredListings = sortListings(filteredListings, sortPrice);
+      }
 
-    return filteredListings;
-  };
+      return filteredListings;
+    },
+    [infiniteListing, selectedStars, urlPriceRange, sortPrice]
+  );
 
   const filteredAndSortedListings = getFilteredListings(
     infiniteListing,
@@ -177,12 +203,6 @@ export default function Dashboard() {
 
           <Filters />
 
-          {searchLoading && (
-            <div className="flex items-center justify-center">
-              <Spin size="large" />
-            </div>
-          )}
-
           <div className="flex items-start justify-between gap-x-10 w-full">
             <div className="space-y-5 w-2/5 h-[683px] overflow-y-scroll hide-scrollbar">
               {(infiniteListing.fetchStatus === "fetching" ||
@@ -202,9 +222,9 @@ export default function Dashboard() {
 
               {filteredAndSortedListings?.map((entry: IHotelListing) => (
                 <div
-                  key={entry.id}
+                  key={entry?.id}
                   className="cursor-pointer"
-                  onClick={() => onHotelSelect(entry.id)}
+                  onClick={() => onHotelSelect(entry?.id)}
                 >
                   <HotelCard entry={entry} />
                 </div>
@@ -255,7 +275,7 @@ const RenderMap = ({
   } | null>(null);
 
   React.useEffect(() => {
-    if (navigator.geolocation) {
+    if (typeof window !== "undefined" && navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           setCurrentUserLocation({

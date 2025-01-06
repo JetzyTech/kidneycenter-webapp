@@ -1,6 +1,7 @@
 "use client";
 import { Button, Typography } from "antd";
 import React from "react";
+import { cn } from "@Jetzy/app/lib/helper";
 
 enum PackageVariant {
   MONTHLY = "MONTH",
@@ -9,17 +10,30 @@ enum PackageVariant {
 
 const packageData = [
   {
+    priceId: "price_1QcTJuB7XccR5GE0oFkVcHYh",
     discount: 20,
     pricing: "1,000",
     variant: "year",
     currency: "PKR",
+    link: "https://buy.stripe.com/test_aEU01DfVh93H6uk6op?priceId=price_1QcTJuB7XccR5GE0oFkVcHYh",
   },
   {
-    pricing: "100",
+    priceId: "price_1QcTJuB7XccR5GE0bUN9JqT7",
+    pricing: "150",
     variant: "month",
     currency: "PKR",
+    link: "https://buy.stripe.com/test_bIY15H6kHgw92e45kk?priceId=price_1QcTJuB7XccR5GE0bUN9JqT7",
   },
 ];
+
+type PackageProps = {
+  priceId: string;
+  discount?: number;
+  pricing: string;
+  variant: string;
+  currency: string;
+  link: string;
+};
 
 const Packages = () => {
   return (
@@ -45,13 +59,7 @@ const Packages = () => {
         />
         <div className="relative mt-20 flex items-center justify-center gap-x-20">
           {packageData.map((data) => (
-            <PackageDetails
-              key={data.variant}
-              discount={data.discount}
-              pricing={data.pricing}
-              variant={data.variant as PackageVariant}
-              currency={data.currency}
-            />
+            <PackageDetails key={data.priceId} {...data} />
           ))}
         </div>
       </div>
@@ -66,12 +74,8 @@ const PackageDetails = ({
   pricing,
   variant,
   currency,
-}: {
-  discount?: number;
-  pricing: string;
-  variant: PackageVariant;
-  currency: string;
-}) => {
+  link,
+}: PackageProps) => {
   return (
     <>
       <div className="relative w-[368px] h-[346px] border border-[#E1E1E1] rounded-3xl bg-white flex flex-col justify-between items-center p-4 overflow-hidden">
@@ -102,22 +106,22 @@ const PackageDetails = ({
         <Typography.Text className="text-black font-normal text-[28px] inline-block">
           Hotels Only
         </Typography.Text>
-        {variant.toUpperCase() === PackageVariant.MONTHLY ? (
-          <Button
-            size="large"
-            className="bg-transparent border-primary px-9 font-medium text-primary"
-          >
-            Get this Package
-          </Button>
-        ) : (
-          <Button
-            size="large"
-            type="primary"
-            className="px-9 font-medium text-[#f9f9f9]"
-          >
-            Get this Package
-          </Button>
-        )}
+        <Button
+          size="large"
+          type={
+            variant.toUpperCase() !== PackageVariant.MONTHLY
+              ? "primary"
+              : "default"
+          }
+          className={cn(
+            "px-9 font-medium",
+            variant.toUpperCase() === PackageVariant.MONTHLY
+              ? "bg-transparent border-primary text-primary "
+              : "text-[#f9f9f9]"
+          )}
+        >
+          <a href={link}>Get this Package</a>
+        </Button>
       </div>
     </>
   );

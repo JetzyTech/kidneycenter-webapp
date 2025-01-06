@@ -34,7 +34,7 @@ export const filterByStarRating = (
   selectedStars: number | null
 ): IHotelListing[] => {
   return listings.filter((entry: IHotelListing) => {
-    const entryStarRating = Number(entry.star_rating);
+    const entryStarRating = Number(entry?.star_rating);
     return !selectedStars || entryStarRating === Number(selectedStars);
   });
 };

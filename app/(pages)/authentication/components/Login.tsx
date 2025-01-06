@@ -43,7 +43,7 @@ const Login = () => {
   const handleLogin = async (values: SignInFormData) => {
     setLoader(true);
 
-    //  Process user login
+    // Process user login
     const res = await signIn("credentials", {
       email: values?.email,
       password: values?.password,
@@ -65,8 +65,13 @@ const Login = () => {
     // turn off loader
     setLoader(false);
 
-    navigator?.push(ROUTES.dashboard);
+    if (res?.ok) {
+      navigator.push(ROUTES.dashboard);
+    } else {
+      ServerErrors("Sorry", [{ message: "Login failed. Please try again." }]);
+    }
   };
+
   // handle form submit
   const handleSubmit = (data: SignInFormData) => {
     handleLogin(data);
@@ -131,7 +136,7 @@ const Login = () => {
 
                 <Flex w={"100%"} justifyContent="flex-end" mt={2} mb={4}>
                   <Link
-                    href="/"
+                    href="#"
                     className="text-primary hover:underline hover:text-primary"
                   >
                     Forgot Password?
