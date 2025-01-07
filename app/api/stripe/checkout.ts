@@ -1,6 +1,7 @@
 import Stripe from "stripe";
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
+import { findUser } from "../webhooks/events";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
 
@@ -9,7 +10,8 @@ export async function POST(request: NextRequest) {
   try {
     const data = await request.json();
     const priceId = request.nextUrl.searchParams.get('priceId') as string;
-
+    const loggedUser = await findUser(_session?.user?.email as string);
+    
     const checkoutSession: Stripe.Checkout.Session =
       await stripe.checkout.sessions.create({
         payment_method_types: ["card"],
@@ -24,8 +26,9 @@ export async function POST(request: NextRequest) {
         cancel_url: `${process.env.NEXT_PUBLIC_URL}/billing`,
         metadata: {
           priceId,
-          name: _session?.user?.name as string,
-          email: _session?.user?.email as string
+          name: loggedUser?.name as string, 
+          email: loggedUser?.email as string,
+          userId: loggedUser?._id?.toString() || ''
         },
       });
     return NextResponse.json({ result: checkoutSession, ok: true });

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { Stripe } from "stripe";
 import { authOptions } from "../auth/[...nextauth]/authOptions";
+import { findUser } from "../webhooks/events";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
 
@@ -12,7 +13,7 @@ export async function POST(request: NextRequest) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
-    const loggedUser = session.user;
+    const loggedUser = await findUser(session?.user?.email as string);
     const data = await request.json();
     const priceId = data.priceId;
 
@@ -48,10 +49,10 @@ export async function POST(request: NextRequest) {
         mode: "payment",
         success_url: `${process.env.NEXT_PUBLIC_URL}/success`,
         cancel_url: `${process.env.NEXT_PUBLIC_URL}/cancel`,
-        metadata: { priceId, email: loggedUser?.email || '', name: loggedUser?.name || '' },
+        metadata: { priceId, email: loggedUser?.email || '', name: loggedUser?.name || '', userId: loggedUser?._id?.toString() || ''
+        },
       });
 
-    console.log({ checkoutSession });
     return NextResponse.json({ result: checkoutSession, ok: true });
   } catch (error) {
     console.error(error);
