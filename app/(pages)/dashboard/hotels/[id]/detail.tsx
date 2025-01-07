@@ -1,19 +1,25 @@
 "use client";
-import { ChevronLeftSVG, ChevronRightSVG, DirectionSVG, Pins } from "@/app/assets/icons";
+
+import React from "react";
+import Image from "next/image";
 import { APIProvider, Map, Marker } from "@vis.gl/react-google-maps";
 import { Rate, Tag, Typography } from "antd";
-import Image from "next/image";
-import React from "react";
 import { Filters } from "../../components/hotels/detail-filters";
 import { RoomDetail } from "../../components/hotels/room-details";
 import { parseAsString, useQueryState } from "nuqs";
 import { cn } from "@/app/lib/helper";
 import { useAppDispatch } from "@Jetzy/redux";
-import Slider from 'react-slick';
+import Slider from "react-slick";
 import {
   setHotelBookingDetails,
   setSelectedRoomDetails,
 } from "@Jetzy/redux/reducers/hotel/bookingSlice";
+import {
+  ChevronLeftSVG,
+  ChevronRightSVG,
+  DirectionSVG,
+  Pins,
+} from "@/app/assets/icons";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
@@ -86,8 +92,8 @@ const Detail = ({
 
   return (
     <>
-      <div className="flex flex-col xl:flex-row items-start justify-between px-2">
-        <div className="max-w-sm xl:max-w-3xl mx-auto xl:mx-0">
+      <div className="flex flex-col xl:flex-row xl:items-start xl:justify-between md:px-2">
+        <div className="max-w-sm md:max-w-xl xl:max-w-3xl mx-auto xl:mx-0">
           <div className="flex flex-col mt-10 space-y-4">
             <Typography.Text className="text-[28px] font-bold">
               {hotelData?.name}
@@ -98,10 +104,10 @@ const Detail = ({
                 defaultValue={hotelData?.star_rating}
                 className="text-primary p-2"
               />
-            </div>  
+            </div>
 
             <div className="xl:hidden">
-            <DetailImageCarousal images={hotelData?.photo_data} />
+              <DetailImageCarousal images={hotelData?.photo_data} />
             </div>
             <div className="hidden xl:flex gap-x-3">
               <Image
@@ -139,7 +145,7 @@ const Detail = ({
               </div>
             </div>
 
-            <div className="flex flex-col gap-y-10">
+            <div className="flex flex-col gap-y-10 px-2 md:px-0">
               <div className="flex flex-col gap-y-3">
                 <Typography.Text className="font-medium text-xl">
                   About
@@ -168,7 +174,7 @@ const Detail = ({
                   </div>
                 )}
               </div>
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between w-[21rem] md:w-full">
                 <div className="flex items-start gap-x-1">
                   <div className="mt-1">
                     <Pins stroke="#000" />
@@ -220,7 +226,7 @@ const Detail = ({
           </div>
         </div>
 
-        <div className="flex flex-col gap-y-5 max-w-sm xl:max-w-3xl mx-auto xl:mx-0 my-10 xl:my-0">
+        <div className="flex flex-col xl:items-end xl:justify-center gap-y-5 max-w-sm md:max-w-xl xl:max-w-3xl mx-auto xl:mx-0 my-10 xl:my-0">
           <Filters />
 
           {roomData?.room_data?.map((room) => (
@@ -229,7 +235,7 @@ const Detail = ({
               selectedDeal={selectedDeal}
               setSelectedDeal={setSelectedDeal}
               room={room}
-              className="w-full xl:w-[444px]"
+              className="w-[300px] sm:w-full xl:w-[444px]"
             />
           ))}
         </div>
@@ -240,41 +246,48 @@ const Detail = ({
 
 export default Detail;
 
-
-
-const DetailImageCarousal = ({images}) => {
+const DetailImageCarousal: React.FC<{ images: string[] }> = ({ images }) => {
   const settings = {
     infinite: true,
     speed: 500,
     slidesToShow: 1,
     slidesToScroll: 1,
     arrows: true,
-    nextArrow: <CustomArrow><ChevronRightSVG stroke="#fff" width={16} height={16} /></CustomArrow>,
-    prevArrow: <CustomArrow><ChevronLeftSVG stroke="#fff" width={16} height={16} /></CustomArrow>
+    nextArrow: (
+      <CustomArrow>
+        <ChevronRightSVG stroke="#fff" width={16} height={16} />
+      </CustomArrow>
+    ),
+    prevArrow: (
+      <CustomArrow>
+        <ChevronLeftSVG stroke="#fff" width={16} height={16} />
+      </CustomArrow>
+    ),
   };
   return (
     <div className="relative">
-    <Slider {...settings}>
-    {images?.map((photo) => (
-                  <div
-                    key={photo}
-                    className="w-[440px]"
-                  >
-                    <Image
-                      src={photo}
-                      alt='hotel images jetzy'
-                      width={440}
-                      height={340}
-                      className="object-cover h-[340px] w-[440px] cursor-pointer rounded-md"
-                    />
-                  </div>
-                ))}
-    </Slider>
+      <Slider {...settings}>
+        {images?.map((photo) => (
+          <div key={photo} className="w-[440px]">
+            <Image
+              src={photo}
+              alt="hotel images jetzy"
+              width={440}
+              height={340}
+              className="object-cover h-[340px] w-[440px] md:w-[580px] cursor-pointer rounded-md"
+            />
+          </div>
+        ))}
+      </Slider>
     </div>
-  )
-}
+  );
+};
 
-function CustomArrow(props: { className?: string; onClick?: () => void; children?: React.ReactNode }) {
+function CustomArrow(props: {
+  className?: string;
+  onClick?: () => void;
+  children?: React.ReactNode;
+}) {
   const { className, onClick, children } = props;
   return (
     <div

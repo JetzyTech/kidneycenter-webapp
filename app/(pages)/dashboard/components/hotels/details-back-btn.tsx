@@ -1,15 +1,13 @@
 'use client';
 
-import { ChevronLeftSVG } from '@/app/assets/icons';
 import React from 'react';
-import { useRouter } from 'next/navigation'; // Import useRouter
+import { ChevronLeftSVG } from '@/app/assets/icons';
+import { useRouter } from 'next/navigation';
 
 export const DetailsBackBtn = () => {
-  const router = useRouter(); // Initialize the router
+  const router = useRouter();
 
-  const handleBackClick = () => {
-    router.back(); // Navigate back to the previous page
-  };
+  const handleBackClick = () => router.back()
 
   return (
     <div className="flex gap-x-2 cursor-pointer">

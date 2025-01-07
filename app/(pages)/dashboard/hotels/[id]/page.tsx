@@ -28,7 +28,7 @@ export default async function HotelDetails({
 
   return (
     <>
-      <div className="max-w-sm xl:max-w-7xl mx-auto">
+      <div className="max-w-sm md:max-w-xl xl:max-w-7xl mx-auto pt-5">
         <DetailsBackBtn />
         {hotelData ? (
           <Detail key={hotelId} hotelData={hotelData} roomData={roomData} />

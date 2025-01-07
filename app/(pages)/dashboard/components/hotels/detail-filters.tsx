@@ -33,11 +33,11 @@ export const Filters = () => {
         </div>
       }
     >
-      <div className="fixed bottom-10 left-1/2 transform -translate-x-1/2 xl:static xl:bottom-auto xl:left-auto xl:transform-none text-end mt-10 z-50">
+      <div className="fixed bottom-10 left-1/2 transform -translate-x-1/2 xl:static xl:bottom-auto xl:left-0 xl:transform-none text-end mt-10 z-50">
         <Button
           size="large"
           type="primary"
-          className="font-medium w-[380px] xl:w-max"
+          className="font-medium w-[380px] xl:w-max disabled:bg-white"
           disabled={!deal}
           onClick={onProceed}
         >
@@ -45,7 +45,7 @@ export const Filters = () => {
         </Button>
       </div>
       <Form colon={false} layout="vertical" className="flex flex-col">
-        <div className="flex items-center gap-x-2">
+        <div className="flex flex-col md:flex-row md:items-center items-start justify-start gap-x-2">
           <Form.Item
             className="w-[200px]"
             label={
