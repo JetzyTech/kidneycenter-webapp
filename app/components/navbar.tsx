@@ -22,12 +22,12 @@ export default function Navbar() {
     signOut({ redirect: true, callbackUrl: ROUTES.auth });
 
   return (
-    <div className="bg-white z-50 sticky top-0 left-0 right-0 flex items-center justify-between py-4 px-10 border-b border-b-[#EDEDED]">
+    <div className="bg-white z-50 sticky top-0 left-0 right-0 flex items-center justify-between py-4 px-2 md:px-10 border-b border-b-[#EDEDED]">
       <Link href="/" className="w-max inline-block">
         <Image
           src={JetzyLogo}
           alt="Jetzy Logo"
-          className="w-12 h-12 cursor-pointer"
+          className="w-10 h-10 md:w-12 md:h-12 cursor-pointer"
         />
       </Link>
       <Link href="/authentication">
