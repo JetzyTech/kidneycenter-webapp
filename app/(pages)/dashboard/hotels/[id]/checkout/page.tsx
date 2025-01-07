@@ -28,6 +28,7 @@ import { ChevronDownSVG, ChevronLeftSVG, GreenCheckmarkSVG } from "@Jetzy/app/as
 import dayjs from "dayjs";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import MobileBackBtn from "@Jetzy/app/components/back-btn";
 
 const bookHotel = async (payload: BookingPayload) => {
   const url = `${process.env.NEXT_PUBLIC_API_ENDPOINT}/v1/meetselect/hotels/book`;
@@ -47,9 +48,7 @@ const Checkout = () => {
     <div className="max-w-xl xl:max-w-6xl mx-auto">
       <div className="max-w-xs">
       <div className="flex items-center justify-between">
-      <Link href={`/dashboard/hotels/${hotelId}`} className="xl:hidden bg-[#C5C5C533] rounded-xl p-3">
-        <ChevronLeftSVG width={30} height={30} />
-      </Link>
+      <MobileBackBtn href={`/dashboard/hotels/${hotelId}`} />
       <Typography.Text className="text-[28px] font-bold">
         Checkout
       </Typography.Text>

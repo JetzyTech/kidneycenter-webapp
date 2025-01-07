@@ -2,7 +2,7 @@
 
 import React, { Suspense } from "react";
 import { DatePicker, Form, Typography, Button, Spin, Modal } from "antd";
-import { useSearchParams, useRouter, usePathname } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { useFilter } from "../../hooks/use-filter";
 import { Counter } from "./counter";
 import dayjs from "dayjs";
@@ -15,10 +15,7 @@ export const Filters = () => {
   const { rooms, guests, updateField, checkIn, checkOut, lat, lng } =
     useFilter();
   const searchParams = useSearchParams();
-  const router = useRouter();
-  const pathname = usePathname();
   const deal = searchParams.get("deal");
-  const id = pathname.split("/").pop();
 
   const onProceed = () => {
     // TODO:
@@ -36,11 +33,11 @@ export const Filters = () => {
         </div>
       }
     >
-      <div className="text-end mt-10">
+      <div className="fixed bottom-10 left-1/2 transform -translate-x-1/2 xl:static xl:bottom-auto xl:left-0 xl:transform-none text-end mt-10 z-50">
         <Button
           size="large"
           type="primary"
-          className="font-medium w-max"
+          className="font-medium w-[380px] xl:w-max disabled:bg-white"
           disabled={!deal}
           onClick={onProceed}
         >
@@ -48,7 +45,7 @@ export const Filters = () => {
         </Button>
       </div>
       <Form colon={false} layout="vertical" className="flex flex-col">
-        <div className="flex items-center gap-x-2">
+        <div className="flex flex-col md:flex-row md:items-center items-start justify-start gap-x-2">
           <Form.Item
             className="w-[200px]"
             label={

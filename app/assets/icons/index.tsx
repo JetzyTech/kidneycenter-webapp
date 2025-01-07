@@ -185,9 +185,10 @@ export const Stars = () => {
   );
 };
 
-export const Pins = (props: { width?: number; height?: number }) => {
+export const Pins = (props: { width?: number; height?: number, stroke?: string }) => {
   const width = props.width ?? 16;
   const height = props.height ?? 16;
+  const stroke = props.stroke ?? '#8C9094'
   return (
     <svg
       width={width}
@@ -198,13 +199,13 @@ export const Pins = (props: { width?: number; height?: number }) => {
     >
       <path
         d="M8 8.5C9.10457 8.5 10 7.60457 10 6.5C10 5.39543 9.10457 4.5 8 4.5C6.89543 4.5 6 5.39543 6 6.5C6 7.60457 6.89543 8.5 8 8.5Z"
-        stroke="#8C9094"
+        stroke={stroke}
         strokeLinecap="round"
         strokeLinejoin="round"
       />
       <path
         d="M13 6.5C13 11 8 14.5 8 14.5C8 14.5 3 11 3 6.5C3 5.17392 3.52678 3.90215 4.46447 2.96447C5.40215 2.02678 6.67392 1.5 8 1.5C9.32608 1.5 10.5979 2.02678 11.5355 2.96447C12.4732 3.90215 13 5.17392 13 6.5V6.5Z"
-        stroke="#8C9094"
+        stroke={stroke}
         strokeLinecap="round"
         strokeLinejoin="round"
       />
@@ -323,9 +324,10 @@ export const ChevronDownSVG = (props: {
   );
 };
 
-export const ChevronLeftSVG = (props: {width?: number; height?: number}) => {
+export const ChevronLeftSVG = (props: {width?: number; height?: number; stroke?: string}) => {
   const width = props.width ?? 26;
   const height = props.height ?? 26;
+  const stroke = props.stroke ?? '#8C9094'
   return (
     <svg
       width={width}
@@ -336,7 +338,7 @@ export const ChevronLeftSVG = (props: {width?: number; height?: number}) => {
     >
       <path
         d="M16.25 19.5L9.75 13L16.25 6.5"
-        stroke="#8C9094"
+        stroke={stroke}
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -345,18 +347,21 @@ export const ChevronLeftSVG = (props: {width?: number; height?: number}) => {
   );
 };
 
-export const ChevronRightSVG = () => {
+export const ChevronRightSVG = (props: {stroke?: string; height?: number; width?: number}) => {
+  const stroke = props.stroke ?? '#F79432';
+  const height = props.height ?? 20;
+  const width = props.width ?? 20;
   return (
     <svg
-      width="20"
-      height="20"
+      width={width}
+      height={height}
       viewBox="0 0 20 20"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
       <path
         d="M7.5 15L12.5 10L7.5 5"
-        stroke="#F79432"
+        stroke={stroke}
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
