@@ -70,47 +70,45 @@ export const MobileCard = ({ entry }: { entry: IHotel }) => {
 
   return (
     <>
-      <div>
-        <div className="relative">
-          <Image
-            src={entry.thumbnail}
-            alt={entry.name}
-            width={382}
-            height={186}
-            className="w-full h-[186px] object-cover rounded-xl"
-          />
-          {Number(percentage) !== 0 && (
-            <div className="bg-primary absolute top-0 left-0 w-max rounded-tl-xl rounded-br-xl px-2">
-              <Typography.Text className="text-base font-bold text-white">
-                {percentage}%
-              </Typography.Text>
-            </div>
-          )}
-          <div
-            className="absolute bottom-0 right-0 left-0 w-full h-16 backdrop-blur-sm"
-            style={{
-              background:
-                "linear-gradient(to top, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0))",
-            }}
-          />
-          <div className="absolute bottom-3 left-5 flex flex-col">
-            <Typography.Text className="text-white text-lg font-bold">
-              {entry.name}
-            </Typography.Text>
-            <Typography.Text className="text-white text-sm">
-              Starts from&nbsp;
-              {convertCurrencySign(entry.display_currency as CURRENCY_SIGNS)}
-              {entry.price_saving}
+      <div className="relative">
+        <Image
+          src={entry.thumbnail}
+          alt={entry.name}
+          width={382}
+          height={186}
+          className="w-full h-[186px] object-cover rounded-xl"
+        />
+        {Number(percentage) !== 0 && (
+          <div className="bg-primary absolute top-0 left-0 w-max rounded-tl-xl rounded-br-xl px-2">
+            <Typography.Text className="text-base font-bold text-white">
+              {percentage}%
             </Typography.Text>
           </div>
-          <div className="absolute bottom-3 right-5 flex justify-end gap-x-1">
-            <Rate
-              disabled
-              allowHalf
-              defaultValue={entry.star_rating}
-              className="text-white"
-            />
-          </div>
+        )}
+        <div
+          className="absolute bottom-0 right-0 left-0 w-full h-16 backdrop-blur-sm"
+          style={{
+            background:
+              "linear-gradient(to top, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0))",
+          }}
+        />
+        <div className="absolute bottom-3 left-5 flex flex-col">
+          <Typography.Text className="text-white text-lg font-bold">
+            {entry.name}
+          </Typography.Text>
+          <Typography.Text className="text-white text-sm">
+            Starts from&nbsp;
+            {convertCurrencySign(entry.display_currency as CURRENCY_SIGNS)}
+            {entry.price_saving}
+          </Typography.Text>
+        </div>
+        <div className="absolute bottom-3 right-5 flex justify-end gap-x-1">
+          <Rate
+            disabled
+            allowHalf
+            defaultValue={entry.star_rating}
+            className="text-white"
+          />
         </div>
       </div>
     </>

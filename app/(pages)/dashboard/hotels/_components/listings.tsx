@@ -77,7 +77,9 @@ export const Listing = () => {
         filteredListings = sortListings(filteredListings, sortPrice);
       }
 
-      if (urlPriceRange !== "") {
+      console.log({ urlPriceRange });
+
+      if (urlPriceRange === "") {
         filteredListings = filteredListings.sort((a, b) => {
           const percentageSavingA =
             a.price_saving && a.price_non_saving
@@ -120,7 +122,7 @@ export const Listing = () => {
 
   return (
     <>
-      <div className="space-y-5 px-3 w-full xl:px-0 xl:h-[683px] overflow-y-scroll hide-scrollbar">
+      <div className="space-y-5 px-3 w-full max-w-sm mx-auto xl:max-w-max xl:mx-0 xl:px-0 xl:h-[683px] overflow-y-scroll hide-scrollbar">
         {(infiniteListing.fetchStatus === "fetching" ||
           infiniteListing.isLoading) && <Spin size="large" />}
 
@@ -140,7 +142,7 @@ export const Listing = () => {
             className="cursor-pointer"
             onClick={() => onHotelSelect(entry?.id)}
           >
-            <div className="hidden xl:inline-block">
+            <div className="hidden xl:inline-block xl:w-[600px]">
               <HotelCard entry={entry} />
             </div>
             <div className="xl:hidden">
