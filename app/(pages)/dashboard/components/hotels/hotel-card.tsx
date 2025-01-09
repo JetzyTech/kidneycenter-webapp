@@ -86,7 +86,7 @@ export const MobileCard = ({ entry }: { entry: IHotel }) => {
           </div>
         )}
         <div
-          className="absolute bottom-0 right-0 left-0 w-full h-16 backdrop-blur-sm"
+          className="absolute rounded-b-xl bottom-0 right-0 left-0 w-full h-16 backdrop-blur-sm"
           style={{
             background:
               "linear-gradient(to top, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0))",

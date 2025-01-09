@@ -49,13 +49,13 @@ export const Listing = () => {
     // Redirect to the hotel details page with all existing query params
     router.push(`/dashboard/hotels/${id}?${new URLSearchParams(queryParams)}`);
   };
-
+  //   InfiniteQueryObserverResult<
+  //   InfiniteData<IHotelListing>,
+  //   Error
+  // >
   const getFilteredListings = React.useCallback(
     (
-      infiniteListing: InfiniteQueryObserverResult<
-        InfiniteData<IHotelListing>,
-        Error
-      >,
+      infiniteListing: any,
       selectedStars: number | null,
       urlPriceRange: string,
       sortPrice: string
@@ -76,8 +76,6 @@ export const Listing = () => {
       if (sortPrice) {
         filteredListings = sortListings(filteredListings, sortPrice);
       }
-
-      console.log({ urlPriceRange });
 
       if (urlPriceRange === "") {
         filteredListings = filteredListings.sort((a, b) => {

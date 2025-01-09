@@ -173,7 +173,7 @@ export const Filters = () => {
       }
     >
       <Form colon={false} className="flex flex-col">
-        <div className="flex items-center gap-x-20">
+        <div className="flex flex-col xl:flex-row xl:items-center gap-x-20">
           <Form.Item
             className="w-[320px]"
             label={
@@ -195,7 +195,7 @@ export const Filters = () => {
             <DatePicker.RangePicker
               size="large"
               format="YYYY-MM-DD"
-              className="w-[300px]"
+              className="w-[300px] bg-[#F9F9F9]"
               popupClassName="dateRangePicker"
               disabledDate={(current) =>
                 current && current < dayjs().startOf("day")
@@ -250,6 +250,7 @@ export const Filters = () => {
               iconPosition="end"
               onClick={handleSearch}
               disabled={infiniteListing.isFetching || infiniteListing.isPending}
+              className="w-full xl:w-max"
             >
               Search
             </Button>
@@ -332,6 +333,7 @@ export const Filters = () => {
 
 export const MobileViewFilters = () => {
   const [openFilters, setOpenFilters] = React.useState(false);
+  const { rooms, guests, checkIn, checkOut } = useFilter();
   return (
     <>
       <div
@@ -342,7 +344,7 @@ export const MobileViewFilters = () => {
           <div className="flex flex-col items-center">
             <Typography.Text>Where</Typography.Text>
             <Typography.Text className="flex items-center gap-x-2">
-              <Pins stroke="#000" />{" "}
+              <Pins stroke="#000" />
               <span className="font-medium">New York</span>
             </Typography.Text>
           </div>
@@ -350,7 +352,12 @@ export const MobileViewFilters = () => {
           <div className="flex flex-col items-center">
             <Typography.Text>When</Typography.Text>
             <Typography.Text className="flex items-center gap-x-2">
-              <CalendarSVG /> <span className="font-medium">New York</span>
+              <CalendarSVG />
+              &nbsp;
+              <span className="font-medium">
+                {formatDateToMonthDay(checkIn)}&nbsp;-&nbsp;
+                {formatDateToMonthDay(checkOut)}
+              </span>
             </Typography.Text>
           </div>
         </div>
@@ -358,10 +365,10 @@ export const MobileViewFilters = () => {
         <div className="flex items-center justify-between">
           <div className="space-x-3">
             <Typography.Text className="text-[#5A5A5A]">
-              Rooms: 2
+              Rooms: {rooms}
             </Typography.Text>
             <Typography.Text className="text-[#5A5A5A]">
-              Guests: 2
+              Guests: {guests}
             </Typography.Text>
           </div>
           <div className="flex items-center gap-x-1">
@@ -378,16 +385,22 @@ export const MobileViewFilters = () => {
         open={openFilters}
         footer={null}
         onCancel={() => setOpenFilters(false)}
+        style={{ zIndex: 9999999999999 }}
       >
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between mt-10 mb-5">
           <Typography.Text className="text-2xl font-semibold">
             Filters
           </Typography.Text>
-          <Typography.Text className="text-lg font-semibold text-primary">
+          <Typography.Text className="text-lg text-primary">
             Reset
           </Typography.Text>
+        </div>
+        <div className="w-full py-2">
+          <Filters />
         </div>
       </Modal>
     </>
   );
 };
+
+const formatDateToMonthDay = (date: string) => dayjs(date).format("MMM DD");

@@ -139,7 +139,7 @@ export default function Dashboard() {
             <div className="hidden xl:block">
               <Listing />
             </div>
-            <div className="xl:pr-10 w-full xl:w-3/5">
+            <div className="w-full xl:w-3/5 xl:pr-10">
               <RenderMap
                 infiniteListing={infiniteListing}
                 lat={Number(lat)}
