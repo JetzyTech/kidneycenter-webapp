@@ -20,7 +20,7 @@ export const Counter: React.FC<{
     <>
       <div
         className={cn(
-          "flex items-center justify-between gap-4 w-[200px] h-[40px] rounded-xl bg-[#F9F9F9] border border-[#C0C0C0] px-3",
+          "flex items-center justify-between gap-4 w-[130px] h-[40px] rounded-xl bg-[#F9F9F9] border border-[#C0C0C0] px-3",
           className
         )}
       >

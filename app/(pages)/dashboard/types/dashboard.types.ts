@@ -25,6 +25,8 @@ export interface IHotelListing extends IHotel {
 }
 
 export interface IDashboardCtx {
+  lat: string;
+  lng: string;
   infiniteListing: UseInfiniteQueryResult<InfiniteData<IHotelListing>, unknown>;
 }
 

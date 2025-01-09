@@ -185,10 +185,14 @@ export const Stars = () => {
   );
 };
 
-export const Pins = (props: { width?: number; height?: number, stroke?: string }) => {
+export const Pins = (props: {
+  width?: number;
+  height?: number;
+  stroke?: string;
+}) => {
   const width = props.width ?? 16;
   const height = props.height ?? 16;
-  const stroke = props.stroke ?? '#8C9094'
+  const stroke = props.stroke ?? "#8C9094";
   return (
     <svg
       width={width}
@@ -324,10 +328,14 @@ export const ChevronDownSVG = (props: {
   );
 };
 
-export const ChevronLeftSVG = (props: {width?: number; height?: number; stroke?: string}) => {
+export const ChevronLeftSVG = (props: {
+  width?: number;
+  height?: number;
+  stroke?: string;
+}) => {
   const width = props.width ?? 26;
   const height = props.height ?? 26;
-  const stroke = props.stroke ?? '#8C9094'
+  const stroke = props.stroke ?? "#8C9094";
   return (
     <svg
       width={width}
@@ -347,8 +355,12 @@ export const ChevronLeftSVG = (props: {width?: number; height?: number; stroke?:
   );
 };
 
-export const ChevronRightSVG = (props: {stroke?: string; height?: number; width?: number}) => {
-  const stroke = props.stroke ?? '#F79432';
+export const ChevronRightSVG = (props: {
+  stroke?: string;
+  height?: number;
+  width?: number;
+}) => {
+  const stroke = props.stroke ?? "#F79432";
   const height = props.height ?? 20;
   const width = props.width ?? 20;
   return (
@@ -430,6 +442,158 @@ export const GreenCheckmarkSVG = () => {
             <rect width="120" height="120" fill="white" />
           </clipPath>
         </defs>
+      </svg>
+    </>
+  );
+};
+
+export const MapSVG = () => {
+  return (
+    <svg
+      width="38"
+      height="37"
+      viewBox="0 0 38 37"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M14.367 26.4234L5.23633 28.7061V8.16206L14.367 5.87939"
+        stroke="white"
+        strokeWidth="2.28267"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M23.4979 30.9887L14.3672 26.4234V5.87939L23.4979 10.4447V30.9887Z"
+        stroke="white"
+        strokeWidth="2.28267"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M23.498 10.4448L32.6287 8.16211V28.7061L23.498 30.9888"
+        stroke="white"
+        strokeWidth="2.28267"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+};
+
+export const CalendarSVG = () => {
+  return (
+    <svg
+      width="13"
+      height="13"
+      viewBox="0 0 13 13"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <g clip-path="url(#clip0_555_9200)">
+        <path
+          d="M9.78125 2.21045H2.78125C2.22897 2.21045 1.78125 2.65816 1.78125 3.21045V10.2104C1.78125 10.7627 2.22897 11.2104 2.78125 11.2104H9.78125C10.3335 11.2104 10.7812 10.7627 10.7812 10.2104V3.21045C10.7812 2.65816 10.3335 2.21045 9.78125 2.21045Z"
+          stroke="black"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M1.78125 5.21045H10.7812"
+          stroke="black"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M8.28125 1.21045V3.21045"
+          stroke="black"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M4.28125 1.21045V3.21045"
+          stroke="black"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </g>
+      <defs>
+        <clipPath id="clip0_555_9200">
+          <rect
+            width="12"
+            height="12"
+            fill="white"
+            transform="translate(0.28125 0.210449)"
+          />
+        </clipPath>
+      </defs>
+    </svg>
+  );
+};
+
+export const FilterSVG = () => {
+  return (
+    <>
+      <svg
+        width="17"
+        height="17"
+        viewBox="0 0 17 17"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M8.17188 7.71045L8.17189 13.7104"
+          stroke="#F79432"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M8.17189 2.71045L8.17188 5.71045"
+          stroke="#F79432"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M12.6719 12.7104L12.672 13.7104"
+          stroke="#F79432"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M12.672 2.71045L12.6719 10.7104"
+          stroke="#F79432"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M14.1719 10.7104H11.1719"
+          stroke="#F79432"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M3.67195 10.7104L3.67188 13.7104"
+          stroke="#F79432"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M3.67188 2.71045L3.67195 8.71045"
+          stroke="#F79432"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M2.17188 8.71045H5.17187"
+          stroke="#F79432"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M9.67188 5.71045H6.67188"
+          stroke="#F79432"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
       </svg>
     </>
   );

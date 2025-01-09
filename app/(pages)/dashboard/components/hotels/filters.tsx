@@ -3,7 +3,14 @@
 import React, { Suspense } from "react";
 import PlacesAutocomplete from "./autocomplete";
 import { useDashboardContext } from "../../hooks/use-dashboard-context";
-import { ChevronDownSVG, SearchSVG, Stars } from "@/app/assets/icons";
+import {
+  CalendarSVG,
+  ChevronDownSVG,
+  FilterSVG,
+  Pins,
+  SearchSVG,
+  Stars,
+} from "@/app/assets/icons";
 import { Counter } from "./counter";
 import { useFilter } from "../../hooks/use-filter";
 import {
@@ -14,6 +21,7 @@ import {
   Dropdown,
   Form,
   MenuProps,
+  Modal,
   Slider,
   Spin,
   Typography,
@@ -167,7 +175,7 @@ export const Filters = () => {
       <Form colon={false} className="flex flex-col">
         <div className="flex items-center gap-x-20">
           <Form.Item
-            className="w-[350px]"
+            className="w-[320px]"
             label={
               <Typography.Text className="text-base font-medium">
                 Where
@@ -177,7 +185,7 @@ export const Filters = () => {
             <PlacesAutocomplete />
           </Form.Item>
           <Form.Item
-            className="w-[350px]"
+            className="w-[320px]"
             label={
               <Typography.Text className="text-base font-medium">
                 When
@@ -187,7 +195,8 @@ export const Filters = () => {
             <DatePicker.RangePicker
               size="large"
               format="YYYY-MM-DD"
-              className="w-[350px]"
+              className="w-[300px]"
+              popupClassName="dateRangePicker"
               disabledDate={(current) =>
                 current && current < dayjs().startOf("day")
               }
@@ -318,5 +327,67 @@ export const Filters = () => {
         </div>
       </Form>
     </Suspense>
+  );
+};
+
+export const MobileViewFilters = () => {
+  const [openFilters, setOpenFilters] = React.useState(false);
+  return (
+    <>
+      <div
+        className="cursor-pointer w-[382px] mx-auto px-10 py-3 border rounded-xl border-[#D7D7D7] space-y-2"
+        onClick={() => setOpenFilters(true)}
+      >
+        <div className="flex items-center justify-between gap-x-5">
+          <div className="flex flex-col items-center">
+            <Typography.Text>Where</Typography.Text>
+            <Typography.Text className="flex items-center gap-x-2">
+              <Pins stroke="#000" />{" "}
+              <span className="font-medium">New York</span>
+            </Typography.Text>
+          </div>
+          <div className="w-[1px] h-12 bg-[#D7D7D7]" />
+          <div className="flex flex-col items-center">
+            <Typography.Text>When</Typography.Text>
+            <Typography.Text className="flex items-center gap-x-2">
+              <CalendarSVG /> <span className="font-medium">New York</span>
+            </Typography.Text>
+          </div>
+        </div>
+        <div className="w-full h-[1px] bg-[#D7D7D7]" />
+        <div className="flex items-center justify-between">
+          <div className="space-x-3">
+            <Typography.Text className="text-[#5A5A5A]">
+              Rooms: 2
+            </Typography.Text>
+            <Typography.Text className="text-[#5A5A5A]">
+              Guests: 2
+            </Typography.Text>
+          </div>
+          <div className="flex items-center gap-x-1">
+            <FilterSVG />
+            <Typography.Text className="text-primary text-[13px]">
+              Edit Filters
+            </Typography.Text>
+          </div>
+        </div>
+      </div>
+
+      <Modal
+        centered
+        open={openFilters}
+        footer={null}
+        onCancel={() => setOpenFilters(false)}
+      >
+        <div className="flex items-center justify-between">
+          <Typography.Text className="text-2xl font-semibold">
+            Filters
+          </Typography.Text>
+          <Typography.Text className="text-lg font-semibold text-primary">
+            Reset
+          </Typography.Text>
+        </div>
+      </Modal>
+    </>
   );
 };

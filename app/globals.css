@@ -10,3 +10,12 @@
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+
+.dateRangePicker .ant-picker-panel:nth-child(2){
+  display: none;
+}
+
+.dateRangePicker .ant-picker-panel:nth-child(1) button{
+  visibility: visible !important;
+}
