@@ -89,6 +89,7 @@ export const useFilter = (): IFilter => {
           break;
         case "lng":
           setLng(value);
+          break;
         default:
           break;
       }

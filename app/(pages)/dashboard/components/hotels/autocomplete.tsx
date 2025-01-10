@@ -87,7 +87,7 @@ export default function PlacesAutocomplete() {
         value={inputValue}
         onChange={handleInputChange}
         placeholder="Search Location"
-        className="border border-[#C0C0C0] p-2 w-[280px] rounded-lg bg-[#F9F9F9]"
+        className="border border-[#C0C0C0] p-2 w-[330px] xl:w-[280px] rounded-lg bg-[#F9F9F9]"
       />
       <div className="absolute top-[10px] right-1 pointer-events-none bg-[#f9f9f9]">
         <Pins width={20} height={20} />

@@ -11,11 +11,14 @@
   scrollbar-width: none;
 }
 
-
-.dateRangePicker .ant-picker-panel:nth-child(2){
+.dateRangePicker .ant-picker-panel:nth-child(2) {
   display: none;
 }
 
-.dateRangePicker .ant-picker-panel:nth-child(1) button{
+.dateRangePicker .ant-picker-panel:nth-child(1) button {
   visibility: visible !important;
+}
+
+[data-vaul-drawer][data-vaul-drawer-direction="bottom"]::after {
+  height: 0 !important;
 }

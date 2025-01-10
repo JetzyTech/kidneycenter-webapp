@@ -3,14 +3,7 @@
 import React, { Suspense } from "react";
 import PlacesAutocomplete from "./autocomplete";
 import { useDashboardContext } from "../../hooks/use-dashboard-context";
-import {
-  CalendarSVG,
-  ChevronDownSVG,
-  FilterSVG,
-  Pins,
-  SearchSVG,
-  Stars,
-} from "@/app/assets/icons";
+import { ChevronDownSVG, SearchSVG, Stars } from "@/app/assets/icons";
 import { Counter } from "./counter";
 import { useFilter } from "../../hooks/use-filter";
 import {
@@ -21,7 +14,6 @@ import {
   Dropdown,
   Form,
   MenuProps,
-  Modal,
   Slider,
   Spin,
   Typography,
@@ -44,7 +36,6 @@ export const Filters = () => {
   const {
     guests,
     rooms,
-    priceRange,
     tempPriceRange,
     setTempPriceRange,
     setPriceRange,
@@ -63,6 +54,7 @@ export const Filters = () => {
 
   const pricesProps: MenuProps = {
     items: pricesItems,
+    className: "w-28",
     onClick: (e) => {
       updateField(
         "sortPrice",
@@ -88,7 +80,7 @@ export const Filters = () => {
 
   const PriceRangeContent = React.useCallback(
     () => (
-      <Card className="w-[378px] drop-shadow-xl">
+      <Card className="w-[300px] sm:w-[378px] drop-shadow-xl">
         <Slider
           range
           min={0}
@@ -195,7 +187,7 @@ export const Filters = () => {
             <DatePicker.RangePicker
               size="large"
               format="YYYY-MM-DD"
-              className="w-[300px] bg-[#F9F9F9]"
+              className="w-[330px] xl:w-[300px] bg-[#F9F9F9]"
               popupClassName="dateRangePicker"
               disabledDate={(current) =>
                 current && current < dayjs().startOf("day")
@@ -243,21 +235,21 @@ export const Filters = () => {
 
           <Form.Item>
             <Button
+              size="large"
               type="primary"
               variant="filled"
-              size="large"
-              icon={<SearchSVG />}
               iconPosition="end"
+              className="w-full xl:w-max"
+              icon={<SearchSVG />}
               onClick={handleSearch}
               disabled={infiniteListing.isFetching || infiniteListing.isPending}
-              className="w-full xl:w-max"
             >
               Search
             </Button>
           </Form.Item>
         </div>
 
-        <div className="flex items-center gap-x-10">
+        <div className="flex items-center xl:gap-x-10 gap-x-5">
           <Form.Item
             label={
               <Typography.Text className="text-muted font-medium">
@@ -268,6 +260,7 @@ export const Filters = () => {
             <Dropdown
               className="cursor-pointer"
               trigger={["click"]}
+              getPopupContainer={(triggerNode) => triggerNode.parentElement!}
               dropdownRender={() => (
                 <StarRatingContent
                   selectedStars={[selectedStars]}
@@ -296,6 +289,7 @@ export const Filters = () => {
               menu={pricesProps}
               className="cursor-pointer"
               trigger={["click"]}
+              getPopupContainer={(triggerNode) => triggerNode.parentElement!}
             >
               <Typography.Text className="inline-flex font-medium">
                 {sortPrice.trim() === "" ? "All" : sortPrice}&nbsp;
@@ -313,8 +307,10 @@ export const Filters = () => {
           >
             <Dropdown
               dropdownRender={() => <PriceRangeContent />}
+              getPopupContainer={(triggerNode) => triggerNode.parentElement!}
               className="cursor-pointer"
               trigger={["click"]}
+              placement="bottom"
             >
               <Typography.Text className="inline-flex font-medium">
                 {priceRangeArray[0] === 0 && priceRangeArray[1] === 1000
@@ -330,77 +326,3 @@ export const Filters = () => {
     </Suspense>
   );
 };
-
-export const MobileViewFilters = () => {
-  const [openFilters, setOpenFilters] = React.useState(false);
-  const { rooms, guests, checkIn, checkOut } = useFilter();
-  return (
-    <>
-      <div
-        className="cursor-pointer w-[382px] mx-auto px-10 py-3 border rounded-xl border-[#D7D7D7] space-y-2"
-        onClick={() => setOpenFilters(true)}
-      >
-        <div className="flex items-center justify-between gap-x-5">
-          <div className="flex flex-col items-center">
-            <Typography.Text>Where</Typography.Text>
-            <Typography.Text className="flex items-center gap-x-2">
-              <Pins stroke="#000" />
-              <span className="font-medium">New York</span>
-            </Typography.Text>
-          </div>
-          <div className="w-[1px] h-12 bg-[#D7D7D7]" />
-          <div className="flex flex-col items-center">
-            <Typography.Text>When</Typography.Text>
-            <Typography.Text className="flex items-center gap-x-2">
-              <CalendarSVG />
-              &nbsp;
-              <span className="font-medium">
-                {formatDateToMonthDay(checkIn)}&nbsp;-&nbsp;
-                {formatDateToMonthDay(checkOut)}
-              </span>
-            </Typography.Text>
-          </div>
-        </div>
-        <div className="w-full h-[1px] bg-[#D7D7D7]" />
-        <div className="flex items-center justify-between">
-          <div className="space-x-3">
-            <Typography.Text className="text-[#5A5A5A]">
-              Rooms: {rooms}
-            </Typography.Text>
-            <Typography.Text className="text-[#5A5A5A]">
-              Guests: {guests}
-            </Typography.Text>
-          </div>
-          <div className="flex items-center gap-x-1">
-            <FilterSVG />
-            <Typography.Text className="text-primary text-[13px]">
-              Edit Filters
-            </Typography.Text>
-          </div>
-        </div>
-      </div>
-
-      <Modal
-        centered
-        open={openFilters}
-        footer={null}
-        onCancel={() => setOpenFilters(false)}
-        style={{ zIndex: 9999999999999 }}
-      >
-        <div className="flex items-center justify-between mt-10 mb-5">
-          <Typography.Text className="text-2xl font-semibold">
-            Filters
-          </Typography.Text>
-          <Typography.Text className="text-lg text-primary">
-            Reset
-          </Typography.Text>
-        </div>
-        <div className="w-full py-2">
-          <Filters />
-        </div>
-      </Modal>
-    </>
-  );
-};
-
-const formatDateToMonthDay = (date: string) => dayjs(date).format("MMM DD");
