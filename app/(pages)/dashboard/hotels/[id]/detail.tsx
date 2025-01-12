@@ -2,7 +2,7 @@
 
 import React from "react";
 import Image from "next/image";
-import { APIProvider, Map, Marker } from "@vis.gl/react-google-maps";
+import { Map, Marker } from "@vis.gl/react-google-maps";
 import { Rate, Tag, Typography } from "antd";
 import { Filters } from "../../components/hotels/detail-filters";
 import { RoomDetail } from "../../components/hotels/room-details";
@@ -193,33 +193,24 @@ const Detail = ({
                 </Typography.Text>
 
                 <div>
-                  <APIProvider
-                    apiKey={
-                      process.env.NEXT_PUBLIC_GOOGLE_MAP_API_KEY as string
-                    }
-                    libraries={["marker"]}
-                    onLoad={() => console.log("Maps API has loaded.")}
-                    onError={(error) => console.log("Map Error: ", error)}
+                  <Map
+                    key="1"
+                    defaultZoom={15}
+                    defaultCenter={{
+                      lat: Number(hotelData?.geo?.latitude),
+                      lng: Number(hotelData?.geo?.longitude),
+                    }}
+                    style={{ width: "100%", height: "320px" }}
                   >
-                    <Map
-                      key="1"
-                      defaultZoom={15}
-                      defaultCenter={{
+                    <Marker
+                      key={hotelData?.name}
+                      position={{
                         lat: Number(hotelData?.geo?.latitude),
                         lng: Number(hotelData?.geo?.longitude),
                       }}
-                      style={{ width: "100%", height: "320px" }}
-                    >
-                      <Marker
-                        key={hotelData?.name}
-                        position={{
-                          lat: Number(hotelData?.geo?.latitude),
-                          lng: Number(hotelData?.geo?.longitude),
-                        }}
-                        title={hotelData?.name}
-                      />
-                    </Map>
-                  </APIProvider>
+                      title={hotelData?.name}
+                    />
+                  </Map>
                 </div>
               </div>
             </div>
