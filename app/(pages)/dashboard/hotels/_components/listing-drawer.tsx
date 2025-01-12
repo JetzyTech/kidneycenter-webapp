@@ -8,10 +8,12 @@ import { Listing } from "./listings";
 import { Filters } from "../../components/hotels/filters";
 import { useFilter } from "../../hooks/use-filter";
 import dayjs from "dayjs";
+import { useMapsLibrary } from "@vis.gl/react-google-maps";
 
 export const ListingDrawer = () => {
   const [open, setOpen] = React.useState(false);
   const [address, setAddress] = React.useState("");
+  const geocodingLibrary = useMapsLibrary("geocoding");
 
   const {
     rooms,
@@ -43,9 +45,9 @@ export const ListingDrawer = () => {
 
   React.useEffect(() => {
     const fetchPlace = async () => {
-      if (lat && lng) {
-        const geocoder = new google.maps.Geocoder();
+      if (lat && lng && geocodingLibrary) {
         const latLng = new google.maps.LatLng(parseFloat(lat), parseFloat(lng));
+        const geocoder = new geocodingLibrary.Geocoder();
 
         try {
           const results = await geocoder.geocode({ location: latLng });
@@ -60,7 +62,7 @@ export const ListingDrawer = () => {
     };
 
     fetchPlace();
-  }, [lat, lng]);
+  }, [lat, lng, geocodingLibrary]);
 
   const onReset = () => {
     setSelectedStars(0);
@@ -69,6 +71,11 @@ export const ListingDrawer = () => {
     setPriceRange([0, 1000]);
     updateField("priceRange", "0-1000");
   };
+
+  const selectedDates =
+    checkIn !== "" && checkOut !== ""
+      ? `${formatDateToMonthDay(checkIn)} - ${formatDateToMonthDay(checkOut)}`
+      : "Select Date";
 
   return (
     <>
@@ -117,10 +124,7 @@ export const ListingDrawer = () => {
                         <Typography.Text className="flex items-center gap-x-2">
                           <CalendarSVG />
                           &nbsp;
-                          <span className="font-medium">
-                            {formatDateToMonthDay(checkIn)}&nbsp;-&nbsp;
-                            {formatDateToMonthDay(checkOut)}
-                          </span>
+                          <span className="font-medium">{selectedDates}</span>
                         </Typography.Text>
                       </div>
                     </div>
@@ -144,23 +148,31 @@ export const ListingDrawer = () => {
                   </div>
                 </Drawer.Trigger>
                 <Drawer.Portal>
-                  <Drawer.Overlay className="fixed inset-0 bg-black/40" />
+                  <Drawer.Overlay
+                    asChild
+                    className="fixed inset-0 bg-black/40"
+                  />
 
-                  <Drawer.Content className="bg-gray-100 flex flex-col fixed bottom-0 left-0 right-0 outline-none rounded-t-3xl overflow-y-auto z-40 border-2 px-10 py-5">
+                  <Drawer.Content
+                    className="bg-gray-100 flex flex-col fixed bottom-0 left-0 right-0 outline-none rounded-t-3xl overflow-y-auto z-40 border-2 px-10 py-5"
+                    aria-hidden={false}
+                  >
                     <Drawer.Handle className="cursor-grabbing" />
-                    <div className="flex items-center justify-between mt-10 mb-5">
-                      <Typography.Text className="text-2xl font-semibold">
-                        Filters
-                      </Typography.Text>
-                      <Button
-                        type="text"
-                        variant="text"
-                        className="text-lg text-primary"
-                        onClick={onReset}
-                      >
-                        Reset
-                      </Button>
-                    </div>
+                    <Drawer.Title className="">
+                      <div className="flex items-center justify-between mt-10 mb-5">
+                        <Typography.Text className="text-2xl font-semibold">
+                          Filters
+                        </Typography.Text>
+                        <Button
+                          type="text"
+                          variant="text"
+                          className="text-lg text-primary"
+                          onClick={onReset}
+                        >
+                          Reset
+                        </Button>
+                      </div>
+                    </Drawer.Title>
                     <Filters />
                   </Drawer.Content>
                 </Drawer.Portal>

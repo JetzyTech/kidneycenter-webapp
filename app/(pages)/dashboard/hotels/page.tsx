@@ -19,7 +19,6 @@ import { ListingDrawer } from "./_components/listing-drawer";
 import { Listing } from "./_components/listings";
 import { RenderMap } from "./_components/map";
 import { IHotelListing } from "../types/dashboard.types";
-import { APIProvider } from "@vis.gl/react-google-maps";
 
 const getHotelListings = async ({
   page,
@@ -117,46 +116,33 @@ export default function Dashboard() {
   }, [checkIn, checkOut, guests, rooms, lat, lng]);
 
   return (
-    <Suspense
-      fallback={
-        <div className="flex items-center justify-center h-screen">
-          <Spin />
-        </div>
-      }
-    >
-      <APIProvider
-        apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAP_API_KEY as string}
-        libraries={["marker", "places"]}
-        onLoad={() => console.log("Maps API has loaded.")}
-        onError={(error) => console.error("Map Error: ", error)}
-      >
-        <DashboardContext.Provider value={{ infiniteListing, lat, lng }}>
-          <div className="relative space-y-5">
-            <div className="fixed bottom-20 left-1/2 transform -translate-x-1/2 z-10">
-              <ListingDrawer />
-            </div>
-            <Typography.Text className="hidden xl:block text-[32px] font-semibold">
-              Explore Hotels
-            </Typography.Text>
+    <Suspense>
+      <DashboardContext.Provider value={{ infiniteListing, lat, lng }}>
+        <div className="relative space-y-5">
+          <div className="fixed bottom-20 left-1/2 transform -translate-x-1/2 z-10">
+            <ListingDrawer />
+          </div>
+          <Typography.Text className="hidden xl:block text-[32px] font-semibold">
+            Explore Hotels
+          </Typography.Text>
 
+          <div className="hidden xl:block">
+            <Filters />
+          </div>
+          <div className="flex items-start justify-between gap-x-10 w-full">
             <div className="hidden xl:block">
-              <Filters />
+              <Listing />
             </div>
-            <div className="flex items-start justify-between gap-x-10 w-full">
-              <div className="hidden xl:block">
-                <Listing />
-              </div>
-              <div className="w-full xl:w-3/5 xl:pr-10">
-                <RenderMap
-                  infiniteListing={infiniteListing}
-                  lat={Number(lat)}
-                  lng={Number(lng)}
-                />
-              </div>
+            <div className="w-full xl:w-3/5 xl:pr-10">
+              <RenderMap
+                infiniteListing={infiniteListing}
+                lat={Number(lat)}
+                lng={Number(lng)}
+              />
             </div>
           </div>
-        </DashboardContext.Provider>
-      </APIProvider>
+        </div>
+      </DashboardContext.Provider>
     </Suspense>
   );
 }

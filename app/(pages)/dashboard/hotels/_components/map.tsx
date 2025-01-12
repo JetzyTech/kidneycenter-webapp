@@ -4,7 +4,7 @@ import React from "react";
 import { InfiniteData, UseInfiniteQueryResult } from "@tanstack/react-query";
 import { IHotelListing } from "../../types/dashboard.types";
 import { Map, Marker } from "@vis.gl/react-google-maps";
-import { Spin } from "antd";
+import { message, Spin } from "antd";
 
 type RenderMapProps = {
   infiniteListing: UseInfiniteQueryResult<InfiniteData<IHotelListing>, unknown>;
@@ -19,10 +19,12 @@ export const RenderMap = ({ infiniteListing, lat, lng }: RenderMapProps) => {
   } | null>(null);
 
   const [isLocationReady, setIsLocationReady] = React.useState(false);
-
   React.useEffect(() => {
+    let watchId: number | null = null;
+
+    message.info("Getting your location, Hold tight", 2);
     if (typeof window !== "undefined" && navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
+      watchId = navigator.geolocation.watchPosition(
         (position) => {
           setCurrentUserLocation({
             lat: position.coords.latitude,
@@ -31,16 +33,32 @@ export const RenderMap = ({ infiniteListing, lat, lng }: RenderMapProps) => {
           setIsLocationReady(true);
         },
         (error) => {
-          console.error("Geolocation error:", error);
-          setIsLocationReady(true); // Proceed even if geolocation fails
+          switch (error.code) {
+            case error.PERMISSION_DENIED:
+              message.error("User denied geolocation permission.");
+              break;
+            case error.POSITION_UNAVAILABLE:
+              message.error("Position unavailable.");
+              break;
+            case error.TIMEOUT:
+              message.error("Geolocation request timed out.");
+              break;
+          }
+          setIsLocationReady(true);
         }
       );
     } else {
-      setIsLocationReady(true); // No geolocation, proceed with defaults
+      console.warn("Geolocation is not supported by this browser.");
+      setIsLocationReady(true);
     }
+
+    return () => {
+      if (watchId !== null) {
+        navigator.geolocation.clearWatch(watchId);
+      }
+    };
   }, []);
 
-  // Wait for location or fallback to provided lat/lng
   const center = {
     lat: lat || currentUserLocation?.lat || 0,
     lng: lng || currentUserLocation?.lng || 0,
@@ -56,7 +74,11 @@ export const RenderMap = ({ infiniteListing, lat, lng }: RenderMapProps) => {
 
   return (
     <Map
-      key={JSON.stringify(infiniteListing?.data?.pages)}
+      key={
+        infiniteListing.data
+          ? JSON.stringify(infiniteListing.data.pages)
+          : "default"
+      }
       defaultZoom={10}
       defaultCenter={center}
       className="w-full h-screen xl:w-[50vw] xl:h-[683px]"

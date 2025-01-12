@@ -1,7 +1,7 @@
 "use client";
 
 import React, { Suspense } from "react";
-import PlacesAutocomplete from "./autocomplete";
+import PlacesAutocomplete from "../../components/hotels/autocomplete";
 import { useDashboardContext } from "../../hooks/use-dashboard-context";
 import { ChevronDownSVG, SearchSVG, Stars } from "@/app/assets/icons";
 import { Counter } from "./counter";
@@ -167,7 +167,7 @@ export const Filters = () => {
       <Form colon={false} className="flex flex-col">
         <div className="flex flex-col xl:flex-row xl:items-center gap-x-20">
           <Form.Item
-            className="w-[320px]"
+            className="w-[320px] z-50"
             label={
               <Typography.Text className="text-base font-medium">
                 Where

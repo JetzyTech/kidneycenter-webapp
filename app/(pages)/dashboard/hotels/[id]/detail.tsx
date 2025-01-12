@@ -194,7 +194,7 @@ const Detail = ({
 
                 <div>
                   <Map
-                    key="1"
+                    key="default"
                     defaultZoom={15}
                     defaultCenter={{
                       lat: Number(hotelData?.geo?.latitude),

@@ -3,6 +3,7 @@ import { SimpleFooter } from "@/app/components/footer";
 import { ReactQueryProvider } from "@/app/providers/react-query-provider";
 import { authOptions } from "@Jetzy/app/api/auth/[...nextauth]/authOptions";
 import { ROUTES } from "@Jetzy/configs/routes";
+import { APIProvider } from "@vis.gl/react-google-maps";
 import { Spin } from "antd";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
