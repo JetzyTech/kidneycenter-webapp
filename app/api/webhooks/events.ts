@@ -1,7 +1,7 @@
 import connectMongo from "@Jetzy/app/lib/connectDB";
 import Stripe from "stripe";
 
-const MEMBERSHIP_COLLECTION = 'jetzyMembershipSubsSchema';
+const MEMBERSHIP_COLLECTION = "jetzyMembershipSubsSchema";
 interface Sub {
   subscriptionId: string;
   priceId: string;
@@ -18,10 +18,13 @@ interface UpdateData {
   subscription: Sub;
 }
 
-export async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) {
+export async function handleCheckoutSessionCompleted(
+  session: Stripe.Checkout.Session
+) {
   const db = await connectMongo();
 
   const currentUser = await findUser(session.customer_email as string);
+  console.log({ currentUser, email: session.customer_email });
   const data = {
     user: currentUser?._id,
     customerId: session.customer as string,
@@ -36,17 +39,21 @@ export async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Se
     },
   };
 
-  await db.collection(MEMBERSHIP_COLLECTION).updateOne(
-    { customerId: data.customerId },
-    { $set: data },
-    { upsert: true }
-  );
-
+  await db
+    .collection(MEMBERSHIP_COLLECTION)
+    .updateOne(
+      { customerId: data.customerId },
+      { $set: data },
+      { upsert: true }
+    );
 }
 
-export async function handleSubscriptionCreated(subscription: Stripe.Subscription) {
+export async function handleSubscriptionCreated(
+  subscription: Stripe.Subscription
+) {
   const db = await connectMongo();
-  const mappedStatus = subscription.status === "trialing" ? "trial" : subscription.status;
+  const mappedStatus =
+    subscription.status === "trialing" ? "trial" : subscription.status;
 
   const data: {
     user: string;
@@ -68,18 +75,22 @@ export async function handleSubscriptionCreated(subscription: Stripe.Subscriptio
   };
 
   if (mappedStatus !== "trial") {
-    const subscriptionStart = new Date(subscription.start_date * 1000).toISOString();
-    const subscriptionEnd = new Date(subscription.current_period_end * 1000).toISOString();
+    const subscriptionStart = new Date(
+      subscription.start_date * 1000
+    ).toISOString();
+    const subscriptionEnd = new Date(
+      subscription.current_period_end * 1000
+    ).toISOString();
 
     data.subscription.subscriptionStart = subscriptionStart;
     data.subscription.subscriptionEnd = subscriptionEnd;
-    data.subscription.cost = subscription.items.data[0].price.unit_amount! / 100;
+    data.subscription.cost =
+      subscription.items.data[0].price.unit_amount! / 100;
   }
 
-  await db.collection(MEMBERSHIP_COLLECTION).updateOne(
-    { customerId: subscription.customer },
-    { $set: data }
-  );
+  await db
+    .collection(MEMBERSHIP_COLLECTION)
+    .updateOne({ customerId: subscription.customer }, { $set: data });
 }
 
 export async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice) {
@@ -91,10 +102,9 @@ export async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice) {
     },
   };
 
-  await db.collection(MEMBERSHIP_COLLECTION).updateOne(
-    { customerId: invoice.customer },
-    { $set: data }
-  );
+  await db
+    .collection(MEMBERSHIP_COLLECTION)
+    .updateOne({ customerId: invoice.customer }, { $set: data });
 }
 
 export async function handleInvoicePaymentFailed(invoice: Stripe.Invoice) {
@@ -106,15 +116,17 @@ export async function handleInvoicePaymentFailed(invoice: Stripe.Invoice) {
     },
   };
 
-  await db.collection(MEMBERSHIP_COLLECTION).updateOne(
-    { customerId: invoice.customer },
-    { $set: data }
-  );
+  await db
+    .collection(MEMBERSHIP_COLLECTION)
+    .updateOne({ customerId: invoice.customer }, { $set: data });
 }
 
-export async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
+export async function handleSubscriptionUpdated(
+  subscription: Stripe.Subscription
+) {
   const db = await connectMongo();
-  const mappedStatus = subscription.status === "trialing" ? "trial" : subscription.status;
+  const mappedStatus =
+    subscription.status === "trialing" ? "trial" : subscription.status;
 
   const data: UpdateData = {
     planId: subscription.items.data[0].price.product as string,
@@ -133,21 +145,27 @@ export async function handleSubscriptionUpdated(subscription: Stripe.Subscriptio
   };
 
   if (mappedStatus !== "trial") {
-    const subscriptionStart = new Date(subscription.start_date * 1000).toISOString();
-    const subscriptionEnd = new Date(subscription.current_period_end * 1000).toISOString();
+    const subscriptionStart = new Date(
+      subscription.start_date * 1000
+    ).toISOString();
+    const subscriptionEnd = new Date(
+      subscription.current_period_end * 1000
+    ).toISOString();
 
     data.subscription.subscriptionStart = subscriptionStart;
     data.subscription.subscriptionEnd = subscriptionEnd;
-    data.subscription.cost = subscription.items.data[0].price.unit_amount! / 100;
+    data.subscription.cost =
+      subscription.items.data[0].price.unit_amount! / 100;
   }
 
-  await db.collection(MEMBERSHIP_COLLECTION).updateOne(
-    { customerId: subscription.customer },
-    { $set: data }
-  );
+  await db
+    .collection(MEMBERSHIP_COLLECTION)
+    .updateOne({ customerId: subscription.customer }, { $set: data });
 }
 
-export async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
+export async function handleSubscriptionDeleted(
+  subscription: Stripe.Subscription
+) {
   const db = await connectMongo();
 
   const data = {
@@ -156,16 +174,16 @@ export async function handleSubscriptionDeleted(subscription: Stripe.Subscriptio
     },
   };
 
-  await db.collection(MEMBERSHIP_COLLECTION).updateOne(
-    { customerId: subscription.customer },
-    { $set: data }
-  );
-
+  await db
+    .collection(MEMBERSHIP_COLLECTION)
+    .updateOne({ customerId: subscription.customer }, { $set: data });
 }
 
 export async function findUser(email: string) {
   const db = await connectMongo();
-  const user = await db.collection(MEMBERSHIP_COLLECTION).findOne({ email: email });
+  const user = await db
+    .collection(MEMBERSHIP_COLLECTION)
+    .findOne({ email: email });
 
   if (!user) {
     console.log("User not found");
