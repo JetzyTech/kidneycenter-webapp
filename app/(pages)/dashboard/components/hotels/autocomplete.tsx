@@ -96,6 +96,8 @@ const PlacesAutocomplete: React.FC<Props> = ({
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [inputValue, setInputValue] = useState<string>("");
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
+  const [isGoogleLoaded, setIsGoogleLoaded] = useState(false);
+  const [initializationAttempts, setInitializationAttempts] = useState(0);
 
   const autocompleteService = useRef<AutocompleteService | null>(null);
   const placesService = useRef<PlacesService | null>(null);
@@ -104,22 +106,60 @@ const PlacesAutocomplete: React.FC<Props> = ({
 
   const searchParams = useSearchParams();
   const geocodingLibrary = useMapsLibrary("geocoding");
-
   const { updateField } = useFilter();
 
+  // Service initialization
   useEffect(() => {
-    if (
-      window.google &&
-      attributionsRef.current &&
-      window.google?.maps?.places?.AutocompleteService
-    ) {
-      autocompleteService.current =
-        new window.google.maps.places.AutocompleteService();
-      placesService.current = new window.google.maps.places.PlacesService(
-        attributionsRef.current
-      );
-    }
+    const MAX_ATTEMPTS = 10;
+    const RETRY_DELAY = 1000;
 
+    const initializeServices = () => {
+      if (!window.google?.maps?.places?.AutocompleteService) {
+        console.log("Google Maps not yet available");
+        return false;
+      }
+
+      if (!attributionsRef.current) {
+        console.log("Attribution ref not yet available");
+        return false;
+      }
+
+      try {
+        if (!autocompleteService.current) {
+          console.log("Initializing autocomplete service");
+          autocompleteService.current =
+            new window.google.maps.places.AutocompleteService();
+        }
+
+        if (!placesService.current) {
+          console.log("Initializing places service");
+          placesService.current = new window.google.maps.places.PlacesService(
+            attributionsRef.current
+          );
+        }
+
+        setIsGoogleLoaded(true);
+        return true;
+      } catch (error) {
+        console.error("Error initializing services:", error);
+        return false;
+      }
+    };
+
+    // Try immediate initialization
+    if (!isGoogleLoaded && initializationAttempts < MAX_ATTEMPTS) {
+      if (!initializeServices()) {
+        // Schedule retry
+        const retryTimeout = setTimeout(() => {
+          setInitializationAttempts((prev) => prev + 1);
+        }, RETRY_DELAY);
+
+        return () => clearTimeout(retryTimeout);
+      }
+    }
+  }, [isGoogleLoaded, initializationAttempts]);
+
+  useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
         dropdownRef.current &&
@@ -168,6 +208,7 @@ const PlacesAutocomplete: React.FC<Props> = ({
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     const value = event.target.value;
+    console.log("Input changed:", value);
     setInputValue(value);
 
     if (!value) {
@@ -176,36 +217,39 @@ const PlacesAutocomplete: React.FC<Props> = ({
       return;
     }
 
-    if (autocompleteService.current) {
-      setIsLoading(true);
-      try {
-        const response = await new Promise<GooglePrediction[]>(
-          (resolve, reject) => {
-            autocompleteService.current!.getPlacePredictions(
-              {
-                input: value,
-              },
-              (results, status) => {
-                if (
-                  status === window.google.maps.places.PlacesServiceStatus.OK &&
-                  results
-                ) {
-                  resolve(results);
-                } else {
-                  reject(status);
-                }
+    if (!autocompleteService.current) {
+      console.error("Autocomplete service not initialized");
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const response = await new Promise<GooglePrediction[]>(
+        (resolve, reject) => {
+          autocompleteService.current!.getPlacePredictions(
+            {
+              input: value,
+            },
+            (results, status) => {
+              if (
+                status === window.google.maps.places.PlacesServiceStatus.OK &&
+                results
+              ) {
+                resolve(results);
+              } else {
+                reject(status);
               }
-            );
-          }
-        );
-        setPredictions(response);
-        setShowDropdown(true);
-      } catch (error) {
-        console.error("Error fetching predictions:", error);
-        setPredictions([]);
-      } finally {
-        setIsLoading(false);
-      }
+            }
+          );
+        }
+      );
+      setPredictions(response);
+      setShowDropdown(true);
+    } catch (error) {
+      console.error("Error fetching predictions:", error);
+      setPredictions([]);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -242,11 +286,15 @@ const PlacesAutocomplete: React.FC<Props> = ({
         console.error("Geocoding error: ", error);
       }
     }
-  }, [searchParams]);
+  }, [searchParams, geocodingLibrary]);
 
   useEffect(() => {
     getPlaceFromCoordinates();
   }, [getPlaceFromCoordinates]);
+
+  if (!isGoogleLoaded && initializationAttempts >= 10) {
+    return <div>Failed to load Google Places. Please refresh the page.</div>;
+  }
 
   const suffixIcon = isLoading ? (
     <LoadingOutlined style={{ visibility: isLoading ? "visible" : "hidden" }} />
@@ -262,10 +310,11 @@ const PlacesAutocomplete: React.FC<Props> = ({
         placeholder={placeholder}
         suffix={suffixIcon}
         className="border border-[#C0C0C0] p-2 w-[330px] xl:w-[280px] rounded-lg bg-[#F9F9F9]"
+        disabled={!isGoogleLoaded}
       />
 
       {showDropdown && predictions.length > 0 && (
-        <div className="absolute z-50 w-[330px] xl:w-[280px] mt-1 bg-white rounded-md shadow-lg border border-gray-200">
+        <div className="absolute z-50 w-[330px] xl:w-[280px] mt-1 bg-white rounded-md shadow-lg border border-gray-200 max-h-[300px] overflow-y-auto">
           {predictions.map((prediction) => (
             <div
               key={prediction.place_id}
