@@ -21,31 +21,40 @@ interface UpdateData {
 export async function handleCheckoutSessionCompleted(
   session: Stripe.Checkout.Session
 ) {
-  const db = await connectMongo();
+  try {
+    const db = await connectMongo();
 
-  const currentUser = await findUser(session.customer_email as string);
-  console.log({ currentUser, email: session.customer_email });
-  const data = {
-    user: currentUser?._id,
-    customerId: session.customer as string,
-    planId: session.metadata?.planId || null,
-    subscription: {
-      subscriptionId: session.subscription as string,
-      priceId: session.metadata?.priceId || null,
-      interval: "monthly",
-      status: "trial",
-      trialEndsOn: session.metadata?.trialEndsOn || null,
-      isTrialEnded: false,
-    },
-  };
+    if (!session.customer_email) {
+      throw new Error("No customer email provided in session");
+    }
 
-  await db
-    .collection(MEMBERSHIP_COLLECTION)
-    .updateOne(
-      { customerId: data.customerId },
-      { $set: data },
-      { upsert: true }
-    );
+    const currentUser = await findUser(session.customer_email);
+
+    const data = {
+      user: currentUser?._id,
+      customerId: session.customer as string,
+      planId: session.metadata?.planId || null,
+      subscription: {
+        subscriptionId: session.subscription as string,
+        priceId: session.metadata?.priceId || null,
+        interval: "monthly",
+        status: "trial",
+        trialEndsOn: session.metadata?.trialEndsOn || null,
+        isTrialEnded: false,
+      },
+    };
+
+    await db
+      .collection(MEMBERSHIP_COLLECTION)
+      .updateOne(
+        { customerId: data.customerId },
+        { $set: data },
+        { upsert: true }
+      );
+  } catch (error: any) {
+    console.error("Error in handleCheckoutSessionCompleted:", error);
+    throw error;
+  }
 }
 
 export async function handleSubscriptionCreated(
@@ -180,15 +189,20 @@ export async function handleSubscriptionDeleted(
 }
 
 export async function findUser(email: string) {
-  const db = await connectMongo();
-  const user = await db
-    .collection(MEMBERSHIP_COLLECTION)
-    .findOne({ email: email });
+  try {
+    const db = await connectMongo();
+    const user = await db
+      .collection(MEMBERSHIP_COLLECTION)
+      .findOne({ email: email });
 
-  if (!user) {
-    console.log("User not found");
-    return null;
+    if (!user) {
+      console.log(`User not found for email: ${email}`);
+      return null;
+    }
+
+    return user;
+  } catch (error: any) {
+    console.error("Error in findUser:", error);
+    throw error;
   }
-
-  return user;
 }
