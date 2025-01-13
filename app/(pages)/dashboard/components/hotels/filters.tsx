@@ -156,6 +156,16 @@ export const Filters = () => {
     ? urlPriceRange.split("-").map(Number)
     : [0, 1000];
 
+  React.useEffect(() => {
+    if (!checkIn && !checkOut) {
+      const tomorrow = dayjs().add(1, "day").format("YYYY-MM-DD");
+      const dayAfterTomorrow = dayjs().add(2, "day").format("YYYY-MM-DD");
+
+      updateField("checkIn", tomorrow);
+      updateField("checkOut", dayAfterTomorrow);
+    }
+  }, []);
+
   return (
     <Suspense
       fallback={
@@ -198,7 +208,7 @@ export const Filters = () => {
                       dayjs(checkIn, "YYYY-MM-DD"),
                       dayjs(checkOut, "YYYY-MM-DD"),
                     ]
-                  : null
+                  : [dayjs().add(1, "day"), dayjs().add(2, "day")]
               }
               onChange={(_, dateStrings) => {
                 updateField("checkIn", dateStrings[0]);

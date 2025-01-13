@@ -208,7 +208,6 @@ const PlacesAutocomplete: React.FC<Props> = ({
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     const value = event.target.value;
-    console.log("Input changed:", value);
     setInputValue(value);
 
     if (!value) {

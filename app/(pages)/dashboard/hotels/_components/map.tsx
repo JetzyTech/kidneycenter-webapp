@@ -5,6 +5,7 @@ import { InfiniteData, UseInfiniteQueryResult } from "@tanstack/react-query";
 import { IHotelListing } from "../../types/dashboard.types";
 import { Map, Marker } from "@vis.gl/react-google-maps";
 import { message, Spin } from "antd";
+import { useFilter } from "../../hooks/use-filter";
 
 type RenderMapProps = {
   infiniteListing: UseInfiniteQueryResult<InfiniteData<IHotelListing>, unknown>;
@@ -17,8 +18,10 @@ export const RenderMap = ({ infiniteListing, lat, lng }: RenderMapProps) => {
     lat: number;
     lng: number;
   } | null>(null);
-
   const [isLocationReady, setIsLocationReady] = React.useState(false);
+
+  const { updateField } = useFilter();
+
   React.useEffect(() => {
     let watchId: number | null = null;
 
@@ -63,6 +66,13 @@ export const RenderMap = ({ infiniteListing, lat, lng }: RenderMapProps) => {
     lat: lat || currentUserLocation?.lat || 0,
     lng: lng || currentUserLocation?.lng || 0,
   };
+
+  React.useEffect(() => {
+    if (!lat && !lng && currentUserLocation) {
+      updateField("lat", currentUserLocation?.lat || 0);
+      updateField("lng", currentUserLocation?.lng || 0);
+    }
+  }, [lat, lng, currentUserLocation]);
 
   if (!isLocationReady) {
     return (
