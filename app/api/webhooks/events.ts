@@ -24,12 +24,8 @@ export async function handleCheckoutSessionCompleted(
   try {
     const db = await connectMongo();
 
-    if (!session.customer_email) {
-      throw new Error("No customer email provided in session");
-    }
-
-    const currentUser = await findUser(session.customer_email);
-
+    const currentUser = await findUser(session.customer_email as string);
+    console.log({ currentUser, email: session.customer_email });
     const data = {
       user: currentUser?._id,
       customerId: session.customer as string,
@@ -51,8 +47,14 @@ export async function handleCheckoutSessionCompleted(
         { $set: data },
         { upsert: true }
       );
-  } catch (error: any) {
-    console.error("Error in handleCheckoutSessionCompleted:", error);
+  } catch (error: unknown) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error";
+    console.error(
+      `Error handling checkout session completed for session: ${session.id}`,
+      errorMessage
+    );
+
     throw error;
   }
 }
@@ -60,132 +62,167 @@ export async function handleCheckoutSessionCompleted(
 export async function handleSubscriptionCreated(
   subscription: Stripe.Subscription
 ) {
-  const db = await connectMongo();
-  const mappedStatus =
-    subscription.status === "trialing" ? "trial" : subscription.status;
+  try {
+    const db = await connectMongo();
+    const mappedStatus =
+      subscription.status === "trialing" ? "trial" : subscription.status;
 
-  const data: {
-    user: string;
-    customerId: string;
-    subscription: Sub;
-  } = {
-    user: subscription.metadata.userId,
-    customerId: subscription.customer as string,
-    subscription: {
-      subscriptionId: subscription.id,
-      priceId: subscription.items.data[0].price.id,
-      interval: subscription.items.data[0].price.recurring?.interval,
-      status: mappedStatus,
-      isTrialEnded: subscription.status !== "trialing",
-      trialEndsOn: subscription.trial_end
-        ? new Date(subscription.trial_end * 1000).toISOString()
-        : null,
-    },
-  };
+    const data: {
+      user: string;
+      customerId: string;
+      subscription: Sub;
+    } = {
+      user: subscription.metadata.userId,
+      customerId: subscription.customer as string,
+      subscription: {
+        subscriptionId: subscription.id,
+        priceId: subscription.items.data[0].price.id,
+        interval: subscription.items.data[0].price.recurring?.interval,
+        status: mappedStatus,
+        isTrialEnded: subscription.status !== "trialing",
+        trialEndsOn: subscription.trial_end
+          ? new Date(subscription.trial_end * 1000).toISOString()
+          : null,
+      },
+    };
 
-  if (mappedStatus !== "trial") {
-    const subscriptionStart = new Date(
-      subscription.start_date * 1000
-    ).toISOString();
-    const subscriptionEnd = new Date(
-      subscription.current_period_end * 1000
-    ).toISOString();
+    if (mappedStatus !== "trial") {
+      const subscriptionStart = new Date(
+        subscription.start_date * 1000
+      ).toISOString();
+      const subscriptionEnd = new Date(
+        subscription.current_period_end * 1000
+      ).toISOString();
 
-    data.subscription.subscriptionStart = subscriptionStart;
-    data.subscription.subscriptionEnd = subscriptionEnd;
-    data.subscription.cost =
-      subscription.items.data[0].price.unit_amount! / 100;
+      data.subscription.subscriptionStart = subscriptionStart;
+      data.subscription.subscriptionEnd = subscriptionEnd;
+      data.subscription.cost =
+        subscription.items.data[0].price.unit_amount! / 100;
+    }
+
+    await db
+      .collection(MEMBERSHIP_COLLECTION)
+      .updateOne({ customerId: subscription.customer }, { $set: data });
+  } catch (error: unknown) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown Error";
+    console.error(`Error handling handleSubscriptionCreated`, errorMessage);
+    throw error;
   }
-
-  await db
-    .collection(MEMBERSHIP_COLLECTION)
-    .updateOne({ customerId: subscription.customer }, { $set: data });
 }
 
 export async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice) {
-  const db = await connectMongo();
+  try {
+    const db = await connectMongo();
 
-  const data = {
-    subscription: {
-      status: "active",
-    },
-  };
+    const data = {
+      subscription: {
+        status: "active",
+      },
+    };
 
-  await db
-    .collection(MEMBERSHIP_COLLECTION)
-    .updateOne({ customerId: invoice.customer }, { $set: data });
+    await db
+      .collection(MEMBERSHIP_COLLECTION)
+      .updateOne({ customerId: invoice.customer }, { $set: data });
+  } catch (error: unknown) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown Error";
+    console.error(`Error handling handleInvoicePaymentSucceeded`, errorMessage);
+    throw error;
+  }
 }
 
 export async function handleInvoicePaymentFailed(invoice: Stripe.Invoice) {
-  const db = await connectMongo();
+  try {
+    const db = await connectMongo();
 
-  const data = {
-    subscription: {
-      status: "suspended",
-    },
-  };
+    const data = {
+      subscription: {
+        status: "suspended",
+      },
+    };
 
-  await db
-    .collection(MEMBERSHIP_COLLECTION)
-    .updateOne({ customerId: invoice.customer }, { $set: data });
+    await db
+      .collection(MEMBERSHIP_COLLECTION)
+      .updateOne({ customerId: invoice.customer }, { $set: data });
+  } catch (error: unknown) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown Error";
+    console.error(`Error handling handleInvoicePaymentFailed`, errorMessage);
+    throw error;
+  }
 }
 
 export async function handleSubscriptionUpdated(
   subscription: Stripe.Subscription
 ) {
-  const db = await connectMongo();
-  const mappedStatus =
-    subscription.status === "trialing" ? "trial" : subscription.status;
+  try {
+    const db = await connectMongo();
+    const mappedStatus =
+      subscription.status === "trialing" ? "trial" : subscription.status;
 
-  const data: UpdateData = {
-    planId: subscription.items.data[0].price.product as string,
-    subscription: {
-      subscriptionId: subscription.id,
-      priceId: subscription.items.data[0].price.id,
-      interval: subscription.items.data[0].price.recurring?.interval || null,
-      status: subscription.status,
-      trialEndsOn: subscription.trial_end
-        ? new Date(subscription.trial_end * 1000).toISOString()
-        : null,
-      isTrialEnded: subscription.trial_end
-        ? Date.now() >= subscription.trial_end * 1000
-        : true,
-    },
-  };
+    const data: UpdateData = {
+      planId: subscription.items.data[0].price.product as string,
+      subscription: {
+        subscriptionId: subscription.id,
+        priceId: subscription.items.data[0].price.id,
+        interval: subscription.items.data[0].price.recurring?.interval || null,
+        status: subscription.status,
+        trialEndsOn: subscription.trial_end
+          ? new Date(subscription.trial_end * 1000).toISOString()
+          : null,
+        isTrialEnded: subscription.trial_end
+          ? Date.now() >= subscription.trial_end * 1000
+          : true,
+      },
+    };
 
-  if (mappedStatus !== "trial") {
-    const subscriptionStart = new Date(
-      subscription.start_date * 1000
-    ).toISOString();
-    const subscriptionEnd = new Date(
-      subscription.current_period_end * 1000
-    ).toISOString();
+    if (mappedStatus !== "trial") {
+      const subscriptionStart = new Date(
+        subscription.start_date * 1000
+      ).toISOString();
+      const subscriptionEnd = new Date(
+        subscription.current_period_end * 1000
+      ).toISOString();
 
-    data.subscription.subscriptionStart = subscriptionStart;
-    data.subscription.subscriptionEnd = subscriptionEnd;
-    data.subscription.cost =
-      subscription.items.data[0].price.unit_amount! / 100;
+      data.subscription.subscriptionStart = subscriptionStart;
+      data.subscription.subscriptionEnd = subscriptionEnd;
+      data.subscription.cost =
+        subscription.items.data[0].price.unit_amount! / 100;
+    }
+
+    await db
+      .collection(MEMBERSHIP_COLLECTION)
+      .updateOne({ customerId: subscription.customer }, { $set: data });
+  } catch (error: unknown) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown Error";
+    console.error(`Error handling handleSubscriptionUpdated`, errorMessage);
+    throw error;
   }
-
-  await db
-    .collection(MEMBERSHIP_COLLECTION)
-    .updateOne({ customerId: subscription.customer }, { $set: data });
 }
 
 export async function handleSubscriptionDeleted(
   subscription: Stripe.Subscription
 ) {
-  const db = await connectMongo();
+  try {
+    const db = await connectMongo();
 
-  const data = {
-    subscription: {
-      status: "inactive",
-    },
-  };
+    const data = {
+      subscription: {
+        status: "inactive",
+      },
+    };
 
-  await db
-    .collection(MEMBERSHIP_COLLECTION)
-    .updateOne({ customerId: subscription.customer }, { $set: data });
+    await db
+      .collection(MEMBERSHIP_COLLECTION)
+      .updateOne({ customerId: subscription.customer }, { $set: data });
+  } catch (error: unknown) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown Error";
+    console.error(`Error handling handleSubscriptionDeleted`, errorMessage);
+    throw error;
+  }
 }
 
 export async function findUser(email: string) {
@@ -201,8 +238,10 @@ export async function findUser(email: string) {
     }
 
     return user;
-  } catch (error: any) {
-    console.error("Error in findUser:", error);
+  } catch (error: unknown) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown Error";
+    console.error(`Error handling findUser`, errorMessage);
     throw error;
   }
 }
