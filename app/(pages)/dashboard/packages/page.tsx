@@ -38,8 +38,9 @@ type PackageProps = {
 
 const createCheckoutSession = async (priceId: string) => {
   try {
-    const { data } = await axios.post("/api/stripe", { priceId });
-    return data.result.url;
+    const response = await axios.post("/api/stripe", { priceId });
+    console.log({ response });
+    return response.data.result.url;
   } catch (error: unknown) {
     const errorMessage =
       error instanceof Error ? error.message : "Unknown Error";
