@@ -20,6 +20,7 @@ interface UpdateData {
   planId: string;
   subscription: Sub;
 }
+
 export async function handleCheckoutSessionCompleted(
   session: Stripe.Checkout.Session
 ) {
@@ -27,22 +28,22 @@ export async function handleCheckoutSessionCompleted(
     const db = await connectMongo();
     const currentUser = await findUser(session.customer_email as string);
 
-    console.log({ currentUser });
-
     const price = await stripe.prices.retrieve(
-      session.metadata?.priceId as string
+      "price_1QcTJuB7XccR5GE0oFkVcHYh"
     );
 
     console.log({ price });
 
     const interval = price.recurring?.interval || "monthly";
 
+    console.log("here before retriving stripe");
+
     const subscription = await stripe.subscriptions.retrieve(
       session.subscription as string
     );
 
     const status = subscription.status || "trial";
-
+    console.log("here before creating data");
     const data = {
       user: currentUser?._id,
       customerId: session.customer as string,
@@ -58,14 +59,16 @@ export async function handleCheckoutSessionCompleted(
         isTrialEnded: subscription.status !== "trialing",
       },
     };
-
-    await db
+    console.log("here before DB");
+    const checking = await db
       .collection(MEMBERSHIP_COLLECTION)
       .updateOne(
         { customerId: data.customerId },
         { $set: data },
         { upsert: true }
       );
+
+    console.log({ checking });
   } catch (error: unknown) {
     const errorMessage =
       error instanceof Error ? error.message : "Unknown error";
@@ -121,9 +124,13 @@ export async function handleSubscriptionCreated(
         subscription.items.data[0].price.unit_amount! / 100;
     }
 
-    await db
+    console.log("here before DB");
+
+    const checking = await db
       .collection(MEMBERSHIP_COLLECTION)
       .updateOne({ customerId: subscription.customer }, { $set: data });
+
+    console.log({ checking });
   } catch (error: unknown) {
     const errorMessage =
       error instanceof Error ? error.message : "Unknown Error";
@@ -142,9 +149,11 @@ export async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice) {
       },
     };
 
-    await db
+    const checking = await db
       .collection(MEMBERSHIP_COLLECTION)
       .updateOne({ customerId: invoice.customer }, { $set: data });
+
+    console.log({ checking });
   } catch (error: unknown) {
     const errorMessage =
       error instanceof Error ? error.message : "Unknown Error";
@@ -163,9 +172,11 @@ export async function handleInvoicePaymentFailed(invoice: Stripe.Invoice) {
       },
     };
 
-    await db
+    const checking = await db
       .collection(MEMBERSHIP_COLLECTION)
       .updateOne({ customerId: invoice.customer }, { $set: data });
+
+    console.log({ checking });
   } catch (error: unknown) {
     const errorMessage =
       error instanceof Error ? error.message : "Unknown Error";
@@ -212,9 +223,11 @@ export async function handleSubscriptionUpdated(
         subscription.items.data[0].price.unit_amount! / 100;
     }
 
-    await db
+    const checking = await db
       .collection(MEMBERSHIP_COLLECTION)
       .updateOne({ customerId: subscription.customer }, { $set: data });
+
+    console.log({ checking });
   } catch (error: unknown) {
     const errorMessage =
       error instanceof Error ? error.message : "Unknown Error";
@@ -235,9 +248,11 @@ export async function handleSubscriptionDeleted(
       },
     };
 
-    await db
+    const checking = await db
       .collection(MEMBERSHIP_COLLECTION)
       .updateOne({ customerId: subscription.customer }, { $set: data });
+
+    console.log({ checking });
   } catch (error: unknown) {
     const errorMessage =
       error instanceof Error ? error.message : "Unknown Error";
@@ -269,7 +284,7 @@ export async function updateSubsPlanPricing() {
       await db
         .collection(SUBS_PLAN_PRICING_COLLECTION)
         .updateOne(
-          { priceId: "price_1Qh3ttB7XccR5GE09U8wGjVs" },
+          { priceId: planData.priceId },
           { $set: planData },
           { upsert: true }
         );

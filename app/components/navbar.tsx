@@ -11,6 +11,8 @@ export default function Navbar() {
   const session = useSession();
   const [isActive, setLoggedIn] = React.useState(false);
 
+  console.log({ session });
+
   React.useEffect(() => {
     if (session && session?.status === "authenticated") {
       setLoggedIn(true);

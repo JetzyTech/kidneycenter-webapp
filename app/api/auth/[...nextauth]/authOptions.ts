@@ -98,11 +98,11 @@ export const authOptions: NextAuthOptions = {
     },
 
     async session({ session, user, token }) {
-      //   @ts-ignore
       if (token?.profile) {
         // @ts-ignore
-        session.profile = token?.profile;
-        session.user = token?.profile;
+        session.user = token.profile.user;
+        // @ts-ignore
+        session.profile = token.profile;
       }
 
       return session;
