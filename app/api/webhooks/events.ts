@@ -1,7 +1,10 @@
 import connectMongo from "@Jetzy/app/lib/connectDB";
+import { stripe } from "@Jetzy/app/lib/stripe";
 import Stripe from "stripe";
 
+const SUBS_PLAN_PRICING_COLLECTION = "subsplanpricing";
 const MEMBERSHIP_COLLECTION = "jetzyMembershipSubsSchema";
+
 interface Sub {
   subscriptionId: string;
   priceId: string;
@@ -17,15 +20,29 @@ interface UpdateData {
   planId: string;
   subscription: Sub;
 }
-
 export async function handleCheckoutSessionCompleted(
   session: Stripe.Checkout.Session
 ) {
   try {
     const db = await connectMongo();
-
     const currentUser = await findUser(session.customer_email as string);
-    console.log({ currentUser, email: session.customer_email });
+
+    console.log({ currentUser });
+
+    const price = await stripe.prices.retrieve(
+      session.metadata?.priceId as string
+    );
+
+    console.log({ price });
+
+    const interval = price.recurring?.interval || "monthly";
+
+    const subscription = await stripe.subscriptions.retrieve(
+      session.subscription as string
+    );
+
+    const status = subscription.status || "trial";
+
     const data = {
       user: currentUser?._id,
       customerId: session.customer as string,
@@ -33,10 +50,12 @@ export async function handleCheckoutSessionCompleted(
       subscription: {
         subscriptionId: session.subscription as string,
         priceId: session.metadata?.priceId || null,
-        interval: "monthly",
-        status: "trial",
-        trialEndsOn: session.metadata?.trialEndsOn || null,
-        isTrialEnded: false,
+        interval,
+        status,
+        trialEndsOn: subscription.trial_end
+          ? new Date(subscription.trial_end * 1000).toISOString()
+          : null,
+        isTrialEnded: subscription.status !== "trialing",
       },
     };
 
@@ -66,6 +85,8 @@ export async function handleSubscriptionCreated(
     const db = await connectMongo();
     const mappedStatus =
       subscription.status === "trialing" ? "trial" : subscription.status;
+
+    await updateSubsPlanPricing();
 
     const data: {
       user: string;
@@ -225,12 +246,49 @@ export async function handleSubscriptionDeleted(
   }
 }
 
-export async function findUser(email: string) {
+export async function updateSubsPlanPricing() {
   try {
     const db = await connectMongo();
-    const user = await db
-      .collection(MEMBERSHIP_COLLECTION)
-      .findOne({ email: email });
+
+    // Fetch all pricing plans from Stripe
+    const prices = await stripe.prices.list({
+      active: true,
+      expand: ["data.product"],
+    });
+
+    // Iterate through the pricing plans and update the database
+    for (const price of prices.data) {
+      const planData = {
+        amount: price.unit_amount ? price.unit_amount / 100 : 0,
+        type: price.recurring?.interval || "monthly",
+        planName: price.nickname || "Unknown",
+        priceId: price.id,
+        isDeleted: false,
+      };
+
+      await db
+        .collection(SUBS_PLAN_PRICING_COLLECTION)
+        .updateOne(
+          { priceId: "price_1Qh3ttB7XccR5GE09U8wGjVs" },
+          { $set: planData },
+          { upsert: true }
+        );
+    }
+  } catch (error: unknown) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error";
+    console.error(`Error updating subscription plan pricing`, errorMessage);
+    throw error;
+  }
+}
+
+export async function findUser(
+  email: string,
+  collection: string = MEMBERSHIP_COLLECTION
+) {
+  try {
+    const db = await connectMongo();
+    const user = await db.collection(collection).findOne({ email: email });
 
     if (!user) {
       console.log(`User not found for email: ${email}`);

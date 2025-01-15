@@ -2,6 +2,7 @@
 import { Button, Typography } from "antd";
 import React from "react";
 import { cn } from "@Jetzy/app/lib/helper";
+import axios from "axios";
 
 enum PackageVariant {
   MONTHLY = "MONTH",
@@ -33,6 +34,17 @@ type PackageProps = {
   variant: string;
   currency: string;
   link: string;
+};
+
+const createCheckoutSession = async (priceId: string) => {
+  try {
+    const { data } = await axios.post("/api/stripe", { priceId });
+    return data.result.url;
+  } catch (error: unknown) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown Error";
+    console.error(errorMessage);
+  }
 };
 
 const Packages = () => {
@@ -75,7 +87,19 @@ const PackageDetails = ({
   variant,
   currency,
   link,
+  priceId,
 }: PackageProps) => {
+  const [loading, setLoading] = React.useState(false);
+
+  const onPackageSelect = async (priceId: string) => {
+    setLoading(true);
+    const url = await createCheckoutSession(priceId);
+    if (url) {
+      window.location.href = url;
+    }
+    setLoading(false);
+  };
+
   return (
     <>
       <div className="relative w-[368px] h-[346px] border border-[#E1E1E1] rounded-3xl bg-white flex flex-col justify-between items-center p-4 overflow-hidden">
@@ -108,6 +132,7 @@ const PackageDetails = ({
         </Typography.Text>
         <Button
           size="large"
+          loading={loading}
           type={
             variant.toUpperCase() !== PackageVariant.MONTHLY
               ? "primary"
@@ -119,8 +144,9 @@ const PackageDetails = ({
               ? "bg-transparent border-primary text-primary "
               : "text-[#f9f9f9]"
           )}
+          onClick={() => onPackageSelect(priceId)}
         >
-          <a href={link}>Get this Package</a>
+          Get this Package
         </Button>
       </div>
     </>

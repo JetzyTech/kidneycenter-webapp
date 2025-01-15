@@ -2,9 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { Stripe } from "stripe";
 import { authOptions } from "../auth/[...nextauth]/authOptions";
-import { findUser } from "../webhooks/events";
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
+import { stripe } from "@Jetzy/app/lib/stripe";
 
 export async function POST(request: NextRequest) {
   try {
@@ -13,14 +11,22 @@ export async function POST(request: NextRequest) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
-    const loggedUser = await findUser(session?.user?.email as string);
-    const data = await request.json();
+    const body = await request.text();
+    const data = JSON.parse(body);
     const priceId = data.priceId;
+    const currentUser = session.user?.user;
+
+    const metadata = {
+      priceId,
+      email: currentUser?.email,
+      name: `${currentUser?.firstName} ${currentUser?.lastName}`,
+      userId: currentUser?._id,
+    };
 
     let customerId;
 
     const customerList = await stripe.customers.list({
-      email: loggedUser?.email as string,
+      email: metadata?.email as string,
       limit: 1,
     });
 
@@ -30,14 +36,16 @@ export async function POST(request: NextRequest) {
       customerId = existingCustomer.id;
     } else {
       const newCustomer = await stripe.customers.create({
-        email: loggedUser?.email as string,
-        name: loggedUser?.name as string,
+        email: metadata?.email as string,
+        name: metadata?.name as string,
       });
       customerId = newCustomer.id;
     }
 
     const checkoutSession: Stripe.Checkout.Session =
       await stripe.checkout.sessions.create({
+        mode: "subscription",
+        currency: "pkr",
         payment_method_types: ["card"],
         customer: customerId,
         line_items: [
@@ -46,16 +54,19 @@ export async function POST(request: NextRequest) {
             quantity: 1,
           },
         ],
-        mode: "payment",
-        success_url: `${process.env.NEXT_PUBLIC_URL}/success`,
-        cancel_url: `${process.env.NEXT_PUBLIC_URL}/cancel`,
-        metadata: { priceId, email: loggedUser?.email || '', name: loggedUser?.name || '', userId: loggedUser?._id?.toString() || ''
-        },
+        success_url: `${process.env.NEXT_PUBLIC_URL}/dashboard/packages?prefilled_email=${currentUser?.email}`,
+        cancel_url: `${process.env.NEXT_PUBLIC_URL}/dashboard/packages`,
+        metadata: metadata,
       });
 
     return NextResponse.json({ result: checkoutSession, ok: true });
   } catch (error) {
-    console.error(error);
-    return new NextResponse("Internal Server Error", { status: 500 });
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown Error";
+    console.error({ errorMessage });
+    return new NextResponse("Something Went Wrong", {
+      status: 500,
+      statusText: errorMessage,
+    });
   }
 }
