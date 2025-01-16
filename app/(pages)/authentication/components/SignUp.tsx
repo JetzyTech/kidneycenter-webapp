@@ -117,7 +117,7 @@ const Signup = () => {
 								</Flex>
 
 								<Flex flexDir="column" gap={4}>
-									<Typography.Text className="font-medium text-lg leading-6">Phone Number</Typography.Text>
+									<Typography.Text className="font-medium text-lg leading-6">Phone Number <span className="text-sm text-muted">(optional)</span></Typography.Text>
 									<Field
 										onChange={handleChange}
 										name="phone"

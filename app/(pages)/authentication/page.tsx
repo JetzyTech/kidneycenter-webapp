@@ -38,7 +38,7 @@ export default function Authentication() {
 
   return (
     <div className="flex flex-col xl:flex-row justify-between">
-      <div className="w-[337px] xl:w-[448px] mx-auto py-10">
+      <div className="w-[330px] xl:w-[448px] mx-auto py-10">
         <Link href="/" className="w-max inline-block">
           <Image
             src={JetzyLogo}
