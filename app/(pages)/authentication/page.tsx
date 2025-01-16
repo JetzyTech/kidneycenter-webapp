@@ -37,8 +37,8 @@ export default function Authentication() {
   );
 
   return (
-    <div className="flex justify-between">
-      <div className="w-[448px] mx-auto py-10">
+    <div className="flex flex-col xl:flex-row justify-between">
+      <div className="w-[337px] xl:w-[448px] mx-auto py-10">
         <Link href="/" className="w-max inline-block">
           <Image
             src={JetzyLogo}
@@ -51,14 +51,14 @@ export default function Authentication() {
             <div
               key={item.key}
               onClick={() => setSelectedTab(item.key)}
-              className={`w-[210px] h-[48px] px-4 py-3 text-center !cursor-pointer ${
+              className={`w-[160px] xl:w-[210px] h-[48px] px-2 xl:px-4 py-2 text-center !cursor-pointer ${
                 selectedTab === item.key
                   ? "bg-secondary border border-primary rounded-full"
                   : ""
               }`}
             >
               <Typography.Text
-                className={`font-medium ${
+                className={`font-medium text-xs ${
                   selectedTab === item.key ? "text-primary" : "text-muted"
                 }`}
               >
@@ -68,11 +68,11 @@ export default function Authentication() {
           ))}
         </div>
 
-        <div className="w-[448px]">
+        <div className="w-[337px] xl:w-[448px]">
           {authItems.find((item) => item.key === selectedTab)?.children}
         </div>
       </div>
-      <div className="relative">
+      <div className="hidden xl:block relative">
         <Image
           src={AuthBgImg}
           alt="Jetzy signup"
