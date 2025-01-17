@@ -36,14 +36,14 @@ const authItems = [
 const explanation = [
   {
     image: FirstExplanation,
-    title: `Unlock 3 Months of Jetzy Select Concierge – Exclusively for Kidney Centers Attendees!`,
-    description: `Enjoy premium travel perks and explore the world with Jetzy Pro – your key to exclusive hotel deals, dining experiences, and more.`,
+    title: `Unlock 3 Months of Jetzy Select Concierge – Exclusively for Kidney Center Attendees!`,
+    description: `Enjoy premium travel perks and explore the world with Jetzy Select Concierge – your key to exclusive hotel deals, dining experiences, and more.`,
     footer: false,
   },
   {
     image: SecondExplanation,
     title: `What is Jetzy?`,
-    description: `Jetzy is a global social network of people who enjoy travel and unique lifestyle experiences. Whether it's culture, food, nightlife or outdoors, on our interest and location based Jetzy app you can contact like-minded people for authentic local recommendations or even plan to meet in person so you're never lost or alone anywhere you go.`,
+    description: `Jetzy is an exclusive "invite only"  lifestyle social app to connect like-minded people where members get VIP perks and significant discounts for travel & leisure.`,
     footer: true,
   },
 ]

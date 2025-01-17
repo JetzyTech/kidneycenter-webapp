@@ -36,8 +36,8 @@ const Success = () => {
       <Typography.Text className='text-[#222B38] text-[18px] font-bold'>Login to the app to unlock your VIP perks!</Typography.Text>
 
       <div className='flex gap-x-2 mb-10 w-[300px]'>
-        <a href='/'><Image src={AppleJetzyApp} alt='jetzy mobile app ios'  /></a>
-        <a href='/'><Image src={GoogleJetzyApp} alt='jetzy mobile app android'  /></a>
+        <a href='https://apps.apple.com/pk/app/jetzy-connect-travel-enjoy/id1019546379'><Image src={AppleJetzyApp} alt='jetzy mobile app ios'  /></a>
+        <a href='https://play.google.com/store/apps/details?id=com.icreon.travelconnect'><Image src={GoogleJetzyApp} alt='jetzy mobile app android'  /></a>
       </div>
     </div>
     </>
