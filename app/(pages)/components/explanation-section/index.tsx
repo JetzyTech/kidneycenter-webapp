@@ -12,7 +12,7 @@ const ExplanationSection = ({title, description, image, footer = false}: {title:
       <Image src={image} alt={title} width={480} height={320} className='w-full h-[320px] object-cover' />
     <div className='py-6 px-3 w-[300px] md:w-[400px] lg:w-[500px] mx-auto space-y-4'>
       <Typography.Text className='text-3xl font-extrabold text-[#2E3134] block'>{title}</Typography.Text>
-      <Typography.Text className='text-lg text-[#595E62]'>{description}</Typography.Text>
+      <Typography.Text className='block text-lg text-[#595E62]'>{description}</Typography.Text>
 
       {footer &&
         <div className='flex gap-x-2 mb-10 w-[300px]'>
