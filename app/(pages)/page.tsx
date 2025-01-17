@@ -8,9 +8,12 @@ import { parseAsString, useQueryState } from "nuqs";
 
 import Signup from "./components/SignUp";
 import Login from "./components/Login";
+import ExplanationSection from './components/explanation-section';
 
 import AuthBgImg from "@/app/assets/images/auth/bg-image.jpg";
 import JetzyLogo from "@/app/assets/logos/jetzy-logo.png";
+import FirstExplanation from '@/app/assets/images/auth/explanation-section/first.png'
+import SecondExplanation from '@/app/assets/images/auth/explanation-section/second.png'
 
 enum AUTH_TABS {
   SIGNUP = "signup",
@@ -30,6 +33,21 @@ const authItems = [
   },
 ];
 
+const explanation = [
+  {
+    image: FirstExplanation,
+    title: `Unlock 3 Months of Jetzy Select Concierge – Exclusively for Kidney Centers Attendees!`,
+    description: `Enjoy premium travel perks and explore the world with Jetzy Pro – your key to exclusive hotel deals, dining experiences, and more.`,
+    footer: false,
+  },
+  {
+    image: SecondExplanation,
+    title: `What is Jetzy?`,
+    description: `Jetzy is a global social network of people who enjoy travel and unique lifestyle experiences. Whether it's culture, food, nightlife or outdoors, on our interest and location based Jetzy app you can contact like-minded people for authentic local recommendations or even plan to meet in person so you're never lost or alone anywhere you go.`,
+    footer: true,
+  },
+]
+
 export default function Authentication() {
   const [selectedTab, setSelectedTab] = useQueryState(
     "tab",
@@ -38,7 +56,7 @@ export default function Authentication() {
 
   return (
     <div className="flex flex-col xl:flex-row justify-between">
-      <div className="w-[330px] xl:w-[448px] mx-auto py-10">
+      <div className="w-[330px] md:w-[400px] xl:w-[448px] mx-auto py-10">
         <Link href="/" className="w-max inline-block">
           <Image
             src={JetzyLogo}
@@ -68,7 +86,7 @@ export default function Authentication() {
           ))}
         </div>
 
-        <div className="w-[337px] xl:w-[448px]">
+        <div className="w-[330px] md:w-[400px] xl:w-[448px]">
           {authItems.find((item) => item.key === selectedTab)?.children}
         </div>
       </div>
@@ -89,6 +107,10 @@ export default function Authentication() {
           </Typography.Text>
         </div>
       </div>
+
+    {explanation.map((item) => (
+      <ExplanationSection key={item.title} {...item} />
+    ))}
     </div>
   );
 }

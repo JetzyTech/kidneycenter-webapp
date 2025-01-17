@@ -23,7 +23,7 @@ const Signup = () => {
 	const formRef = React.createRef<FormikProps<SignUpFormData>>()
 
 	const InitialFormState: SignUpFormData = {
-		refCode: "HBL50",
+		refCode: "KIDNEYCENTERPRO",
 		phone: "",
 		role: "user",
 		email: "",
