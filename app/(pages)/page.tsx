@@ -51,7 +51,7 @@ const explanation = [
 export default function Authentication() {
   const [selectedTab, setSelectedTab] = useQueryState(
     "tab",
-    parseAsString.withDefault(AUTH_TABS.LOGIN)
+    parseAsString.withDefault(AUTH_TABS.SIGNUP)
   );
 
   return (
@@ -108,9 +108,11 @@ export default function Authentication() {
         </div>
       </div>
 
-    {explanation.map((item) => (
-      <ExplanationSection key={item.title} {...item} />
-    ))}
+    <div className="xl:hidden">
+      {explanation.map((item) => (
+        <ExplanationSection key={item.title} {...item} />
+      ))}
+    </div>
     </div>
   );
 }
