@@ -17,9 +17,9 @@ const Success = () => {
       <div className='flex flex-col w-[420px] items-center justify-center text-center'>
       <Typography.Text className='text-[32px] font-bold text-[#222B38]'>Congratulations!</Typography.Text>
       <Typography.Text className='mt-2 mb-5 text-[18px] font-bold text-[#222B38]'>You've Been Awarded a Jetzy Pro Subscription.</Typography.Text>
-      <Typography.Text className='text-base font-normal text-[#707C8D]'>Welcome to the premium Jetzy experience, exclusively tailored for you. You’ve been gifted a subscription worth $135 – enjoy unparalleled perks and benefits!</Typography.Text>
+      <Typography.Text className='text-base font-normal text-[#707C8D]'>Welcome to the premium Jetzy experience, exclusively tailored for you. You&apos;ve been gifted a subscription worth $135 - enjoy unparalleled perks and benefits!</Typography.Text>
       </div>
-      <div className='border rounded-xl py-2 px-3 w-[388px] space-y-1'>
+      <div className='border bg-[#F8F8F8] rounded-xl py-2 px-3 w-[388px] space-y-1'>
         <div className='flex items-center justify-between'>
         <Typography.Text className='text-[20px] font-bold text-black'>Alex Brown</Typography.Text>
         <Typography.Text className='text-base text-[#07B75F] italic'>Active</Typography.Text>
