@@ -16,8 +16,9 @@ const ExplanationSection = ({title, description, image, footer = false}: {title:
 
       {footer &&
         <div className='flex gap-x-2 mb-10 w-[300px]'>
-        <a href='/'><Image src={AppleJetzyApp} alt='jetzy mobile app ios' /></a>
-        <a href='/'><Image src={GoogleJetzyApp} alt='jetzy mobile app android' /></a>
+      <a href='https://apps.apple.com/pk/app/jetzy-connect-travel-enjoy/id1019546379'><Image src={AppleJetzyApp} alt='jetzy mobile app ios'  /></a>
+        <a href='https://play.google.com/store/apps/details?id=com.icreon.travelconnect'><Image src={GoogleJetzyApp} alt='jetzy mobile app android'  /></a>
+
       </div>
       }
     </div>

@@ -116,9 +116,10 @@ const Login = () => {
                     </Box>
                   </Flex>
                   <Flex flexDir={"column"} gap={4}>
+                    
                     <Typography.Text className="font-medium text-lg leading-6">
                       Password
-                    </Typography.Text>
+                    </Typography.Text> {/* I don't see this password hint text for some reason*/}
                     <PasswordInput
                       value={values?.password}
                       handleChange={handleChange}
