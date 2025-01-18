@@ -15,7 +15,6 @@ export const loginValidatorScheme = yup.object().shape({
 
 export const signupValidation = yup.object().shape({
 	email: yup.string().email("Email must be a valid email address.").required("Email is required"),
-	phone: yup.string().required("Phone number is required"),
 	password: yup
 		.string()
 		.required("Password is required")
@@ -54,7 +53,6 @@ export const changePasswordValidatorScheme = yup.object().shape({
 export const onboardingSchema = yup.object().shape({
 	firstName: yup.string().required("First name is required."),
 	lastName: yup.string().required("Last name is required."),
-	phone: yup.string().required("Phone number is required."),
 })
 
 export const setBusinessAccountPasswordValidatorScheme = yup.object().shape({

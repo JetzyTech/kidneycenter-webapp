@@ -1,3 +1,24 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.dateRangePicker .ant-picker-panel:nth-child(2) {
+  display: none;
+}
+
+.dateRangePicker .ant-picker-panel:nth-child(1) button {
+  visibility: visible !important;
+}
+
+[data-vaul-drawer][data-vaul-drawer-direction="bottom"]::after {
+  height: 0 !important;
+}

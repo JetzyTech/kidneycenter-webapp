@@ -185,9 +185,14 @@ export const Stars = () => {
   );
 };
 
-export const Pins = (props: { width?: number; height?: number }) => {
+export const Pins = (props: {
+  width?: number;
+  height?: number;
+  stroke?: string;
+}) => {
   const width = props.width ?? 16;
   const height = props.height ?? 16;
+  const stroke = props.stroke ?? "#8C9094";
   return (
     <svg
       width={width}
@@ -198,13 +203,13 @@ export const Pins = (props: { width?: number; height?: number }) => {
     >
       <path
         d="M8 8.5C9.10457 8.5 10 7.60457 10 6.5C10 5.39543 9.10457 4.5 8 4.5C6.89543 4.5 6 5.39543 6 6.5C6 7.60457 6.89543 8.5 8 8.5Z"
-        stroke="#8C9094"
+        stroke={stroke}
         strokeLinecap="round"
         strokeLinejoin="round"
       />
       <path
         d="M13 6.5C13 11 8 14.5 8 14.5C8 14.5 3 11 3 6.5C3 5.17392 3.52678 3.90215 4.46447 2.96447C5.40215 2.02678 6.67392 1.5 8 1.5C9.32608 1.5 10.5979 2.02678 11.5355 2.96447C12.4732 3.90215 13 5.17392 13 6.5V6.5Z"
-        stroke="#8C9094"
+        stroke={stroke}
         strokeLinecap="round"
         strokeLinejoin="round"
       />
@@ -295,18 +300,26 @@ export const SearchSVG = () => {
   );
 };
 
-export const ChevronDownSVG = () => {
+export const ChevronDownSVG = (props: {
+  fill?: string;
+  width?: number;
+  height?: number;
+}) => {
+  const fill = props.fill ?? "black";
+  const width = props.width ?? 23;
+  const height = props.height ?? 23;
+
   return (
     <svg
-      width="23"
-      height="23"
+      width={width}
+      height={height}
       viewBox="0 0 23 23"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
       <path
         d="M5.75 8.625L11.5 14.375L17.25 8.625"
-        stroke="black"
+        stroke={fill}
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -315,18 +328,25 @@ export const ChevronDownSVG = () => {
   );
 };
 
-export const ChevronLeftSVG = () => {
+export const ChevronLeftSVG = (props: {
+  width?: number;
+  height?: number;
+  stroke?: string;
+}) => {
+  const width = props.width ?? 26;
+  const height = props.height ?? 26;
+  const stroke = props.stroke ?? "#8C9094";
   return (
     <svg
-      width="26"
-      height="26"
+      width={width}
+      height={height}
       viewBox="0 0 26 26"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
       <path
         d="M16.25 19.5L9.75 13L16.25 6.5"
-        stroke="#8C9094"
+        stroke={stroke}
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -335,18 +355,25 @@ export const ChevronLeftSVG = () => {
   );
 };
 
-export const ChevronRightSVG = () => {
+export const ChevronRightSVG = (props: {
+  stroke?: string;
+  height?: number;
+  width?: number;
+}) => {
+  const stroke = props.stroke ?? "#F79432";
+  const height = props.height ?? 20;
+  const width = props.width ?? 20;
   return (
     <svg
-      width="20"
-      height="20"
+      width={width}
+      height={height}
       viewBox="0 0 20 20"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
       <path
         d="M7.5 15L12.5 10L7.5 5"
-        stroke="#F79432"
+        stroke={stroke}
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -391,5 +418,183 @@ export const DirectionSVG = () => {
         fill="white"
       />
     </svg>
+  );
+};
+
+export const GreenCheckmarkSVG = () => {
+  return (
+    <>
+      <svg
+        width="120"
+        height="120"
+        viewBox="0 0 120 120"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <g clipPath="url(#clip0_279_7802)">
+          <path
+            d="M118.892 63.974L111.881 52.9156L116.04 40.5048C116.317 39.6842 116.3 38.7928 115.993 37.983C115.685 37.1732 115.107 36.4952 114.355 36.0648L103.01 29.5248L100.924 16.6017C100.784 15.7473 100.353 14.9673 99.7051 14.3932C99.057 13.819 98.2308 13.4857 97.3657 13.4494L84.281 12.9371L76.4303 2.46019C75.9122 1.76616 75.1692 1.27353 74.3283 1.06645C73.4874 0.859369 72.6006 0.950688 71.8195 1.32481L59.9995 6.94634L48.1749 1.32019C47.3925 0.950988 46.5067 0.862782 45.6668 1.07044C44.827 1.27809 44.0843 1.76891 43.5641 2.46019L35.7134 12.9371L22.6287 13.4494C21.7635 13.4814 20.9362 13.8127 20.2881 14.3868C19.6399 14.9608 19.2111 15.7421 19.0749 16.5971L16.9887 29.5202L5.64412 36.0602C4.89163 36.4898 4.31174 37.1675 4.00362 37.9774C3.6955 38.7873 3.67827 39.679 3.95489 40.5002L8.11335 52.911L1.1072 63.974C0.645029 64.7063 0.450012 65.5758 0.55514 66.4353C0.660268 67.2948 1.05909 68.0916 1.68412 68.691L11.1318 77.751L10.0703 90.794C9.99966 91.6571 10.2294 92.5181 10.7205 93.2313C11.2117 93.9445 11.9341 94.4661 12.7657 94.7079L25.3426 98.3309L30.461 110.382C30.7971 111.18 31.4001 111.838 32.1671 112.241C32.934 112.644 33.8172 112.768 34.6657 112.592L47.4964 109.962L57.6226 118.256C58.3103 118.814 59.1549 119.105 59.9995 119.105C60.8441 119.105 61.6841 118.814 62.3764 118.256L72.5026 109.962L85.3334 112.592C87.0734 112.962 88.841 112.025 89.538 110.382L94.6564 98.3309L107.233 94.7079C108.067 94.4692 108.791 93.9483 109.283 93.2343C109.775 92.5204 110.003 91.6577 109.929 90.794L108.867 77.751L118.315 68.691C118.94 68.0916 119.339 67.2948 119.444 66.4353C119.549 65.5758 119.354 64.7063 118.892 63.974ZM87.1241 45.9233L60.858 85.274C59.8657 86.7417 58.3287 87.7248 56.801 87.7248C55.2733 87.7248 53.5749 86.8709 52.4903 85.7817L33.2072 66.1894C32.573 65.5424 32.2177 64.6724 32.2177 63.7663C32.2177 62.8603 32.573 61.9903 33.2072 61.3433L37.9657 56.4971C38.2775 56.1835 38.6482 55.9347 39.0565 55.7649C39.4648 55.5951 39.9027 55.5077 40.3449 55.5077C40.7871 55.5077 41.2249 55.5951 41.6333 55.7649C42.0416 55.9347 42.4123 56.1835 42.7241 56.4971L55.2733 69.2448L75.9687 38.2386C76.214 37.8689 76.5305 37.5517 76.8997 37.3056C77.2689 37.0595 77.6834 36.8893 78.1191 36.8051C78.5547 36.7209 79.0028 36.7243 79.4371 36.8151C79.8714 36.9059 80.2833 37.0823 80.6487 37.334L86.2287 41.1694C87.7657 42.231 88.1626 44.3679 87.1241 45.9233Z"
+            fill="#07B138"
+          />
+        </g>
+        <defs>
+          <clipPath id="clip0_279_7802">
+            <rect width="120" height="120" fill="white" />
+          </clipPath>
+        </defs>
+      </svg>
+    </>
+  );
+};
+
+export const MapSVG = () => {
+  return (
+    <svg
+      width="38"
+      height="37"
+      viewBox="0 0 38 37"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M14.367 26.4234L5.23633 28.7061V8.16206L14.367 5.87939"
+        stroke="white"
+        strokeWidth="2.28267"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M23.4979 30.9887L14.3672 26.4234V5.87939L23.4979 10.4447V30.9887Z"
+        stroke="white"
+        strokeWidth="2.28267"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M23.498 10.4448L32.6287 8.16211V28.7061L23.498 30.9888"
+        stroke="white"
+        strokeWidth="2.28267"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+};
+
+export const CalendarSVG = () => {
+  return (
+    <svg
+      width="13"
+      height="13"
+      viewBox="0 0 13 13"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <g clipPath="url(#clip0_555_9200)">
+        <path
+          d="M9.78125 2.21045H2.78125C2.22897 2.21045 1.78125 2.65816 1.78125 3.21045V10.2104C1.78125 10.7627 2.22897 11.2104 2.78125 11.2104H9.78125C10.3335 11.2104 10.7812 10.7627 10.7812 10.2104V3.21045C10.7812 2.65816 10.3335 2.21045 9.78125 2.21045Z"
+          stroke="black"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M1.78125 5.21045H10.7812"
+          stroke="black"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M8.28125 1.21045V3.21045"
+          stroke="black"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M4.28125 1.21045V3.21045"
+          stroke="black"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </g>
+      <defs>
+        <clipPath id="clip0_555_9200">
+          <rect
+            width="12"
+            height="12"
+            fill="white"
+            transform="translate(0.28125 0.210449)"
+          />
+        </clipPath>
+      </defs>
+    </svg>
+  );
+};
+
+export const FilterSVG = () => {
+  return (
+    <>
+      <svg
+        width="17"
+        height="17"
+        viewBox="0 0 17 17"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M8.17188 7.71045L8.17189 13.7104"
+          stroke="#F79432"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M8.17189 2.71045L8.17188 5.71045"
+          stroke="#F79432"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M12.6719 12.7104L12.672 13.7104"
+          stroke="#F79432"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M12.672 2.71045L12.6719 10.7104"
+          stroke="#F79432"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M14.1719 10.7104H11.1719"
+          stroke="#F79432"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M3.67195 10.7104L3.67188 13.7104"
+          stroke="#F79432"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M3.67188 2.71045L3.67195 8.71045"
+          stroke="#F79432"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M2.17188 8.71045H5.17187"
+          stroke="#F79432"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M9.67188 5.71045H6.67188"
+          stroke="#F79432"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    </>
   );
 };

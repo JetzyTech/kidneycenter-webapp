@@ -17,7 +17,7 @@ and then  `code .` to open it in VSCode
 1. open the terminal 
 
 ```bash
-  yarn dev (if you have yarn install)
+  yarn dev (if you have yarn installed)
   or 
   npm run dev
 ```
