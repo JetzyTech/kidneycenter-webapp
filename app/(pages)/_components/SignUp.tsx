@@ -1,4 +1,4 @@
-import React, { useEffect } from "react"
+import React, { Suspense, useEffect } from "react"
 import { countries } from "@/app/lib/countries"
 import { Box, Button, Flex } from "@chakra-ui/react"
 import { ServerErrors } from "@Jetzy/app/lib/_toaster"
@@ -9,11 +9,11 @@ import { Button as AntdButton, Divider, Input, message, Select, Spin, Typography
 import { ErrorMessage, Field, Form, Formik, FormikProps } from "formik"
 import { signIn } from "next-auth/react"
 import { useRouter } from "next/navigation"
+import PasswordInput from "./PasswordInput"
 import { signupValidation } from "@Jetzy/validator/authValidtor"
+import AuthFooter from "./AuthFooter"
 import axios from "axios"
 import { useSession } from "next-auth/react"
-import PasswordInput from "../_components/PasswordInput"
-import AuthFooter from "../_components/AuthFooter"
 
 const giftUser = async (email: string) => {
 	try {
@@ -114,7 +114,7 @@ const Signup = () => {
 	)
 
 	return (
-		<>
+		<Suspense fallback={<div className="flex flex-col items-center justify-center"><Spin size="large"/></div>}>
 			{status === 'loading' ? (
 				<div className="flex items-center justify-center"><Spin size='large' /></div>
 			) : (
@@ -176,7 +176,7 @@ const Signup = () => {
 					</div>
 				</div>
 			)}
-		</>
+		</Suspense>
 	)
 }
 

@@ -41,7 +41,7 @@ export const unauthorizedOnly = async (context: any) => {
   if (_session)
     return {
       redirect: {
-        destination: ROUTES.dashboard,
+        destination: ROUTES.auth,
         permanent: false,
       },
     };

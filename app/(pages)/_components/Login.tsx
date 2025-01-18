@@ -8,6 +8,7 @@ import {
   Form as AntdForm,
   Input,
   Typography,
+  Spin,
 } from "antd";
 import {
   AuthCreateAccountThunk,
@@ -15,7 +16,7 @@ import {
   useAppDispatch,
   useAppSelector,
 } from "@Jetzy/redux";
-import React from "react";
+import React, { Suspense } from "react";
 import { useRouter } from "next/navigation";
 import { SignInFormData, SignUpFormData } from "@Jetzy/types";
 import { signIn } from "next-auth/react";
@@ -66,7 +67,7 @@ const Login = () => {
     setLoader(false);
 
     if (res?.ok) {
-      navigator.push(ROUTES.dashboard);
+      navigator.push(ROUTES.success);
     } else {
       ServerErrors("Sorry", [{ message: "Login failed. Please try again." }]);
     }
@@ -78,7 +79,7 @@ const Login = () => {
   };
 
   return (
-    <>
+    <Suspense fallback={<div className="flex flex-col items-center justify-center"><Spin size="large"/></div>}>
       <div className="space-y-5 px-5">
         <Typography.Text className="text-[32px] font-extrabold">
           Sign in
@@ -164,7 +165,7 @@ const Login = () => {
           )}
         </Formik>
       </div>
-    </>
+    </Suspense>
   );
 };
 

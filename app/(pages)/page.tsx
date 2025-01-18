@@ -3,17 +3,18 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import { Typography } from "antd";
+import { Spin, Typography } from "antd";
 import { parseAsString, useQueryState } from "nuqs";
 
-import Signup from "./components/SignUp";
-import Login from "./components/Login";
-import ExplanationSection from './components/explanation-section';
+import Signup from "./_components/SignUp";
+import Login from "./_components/Login";
+import ExplanationSection from './_components/explanation-section';
 
 import AuthBgImg from "@/app/assets/images/auth/bg-image.jpg";
 import JetzyLogo from "@/app/assets/logos/jetzy-logo.png";
 import FirstExplanation from '@/app/assets/images/auth/explanation-section/first.png'
 import SecondExplanation from '@/app/assets/images/auth/explanation-section/second.png'
+import { Suspense } from "react";
 
 enum AUTH_TABS {
   SIGNUP = "signup",
@@ -55,6 +56,7 @@ export default function Authentication() {
   );
 
   return (
+    <Suspense fallback={<div className="flex flex-col items-center justify-center"><Spin size="large"/></div>}>
     <div className="flex flex-col xl:flex-row justify-between">
       <div className="w-[330px] md:w-[400px] xl:w-[448px] mx-auto py-10">
         <Link href="/" className="w-max inline-block">
@@ -114,5 +116,6 @@ export default function Authentication() {
       ))}
     </div>
     </div>
+    </Suspense>
   );
 }

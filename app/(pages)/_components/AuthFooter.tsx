@@ -10,7 +10,7 @@ export default function AuthFooter() {
   const handleSSOSignIn = () => {
     // get callback url
     const baseUrl = window.location.origin;
-    const callbackUrl = `${baseUrl}${ROUTES.dashboard}`;
+    const callbackUrl = `${baseUrl}${ROUTES.success}`;
 
     setLoader(true);
     signIn("google", { callbackUrl: callbackUrl })
